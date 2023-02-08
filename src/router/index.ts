@@ -41,7 +41,7 @@ export default class Router {
    */
   private initMiddleware(): void {
     this.middleware.generateMiddleware(this.app);
-    this.app.use(userValidation);
+    userValidation(this.app);
   }
 
   /**

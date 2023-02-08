@@ -1,5 +1,5 @@
 import * as enums from '../enums';
-import express from 'express';
+import express, { Locals } from 'express';
 
 export interface IUsersTokens {
   userId: string | undefined;
@@ -7,10 +7,12 @@ export interface IUsersTokens {
   validated: boolean;
   newToken?: string;
   type: enums.EUserTypes;
+
+  [key: string]: unknown;
 }
 
 export interface ILocalUser extends express.Response {
-  locals: IUsersTokens;
+  locals: IUsersTokens & Locals;
 }
 
 export interface IUserCredentials {

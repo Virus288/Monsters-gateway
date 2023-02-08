@@ -3,16 +3,21 @@ import Broker from '../../src/broker';
 
 export default class Utils {
   async init(): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise<void>(async (resolve): Promise<void> => {
       State.broker = new Broker();
-      await State.broker.init();
+      State.broker.init();
       setTimeout(() => {
         resolve();
       }, 4000);
     });
   }
 
-  close(): void {
-    State.broker.close();
+  async close(): Promise<void> {
+    return new Promise<void>(async (resolve): Promise<void> => {
+      State.broker.close();
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
   }
 }

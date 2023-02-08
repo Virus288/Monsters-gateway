@@ -4,8 +4,8 @@ import { IFullError } from '../../src/types';
 import * as localTypes from '../types';
 import supertest from 'supertest';
 import fakeData from '../fakeData.json';
-import Utils from '../utils';
 import Router from '../../src/router';
+import Utils from '../utils';
 
 describe('Login', () => {
   const loginData: types.ILoginReq = fakeData.users[0];
@@ -18,8 +18,9 @@ describe('Login', () => {
     router.init();
   });
 
-  afterAll(() => {
-    utils.close();
+  afterAll(async () => {
+    router.close();
+    await utils.close();
   });
 
   describe('Should throw', () => {
@@ -35,7 +36,7 @@ describe('Login', () => {
         expect(body.code).not.toBeUndefined();
       });
 
-      it(`Missing login`, async () => {
+      it(`Missing password`, async () => {
         const clone = structuredClone(loginData);
         delete clone.password;
 

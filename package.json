@@ -18,9 +18,9 @@
     "lintStaged": "npx lint-staged",
     "test": "jest --coverage --config __tests__/jest.config.ts",
     "test:watch": "jest --watch --config __tests__/jest.config.ts",
-    "test:e2e": "jest --config __tests__/jest.config.e2e.ts",
+    "test:e2e": "jest --runInBand --config __tests__/jest.config.e2e.ts",
     "test:unit": "jest --config __tests__/jest.config.unit.ts",
-    "test:db": "jest --config __tests__/jest.config.db.ts"
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.ts": [
@@ -36,6 +36,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "husky": "^8.0.3",
     "jsonwebtoken": "^8.5.1",
     "node": "^18.7.0",
     "winston": "^3.8.2",
