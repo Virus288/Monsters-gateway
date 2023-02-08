@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express } from 'express';
 import jwt from 'jsonwebtoken';
 import * as errors from '../errors';
 import * as enums from '../enums';
@@ -6,24 +6,26 @@ import type * as types from '../types';
 import getConfig from './configLoader';
 import handleErr from '../errors/utils';
 
-const userValidation = (req: express.Request, res: types.ILocalUser, next: express.NextFunction): void => {
-  const access = req.cookies[enums.EJwt.MainToken] as string | undefined;
-  const refresh = req.headers.authorization;
-  try {
-    if (!access) throw new errors.Unauthorized();
-    verify(res, access);
-    next();
-  } catch (err) {
+const userValidation = (app: Express): void => {
+  app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+    const access = req.cookies[enums.EJwt.MainToken] as string | undefined;
+    const refresh = req.headers.authorization;
     try {
-      if (!refresh) throw new errors.Unauthorized();
-      const { type, id } = verify(res, refresh);
-      res.locals.newToken = generateTokens(id, type);
-      // #TODO while sending data back from other services, make sure to return new cookie
+      if (!access) throw new errors.Unauthorized();
+      verify(res, access);
       next();
     } catch (err) {
-      next();
+      try {
+        if (!refresh) throw new errors.Unauthorized();
+        const { type, id } = verify(res, refresh);
+        res.locals.newToken = generateTokens(id, type);
+        // #TODO while sending data back from other services, make sure to return new cookie
+        next();
+      } catch (err) {
+        next();
+      }
     }
-  }
+  });
 };
 
 const verify = (res: types.ILocalUser, token: string): { id: string; type: enums.EUserTypes } => {

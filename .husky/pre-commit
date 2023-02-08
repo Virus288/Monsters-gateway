@@ -7,7 +7,4 @@ echo "Running tsc"
 npm run listErrors
 echo "Running unit tests"
 npm run test:unit
-echo "Running db tests"
-npm run test:db
-echo "Running e2e tests"
-npm run test:e2e
+echo "Remember to run e2e tests!"

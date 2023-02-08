@@ -17,7 +17,7 @@ export default class Broker {
   private services: {
     [key in types.IAvailableServices]: { timeout: NodeJS.Timeout; retries: number; dead: boolean };
   } = {
-    [enums.EServices.Users]: { timeout: undefined, retries: 0, dead: true },
+    [enums.EServices.Users]: { timeout: null, retries: 0, dead: true },
   };
 
   private controller: Controller;
@@ -41,7 +41,7 @@ export default class Broker {
         if (this.retryTimeout) clearTimeout(this.retryTimeout);
         this.cleanAll();
       })
-      .catch(() => null);
+      .catch(() => undefined);
   }
 
   private reconnect(): void {
@@ -68,7 +68,6 @@ export default class Broker {
         Log.warn('Rabbit', 'Error connecting to RabbitMQ, retrying in 1 second');
         Log.error('Rabbit', err);
         this.retryTimeout = setTimeout(() => this.initCommunication(), 1000);
-        return (this.connection = null);
       });
   }
 
@@ -94,7 +93,6 @@ export default class Broker {
           `Error creating rabbit connection channel, retrying in 1 second: ${(err as types.IFullError).message}`,
         );
         this.retryTimeout = setTimeout(() => this.createChannels(), 1000);
-        return (this.channel = null);
       });
   }
 
@@ -106,6 +104,7 @@ export default class Broker {
     await this.channel.consume(
       enums.EAmqQueues.Gateway,
       (message) => {
+        if (!message) return Log.warn('Rabbit', 'Received empty message to gateway');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
           this.validateHeartbeat(payload.payload as types.IAvailableServices);

@@ -9,7 +9,7 @@ import type * as types from '../types';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
-    app.use(express.json({ limit: '1mb' }));
+    app.use(express.json({ limit: '500kb' }));
     app.use(cookieParser());
     app.use(
       cors({
@@ -18,7 +18,7 @@ export default class Middleware {
       }),
     );
 
-    app.use(function (_req: express.Request, res: types.ILocalUser, next: express.NextFunction) {
+    app.use((_req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
       res.header('Content-Type', 'application/json;charset=UTF-8');
       res.header('Access-Control-Allow-Credentials', 'true');
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
