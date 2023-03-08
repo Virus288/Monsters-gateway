@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import userRouter from './routes/users';
+import profileRouter from './routes/profile';
 
-const router = Router();
+export const router = Router();
+export const securedRouter = Router();
 
 router.use('/users', userRouter);
 
-export default router;
+securedRouter.use('/profile', profileRouter);

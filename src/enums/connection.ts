@@ -12,9 +12,11 @@ export enum ERabbit {
 export enum EServices {
   Gateway = 'gateway',
   Users = 'users',
+  Messages = 'messages',
 }
 
 export enum EAmqQueues {
   Gateway = 'gatewayQueue',
   Users = 'usersQueue',
+  Messages = 'messagesQueue',
 }

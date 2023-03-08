@@ -156,7 +156,7 @@ describe('Register', () => {
           .send({ ...registerData, password2: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('passwords not the same');
+        expect(body.message).toEqual('Passwords not the same');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -166,7 +166,7 @@ describe('Register', () => {
           .send({ ...registerData, email: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('not valid email address');
+        expect(body.message).toEqual('Not valid email address');
         expect(body.code).not.toBeUndefined();
       });
     });

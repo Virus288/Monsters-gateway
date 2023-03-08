@@ -8,22 +8,22 @@ import Validator from '../../validation';
 
 const router = Router();
 
-router.post('/login', (req, res: types.ILocalUser) => {
+router.get('/', (req, res: types.ILocalUser) => {
   try {
-    const data = req.body as types.ILoginReq;
-    Validator.validateLogin(data);
-    State.broker.sendLocally(enums.EUserMainTargets.User, enums.EUserTargets.Login, res, data, EServices.Users);
+    const data = req.body as types.IGetProfileReq;
+    Validator.validateGetProfile(data);
+    State.broker.sendLocally(enums.EUserMainTargets.Profile, enums.EProfileTargets.Get, res, data, EServices.Users);
   } catch (err) {
     const { message, code, name, status } = err as FullError;
     res.status(status).json({ message, code, name });
   }
 });
 
-router.post('/register', (req, res: types.ILocalUser) => {
+router.post('/', (req, res: types.ILocalUser) => {
   try {
-    const data = req.body as types.IRegisterReq;
-    Validator.validateRegister(data);
-    State.broker.sendLocally(enums.EUserMainTargets.User, enums.EUserTargets.Register, res, data, EServices.Users);
+    const data = req.body as types.INewProfileReq;
+    Validator.validateAddProfile(data);
+    State.broker.sendLocally(enums.EUserMainTargets.Profile, enums.EProfileTargets.Create, res, data, EServices.Users);
   } catch (err) {
     const { message, code, name, status } = err as FullError;
     res.status(status).json({ message, code, name });

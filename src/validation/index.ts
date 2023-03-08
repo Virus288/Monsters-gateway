@@ -16,4 +16,12 @@ export default class Validator {
     if (!password2) throw new errors.NoDataProvided('password2');
     if (!email) throw new errors.NoDataProvided('email');
   }
+
+  static validateAddProfile(data: types.INewProfileReq): void {
+    if (!data?.race) throw new errors.NoDataProvided('race');
+  }
+
+  static validateGetProfile(data: types.IGetProfileReq): void {
+    if (!data?.id) throw new errors.NoDataProvided('id');
+  }
 }

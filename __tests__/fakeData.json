@@ -1,6 +1,7 @@
 {
   "users": [
     {
+      "_id": "63e55edbe8a800060941121d",
       "login": "Sebastien",
       "email": "seb@gmail.uk",
       "password": "Password123",
@@ -41,6 +42,52 @@
       "email": "marystephens@horyzont.eu",
       "password": "Test123",
       "password2": "Test123"
+    }
+  ],
+  "profiles": [
+    {
+      "user": "63e55edbe8a800060941121d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        7,
+        10
+      ]
+    },
+    {
+      "user": "63e56c96de824fb83daba1c2",
+      "race": "elf",
+      "friends": [
+        "63e55edbe8a800060941121e"
+      ],
+      "lvl": 4,
+      "exp": [
+        40,
+        70
+      ]
+    },
+    {
+      "user": "63e56c96de824fb83daba1c1",
+      "race": "human",
+      "friends": [
+        "63e55edbe8a800060941121g"
+      ],
+      "lvl": 2,
+      "exp": [
+        1,
+        20
+      ]
+    },
+    {
+      "user": "63e56c96de824fb83daba1c3",
+      "race": "human",
+      "friends": [],
+      "lvl": 10,
+      "exp": [
+        421,
+        1000
+      ]
     }
   ]
 }

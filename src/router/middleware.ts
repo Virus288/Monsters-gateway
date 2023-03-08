@@ -32,13 +32,8 @@ export default class Middleware {
       Log.error('Middleware', err.name);
       errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
 
-      if (err.name === 'SyntaxError') {
-        const { message, code, name, status } = new InternalError();
-        res.status(status).json({ message, code, name });
-      } else {
-        const { message, code, name, status } = new InternalError();
-        res.status(status).json({ message, code, name });
-      }
+      const { message, code, name, status } = new InternalError();
+      res.status(status).json({ message, code, name });
 
       next();
     });

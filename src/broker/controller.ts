@@ -3,13 +3,14 @@ import * as enums from '../enums';
 import amqplib from 'amqplib';
 import { FullError, InternalError } from '../errors';
 import Log from '../tools/logger/log';
-import generateTempId from '../utils';
+import { generateTempId } from '../utils';
 
 export default class Communicator {
   private queue: Record<string, { user: types.ILocalUser; target: enums.EServices }> = {};
 
   sendLocally(
-    target: enums.EUserTargets,
+    target: types.IRabbitTargets,
+    subTarget: types.IRabbitSubTargets,
     res: types.ILocalUser,
     payload: unknown,
     service: enums.EServices,
@@ -30,6 +31,7 @@ export default class Communicator {
       },
       payload,
       target,
+      subTarget,
     };
     switch (service) {
       case enums.EServices.Users:
@@ -42,12 +44,16 @@ export default class Communicator {
     const body: types.IRabbitMessage = {
       user: undefined,
       payload: undefined,
+      subTarget: undefined,
       target: enums.EMessageTypes.Heartbeat,
     };
 
     switch (target) {
       case enums.EServices.Users:
         channel.sendToQueue(enums.EAmqQueues.Users, Buffer.from(JSON.stringify(body)));
+        return;
+      case enums.EServices.Messages:
+        channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)));
         return;
     }
   };
@@ -82,8 +88,8 @@ export default class Communicator {
   }
 
   private setTokens(payload: types.IUserCredentials, target: types.ILocalUser): void {
-    const { refreshToken, mainToken } = payload;
-    target.cookie(enums.EJwt.MainToken, mainToken, { httpOnly: true, maxAge: enums.EJwtTime.TokenMaxAge * 1000 });
+    const { refreshToken, accessToken } = payload;
+    target.cookie(enums.EJwt.AccessToken, accessToken, { httpOnly: true, maxAge: enums.EJwtTime.TokenMaxAge * 1000 });
     target.status(200).send({ refreshToken, eol: Date.now() + enums.EJwtTime.RefreshTokenMaxAge * 1000 });
   }
 
