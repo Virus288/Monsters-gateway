@@ -4,7 +4,7 @@ import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import type * as types from '../types';
 import * as errors from '../errors';
-import router from './router';
+import { router, securedRouter } from './router';
 import express from 'express';
 import userValidation from '../tools/token';
 
@@ -41,7 +41,6 @@ export default class Router {
    */
   private initMiddleware(): void {
     this.middleware.generateMiddleware(this.app);
-    userValidation(this.app);
   }
 
   /**
@@ -56,6 +55,9 @@ export default class Router {
    */
   private initRouter(): void {
     this.app.use('/system', router);
+    userValidation(this.app);
+    this.app.use('/system', securedRouter);
+
     this.app.all('*', (_req, res: types.ILocalUser) => {
       const { message, code, name, status } = new errors.NotFoundError();
       res.status(status).json({ message, code, name });

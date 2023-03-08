@@ -16,7 +16,7 @@ export interface ILocalUser extends express.Response {
 }
 
 export interface IUserCredentials {
-  mainToken: string;
+  accessToken: string;
   refreshToken: string;
   userId: string;
 }

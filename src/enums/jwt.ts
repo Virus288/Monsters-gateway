@@ -5,6 +5,6 @@ export const EJwtTime = {
 };
 
 export enum EJwt {
-  MainToken = 'mainToken',
+  AccessToken = 'accessToken',
   RefreshToken = 'refreshToken',
 }

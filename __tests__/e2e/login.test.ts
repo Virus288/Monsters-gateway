@@ -76,7 +76,7 @@ describe('Login', () => {
       const res = await supertest(router.app).post('/system/users/login').send(loginData);
       const body = res.body as localTypes.ILoginSuccessResponse;
 
-      expect(body.refreshToken).not.toEqual(undefined);
+      expect(body.refreshToken).not.toBeUndefined();
       expect(body.eol).not.toBeLessThan(Date.now());
     });
   });

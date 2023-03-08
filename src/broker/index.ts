@@ -18,6 +18,7 @@ export default class Broker {
     [key in types.IAvailableServices]: { timeout: NodeJS.Timeout; retries: number; dead: boolean };
   } = {
     [enums.EServices.Users]: { timeout: null, retries: 0, dead: true },
+    [enums.EServices.Messages]: { timeout: null, retries: 0, dead: true },
   };
 
   private controller: Controller;
@@ -27,11 +28,17 @@ export default class Broker {
     this.initCommunication();
   }
 
-  sendLocally(target: enums.EUserTargets, res: types.ILocalUser, payload: unknown, service: enums.EServices): void {
+  sendLocally(
+    target: types.IRabbitTargets,
+    subTarget: types.IRabbitSubTargets,
+    res: types.ILocalUser,
+    payload: unknown,
+    service: enums.EServices,
+  ): void {
     const queue = this.services[service as types.IAvailableServices];
     if (queue.dead) return this.sendError(res, new InternalError());
 
-    this.controller.sendLocally(target, res, payload, service, this.channel);
+    this.controller.sendLocally(target, subTarget, res, payload, service, this.channel);
   }
 
   close(): void {
@@ -97,10 +104,12 @@ export default class Broker {
   }
 
   private async createQueue(): Promise<void> {
-    Log.log('Rabbit', `Creating channel: ${enums.EAmqQueues.Gateway}`);
-    Log.log('Rabbit', `Creating channel: ${enums.EAmqQueues.Users}`);
-    await this.channel.assertQueue(enums.EAmqQueues.Gateway, { durable: true });
-    await this.channel.assertQueue(enums.EAmqQueues.Users, { durable: true });
+    await Promise.all(
+      Object.values(enums.EAmqQueues).map(async (queue) => {
+        await this.channel.assertQueue(queue, { durable: true });
+      }),
+    );
+
     await this.channel.consume(
       enums.EAmqQueues.Gateway,
       (message) => {
@@ -172,6 +181,9 @@ export default class Broker {
       case enums.EServices.Users:
         await this.channel.purgeQueue(enums.EAmqQueues.Users);
         break;
+      case enums.EServices.Messages:
+        await this.channel.purgeQueue(enums.EAmqQueues.Messages);
+        break;
     }
     return this.controller.fulfillDeadQueue(target);
   };
@@ -180,13 +192,14 @@ export default class Broker {
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout);
     }
-    await this.channel.purgeQueue(enums.EAmqQueues.Gateway);
-    await this.channel.purgeQueue(enums.EAmqQueues.Users);
+    await Promise.all(
+      Object.values(enums.EAmqQueues).map(async (queue) => {
+        await this.channel.purgeQueue(queue);
+        await this.channel.deleteQueue(queue);
+      }),
+    );
 
-    await this.channel.deleteQueue(enums.EAmqQueues.Gateway);
-    await this.channel.deleteQueue(enums.EAmqQueues.Users);
-
-    await this.channel.close().catch(() => null);
+    await this.channel.close();
     this.channel = null;
     this.channelTries = 0;
   }

@@ -9,7 +9,6 @@ export interface IState {
 export interface IConfigInterface {
   amqpURI: string;
   token: string;
-  refToken: string;
   corsOrigin: string;
   httpPort: number;
 }

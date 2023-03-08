@@ -8,39 +8,29 @@ import handleErr from '../errors/utils';
 
 const userValidation = (app: Express): void => {
   app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
-    const access = req.cookies[enums.EJwt.MainToken] as string | undefined;
-    const refresh = req.headers.authorization;
+    const access = req.cookies[enums.EJwt.AccessToken] as string | undefined;
+
     try {
       if (!access) throw new errors.Unauthorized();
       verify(res, access);
       next();
     } catch (err) {
-      try {
-        if (!refresh) throw new errors.Unauthorized();
-        const { type, id } = verify(res, refresh);
-        res.locals.newToken = generateTokens(id, type);
-        // #TODO while sending data back from other services, make sure to return new cookie
-        next();
-      } catch (err) {
-        next();
-      }
+      return handleErr(new errors.Unauthorized(), res);
     }
   });
 };
 
 const verify = (res: types.ILocalUser, token: string): { id: string; type: enums.EUserTypes } => {
   if (!token) throw new errors.Unauthorized();
-  const payload = jwt.verify(token, getConfig().refToken) as { id: string; type: enums.EUserTypes };
+  const payload = jwt.verify(token, getConfig().token) as {
+    id: string;
+    type: enums.EUserTypes;
+  };
+
   res.locals.userId = payload.id;
   res.locals.type = payload.type;
   res.locals.validated = true;
   return payload;
-};
-
-const generateTokens = (id: string, type: enums.EUserTypes): string => {
-  return jwt.sign({ id, type }, getConfig().token, {
-    expiresIn: enums.EJwtTime.TokenMaxAge,
-  });
 };
 
 export const validateAdmin = (_req: express.Request, res: types.ILocalUser, next: express.NextFunction): void => {
