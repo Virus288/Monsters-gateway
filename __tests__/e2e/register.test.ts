@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import * as types from '../../src/types';
 import { IFullError } from '../../src/types';
 import * as localTypes from '../types';
 import supertest from 'supertest';
 import fakeData from '../fakeData.json';
-import Router from '../../src/router';
+import Router from '../../src/structure';
 import { generateRandomName } from '../../src/utils';
 import Utils from '../utils';
+import { IRegisterReq } from '../../src/structure/modules/users/register/types';
 
 describe('Register', () => {
-  const registerData: types.IRegisterReq = fakeData.users[2];
+  const registerData: IRegisterReq = fakeData.users[2];
   let utils: Utils;
   const router = new Router();
 
@@ -30,7 +30,7 @@ describe('Register', () => {
         const clone = structuredClone(registerData);
         delete clone.login;
 
-        const res = await supertest(router.app).post('/system/users/register').send(clone);
+        const res = await supertest(router.app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('login not provided');
@@ -41,7 +41,7 @@ describe('Register', () => {
         const clone = structuredClone(registerData);
         delete clone.password;
 
-        const res = await supertest(router.app).post('/system/users/register').send(clone);
+        const res = await supertest(router.app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('password not provided');
@@ -52,7 +52,7 @@ describe('Register', () => {
         const clone = structuredClone(registerData);
         delete clone.password2;
 
-        const res = await supertest(router.app).post('/system/users/register').send(clone);
+        const res = await supertest(router.app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('password2 not provided');
@@ -63,7 +63,7 @@ describe('Register', () => {
         const clone = structuredClone(registerData);
         delete clone.email;
 
-        const res = await supertest(router.app).post('/system/users/register').send(clone);
+        const res = await supertest(router.app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('email not provided');
@@ -73,7 +73,7 @@ describe('Register', () => {
 
     describe('Incorrect data', () => {
       it(`Selected username is already in use`, async () => {
-        const res = await supertest(router.app).post('/system/users/register').send(fakeData.users[0]);
+        const res = await supertest(router.app).post('/users/register').send(fakeData.users[0]);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('Selected username is already in use');
@@ -82,7 +82,7 @@ describe('Register', () => {
 
       it(`Register incorrect`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, login: '!@#$%^&*&*()_+P{:"<?a' });
         const body = res.body as IFullError;
 
@@ -92,7 +92,7 @@ describe('Register', () => {
 
       it(`Login too short`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, login: 'a' });
         const body = res.body as IFullError;
 
@@ -102,7 +102,7 @@ describe('Register', () => {
 
       it(`Login too long`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({
             ...registerData,
             login:
@@ -116,7 +116,7 @@ describe('Register', () => {
 
       it(`Password incorrect`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, password: 'a@$QEWASD+)}KO_PL{:">?' });
         const body = res.body as IFullError;
 
@@ -128,7 +128,7 @@ describe('Register', () => {
 
       it(`Password too short`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, password: 'a' });
         const body = res.body as IFullError;
 
@@ -138,7 +138,7 @@ describe('Register', () => {
 
       it(`Password too long`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({
             ...registerData,
             password:
@@ -152,7 +152,7 @@ describe('Register', () => {
 
       it(`Passwords do not match`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, password2: 'a' });
         const body = res.body as IFullError;
 
@@ -162,7 +162,7 @@ describe('Register', () => {
 
       it(`Email incorrect`, async () => {
         const res = await supertest(router.app)
-          .post('/system/users/register')
+          .post('/users/register')
           .send({ ...registerData, email: 'a' });
         const body = res.body as IFullError;
 
@@ -175,7 +175,7 @@ describe('Register', () => {
   describe('Should pass', () => {
     it(`Validated register`, async () => {
       const res = await supertest(router.app)
-        .post('/system/users/register')
+        .post('/users/register')
         .send({
           ...registerData,
           login: generateRandomName(),

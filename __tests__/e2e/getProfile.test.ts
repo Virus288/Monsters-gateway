@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import * as types from '../../src/types';
 import { IFullError } from '../../src/types';
 import * as localTypes from '../types';
 import supertest from 'supertest';
-import Router from '../../src/router';
+import Router from '../../src/structure';
 import Utils from '../utils';
 import { EUserTypes } from '../../src/enums';
 import fakeData from '../fakeData.json';
+import { IGetProfileReq } from '../../src/structure/modules/profiles/types';
 
 describe('Profiles = get', () => {
-  const getProfile: types.IGetProfileReq = {
+  const getProfile: IGetProfileReq = {
     id: '63e55edbe8a800060941121d',
   };
   let utils: Utils;
@@ -36,7 +36,7 @@ describe('Profiles = get', () => {
         delete clone.id;
 
         const res = await supertest(router.app)
-          .get('/system/profile')
+          .get('/profile')
           .set('Cookie', [`accessToken=${accessToken}`])
           .send(clone);
         const body = res.body as IFullError;
@@ -49,7 +49,7 @@ describe('Profiles = get', () => {
     describe('Incorrect data', () => {
       it(`Incorrect id`, async () => {
         const res = await supertest(router.app)
-          .get('/system/profile')
+          .get('/profile')
           .set('Cookie', [`accessToken=${accessToken}`])
           .send({ ...getProfile, id: 'abc' });
         const body = res.body as IFullError;
@@ -63,7 +63,7 @@ describe('Profiles = get', () => {
   describe('Should pass', () => {
     it(`Got profile`, async () => {
       const res = await supertest(router.app)
-        .get('/system/profile')
+        .get('/profile')
         .set('Cookie', [`accessToken=${accessToken}`])
         .send(getProfile);
       const body = res.body as localTypes.IProfileLean;

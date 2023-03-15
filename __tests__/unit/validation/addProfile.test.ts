@@ -1,11 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
-import Validation from '../../../src/validation';
-import * as types from '../../../src/types';
+import Validation from '../../../src/structure/modules/profiles/validation';
 import * as errors from '../../../src/errors';
 import { EUserRace } from '../../../src/enums';
+import { IAddProfileReq } from '../../../src/structure/modules/profiles/types';
 
 describe('Profile - add', () => {
-  const addProfile: types.INewProfileReq = {
+  const addProfile: IAddProfileReq = {
     race: EUserRace.Elf,
   };
 

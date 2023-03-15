@@ -4,9 +4,8 @@ import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import type * as types from '../types';
 import * as errors from '../errors';
-import { router, securedRouter } from './router';
+import AppRouter from './router';
 import express from 'express';
-import userValidation from '../tools/token';
 
 export default class Router {
   readonly app: express.Express;
@@ -54,9 +53,10 @@ export default class Router {
    * Init basic routes. Add "debug" route while in development mode
    */
   private initRouter(): void {
-    this.app.use('/system', router);
-    userValidation(this.app);
-    this.app.use('/system', securedRouter);
+    const router = new AppRouter(this.app);
+    router.initRoutes();
+    // userValidation(this.app);
+    router.initSecured();
 
     this.app.all('*', (_req, res: types.ILocalUser) => {
       const { message, code, name, status } = new errors.NotFoundError();

@@ -2,29 +2,40 @@ import chalk from 'chalk';
 import errLogger from './logger';
 import * as enums from '../../enums';
 
+/**
+ * Log passed data and save it in local files
+ */
 export default class Log {
-  static error(target: string, message: unknown): void {
+  static error(target: string, ...messages: unknown[]): void {
     console.info(chalk.red(target));
-    console.info(chalk.red(message));
-    Log.saveLog(message, enums.ELogTypes.Error);
+    messages.forEach((m) => {
+      console.info(chalk.red(m));
+      Log.saveLog(m, enums.ELogTypes.Error);
+    });
   }
 
-  static warn(target: string, message: unknown): void {
+  static warn(target: string, ...messages: unknown[]): void {
     console.info(chalk.yellow(target));
-    console.info(chalk.yellow(message));
-    Log.saveLog(message, enums.ELogTypes.Warn);
+    messages.forEach((m) => {
+      console.info(chalk.yellow(m));
+      Log.saveLog(m, enums.ELogTypes.Warn);
+    });
   }
 
-  static log(target: string, message: unknown): void {
+  static log(target: string, ...messages: unknown[]): void {
     console.info(chalk.blue(target));
-    console.info(chalk.blue(message));
-    Log.saveLog(message, enums.ELogTypes.Log);
+    messages.forEach((m) => {
+      console.info(chalk.blue(m));
+      Log.saveLog(m, enums.ELogTypes.Log);
+    });
   }
 
-  static trace(target: string, message: unknown): void {
+  static trace(target: string, ...messages: unknown[]): void {
     console.trace(chalk.yellowBright(target));
-    console.info(chalk.yellowBright(message));
-    Log.saveLog(message, enums.ELogTypes.Log);
+    messages.forEach((m) => {
+      console.info(chalk.yellowBright(m));
+      Log.saveLog(m, enums.ELogTypes.Log);
+    });
   }
 
   private static saveLog(message: unknown, type: enums.ELogTypes): void {

@@ -6,6 +6,7 @@ import getConfig from '../tools/configLoader';
 import errLogger from '../tools/logger/logger';
 import Log from '../tools/logger/log';
 import type * as types from '../types';
+import { IFullError } from '../types';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
@@ -27,15 +28,27 @@ export default class Middleware {
   }
 
   generateErrHandler(app: Express): void {
-    app.use((err: express.Errback, req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
-      Log.error('Middleware', 'Generic err');
-      Log.error('Middleware', err.name);
-      errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
+    app.use(
+      (err: express.Errback | IFullError, req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+        Log.error('Middleware', 'Generic err', err.name);
+        errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
 
-      const { message, code, name, status } = new InternalError();
-      res.status(status).json({ message, code, name });
+        if (err.name === 'SyntaxError') {
+          const { message, code, name, status } = new InternalError();
+          res.status(status).json({ message, code, name });
+        } else {
+          const error = err as IFullError;
+          if (error.code !== undefined) {
+            const { message, code, name, status } = error;
+            res.status(status).json({ message, code, name });
+          } else {
+            const { message, code, name, status } = new InternalError();
+            res.status(status).json({ message, code, name });
+          }
+        }
 
-      next();
-    });
+        next();
+      },
+    );
   }
 }

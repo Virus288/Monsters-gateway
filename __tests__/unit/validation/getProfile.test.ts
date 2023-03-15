@@ -1,10 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
-import Validation from '../../../src/validation';
-import * as types from '../../../src/types';
+import Validation from '../../../src/structure/modules/profiles/validation';
 import * as errors from '../../../src/errors';
+import { IGetProfileReq } from '../../../src/structure/modules/profiles/types';
 
 describe('Profile - get', () => {
-  const getProfile: types.IGetProfileReq = {
+  const getProfile: IGetProfileReq = {
     id: '63e55edbe8a800060941121d',
   };
 

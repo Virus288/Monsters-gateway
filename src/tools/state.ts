@@ -1,6 +1,7 @@
 import type Broker from '../broker';
-import type Router from '../router';
+import type Router from '../structure';
 import type { IState } from '../types';
+import WebsocketServer from './websocket';
 
 class State implements IState {
   private _broker: Broker;
@@ -11,6 +12,16 @@ class State implements IState {
 
   set broker(value: Broker) {
     this._broker = value;
+  }
+
+  private _socket: WebsocketServer;
+
+  get socket(): WebsocketServer {
+    return this._socket;
+  }
+
+  set socket(value: WebsocketServer) {
+    this._socket = value;
   }
 
   private _router: Router;

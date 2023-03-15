@@ -20,9 +20,9 @@ const userValidation = (app: Express): void => {
   });
 };
 
-const verify = (res: types.ILocalUser, token: string): { id: string; type: enums.EUserTypes } => {
+export const verify = (res: types.ILocalUser, token: string): { id: string; type: enums.EUserTypes } => {
   if (!token) throw new errors.Unauthorized();
-  const payload = jwt.verify(token, getConfig().token) as {
+  const payload = jwt.verify(token, getConfig().accessToken) as {
     id: string;
     type: enums.EUserTypes;
   };
@@ -31,6 +31,12 @@ const verify = (res: types.ILocalUser, token: string): { id: string; type: enums
   res.locals.type = payload.type;
   res.locals.validated = true;
   return payload;
+};
+
+export const generateToken = (id: string, type: enums.EUserTypes): string => {
+  return jwt.sign({ id, type }, getConfig().accessToken, {
+    expiresIn: enums.EJwtTime.TokenMaxAge,
+  });
 };
 
 export const validateAdmin = (_req: express.Request, res: types.ILocalUser, next: express.NextFunction): void => {

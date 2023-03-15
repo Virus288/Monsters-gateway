@@ -1,14 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import * as types from '../../src/types';
 import { IFullError } from '../../src/types';
 import supertest from 'supertest';
-import Router from '../../src/router';
+import Router from '../../src/structure';
 import Utils from '../utils';
 import { EUserRace, EUserTypes } from '../../src/enums';
 import fakeData from '../fakeData.json';
+import { IAddProfileReq } from '../../src/structure/modules/profiles/types';
 
 describe('Profiles - add', () => {
-  const addProfile: types.INewProfileReq = {
+  const addProfile: IAddProfileReq = {
     race: EUserRace.Elf,
   };
   let utils: Utils;
@@ -37,7 +37,7 @@ describe('Profiles - add', () => {
         delete clone.race;
 
         const res = await supertest(router.app)
-          .post('/system/profile')
+          .post('/profile')
           .set('Cookie', [`accessToken=${accessToken}`])
           .send(clone);
         const body = res.body as IFullError;
@@ -50,7 +50,7 @@ describe('Profiles - add', () => {
     describe('Incorrect data', () => {
       it(`Incorrect race`, async () => {
         const res = await supertest(router.app)
-          .post('/system/profile')
+          .post('/profile')
           .set('Cookie', [`accessToken=${accessToken}`])
           .send({ ...addProfile, race: 'abc' });
         const body = res.body as IFullError;
@@ -61,7 +61,7 @@ describe('Profiles - add', () => {
 
       it(`Profile already exists`, async () => {
         const res = await supertest(router.app)
-          .post('/system/profile')
+          .post('/profile')
           .set('Cookie', [`accessToken=${accessToken}`])
           .send(addProfile);
         const body = res.body as IFullError;
@@ -74,7 +74,7 @@ describe('Profiles - add', () => {
   describe('Should pass', () => {
     it(`Add profile`, async () => {
       const res = await supertest(router.app)
-        .post('/system/profile')
+        .post('/profile')
         .set('Cookie', [`accessToken=${accessToken2}`])
         .send({ ...addProfile });
 

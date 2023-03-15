@@ -26,7 +26,7 @@ export default class Utils {
   }
 
   generateAccessToken = (id: string, type: types.EUserTypes): string => {
-    return jwt.sign({ id, type }, getConfig().token, {
+    return jwt.sign({ id, type }, getConfig().accessToken, {
       expiresIn: enums.EJwtTime.TokenMaxAge,
     });
   };
