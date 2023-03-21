@@ -1,14 +1,23 @@
 import Router from './index';
-import { ILocalUser } from '../../../../types';
+import type * as types from '../../../../types';
+import handleErr from '../../../../errors/utils';
 
-const Service = new Router();
+const service = new Router();
 
-Service.router.get('/login', (req, res: ILocalUser) => {
-  Service.get(req, res);
+service.router.get('/login', (req, res: types.ILocalUser) => {
+  try {
+    return service.get(req, res);
+  } catch (err) {
+    return handleErr(err as types.IFullError, res);
+  }
 });
 
-Service.router.post('/login', (req, res: ILocalUser) => {
-  Service.post(req, res);
+service.router.post('/login', (req, res: types.ILocalUser) => {
+  try {
+    return service.post(req, res);
+  } catch (err) {
+    return handleErr(err as types.IFullError, res);
+  }
 });
 
-export default Service;
+export default service;

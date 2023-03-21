@@ -16,7 +16,7 @@ describe('Profile - add', () => {
         delete clone.race;
         const func = () => Validation.validateAddProfile(clone);
 
-        expect(func).toThrow(new errors.NoDataProvided('race'));
+        expect(func).toThrow(new errors.NoDataProvided());
       });
     });
   });

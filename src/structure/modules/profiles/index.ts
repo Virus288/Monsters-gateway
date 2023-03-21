@@ -1,7 +1,7 @@
 import express from 'express';
 import Validator from './validation';
-import { IAddProfileReq, IGetProfileReq } from './types';
-import { ILocalUser } from '../../../types';
+import type { IAddProfileReq, IGetProfileReq } from './types';
+import type { ILocalUser } from '../../../types';
 import State from '../../../tools/state';
 import * as enums from '../../../enums';
 import { EServices } from '../../../enums';

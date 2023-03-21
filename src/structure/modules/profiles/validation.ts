@@ -1,8 +1,9 @@
 import * as errors from '../../../errors';
-import { IAddProfileReq, IGetProfileReq } from './types';
+import type { IAddProfileReq, IGetProfileReq } from './types';
 
 export default class Validation {
   static validateAddProfile(data: IAddProfileReq): void {
+    if (!data || Object.keys(data).length === 0) throw new errors.NoDataProvided();
     if (!data?.race) throw new errors.NoDataProvided('race');
   }
 

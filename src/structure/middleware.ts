@@ -1,4 +1,5 @@
-import express, { Express } from 'express';
+import type { Express } from 'express';
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { InternalError } from '../errors';
@@ -6,7 +7,6 @@ import getConfig from '../tools/configLoader';
 import errLogger from '../tools/logger/logger';
 import Log from '../tools/logger/log';
 import type * as types from '../types';
-import { IFullError } from '../types';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
@@ -29,7 +29,12 @@ export default class Middleware {
 
   generateErrHandler(app: Express): void {
     app.use(
-      (err: express.Errback | IFullError, req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+      (
+        err: express.Errback | types.IFullError,
+        req: express.Request,
+        res: types.ILocalUser,
+        _next: express.NextFunction,
+      ) => {
         Log.error('Middleware', 'Generic err', err.name);
         errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
 
@@ -37,7 +42,7 @@ export default class Middleware {
           const { message, code, name, status } = new InternalError();
           res.status(status).json({ message, code, name });
         } else {
-          const error = err as IFullError;
+          const error = err as types.IFullError;
           if (error.code !== undefined) {
             const { message, code, name, status } = error;
             res.status(status).json({ message, code, name });
@@ -46,8 +51,6 @@ export default class Middleware {
             res.status(status).json({ message, code, name });
           }
         }
-
-        next();
       },
     );
   }

@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import type express from 'express';
 import jwt from 'jsonwebtoken';
 import * as errors from '../errors';
 import * as enums from '../enums';
@@ -6,7 +6,7 @@ import type * as types from '../types';
 import getConfig from './configLoader';
 import handleErr from '../errors/utils';
 
-const userValidation = (app: Express): void => {
+const userValidation = (app: express.Express): void => {
   app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
     const access = req.cookies[enums.EJwt.AccessToken] as string | undefined;
 

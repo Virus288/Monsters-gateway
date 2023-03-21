@@ -6,15 +6,25 @@ import type * as types from '../types';
 import * as errors from '../errors';
 import AppRouter from './router';
 import express from 'express';
+import userValidation from '../tools/token';
 
 export default class Router {
   readonly app: express.Express;
-  private server: http.Server;
-  private middleware: Middleware;
+  private readonly _middleware: Middleware;
 
   constructor() {
     this.app = express();
-    this.middleware = new Middleware();
+    this._middleware = new Middleware();
+  }
+
+  private get middleware(): Middleware {
+    return this._middleware;
+  }
+
+  private _server: http.Server;
+
+  private get server(): http.Server {
+    return this._server;
   }
 
   init(): void {
@@ -55,7 +65,7 @@ export default class Router {
   private initRouter(): void {
     const router = new AppRouter(this.app);
     router.initRoutes();
-    // userValidation(this.app);
+    userValidation(this.app);
     router.initSecured();
 
     this.app.all('*', (_req, res: types.ILocalUser) => {
@@ -68,7 +78,7 @@ export default class Router {
    * Init server
    */
   private initServer(): void {
-    this.server = http.createServer(this.app);
+    this._server = http.createServer(this.app);
 
     this.server.listen(getConfig().httpPort, () => {
       Log.log('Server', `Listening on ${getConfig().httpPort}`);

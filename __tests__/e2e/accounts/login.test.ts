@@ -1,27 +1,14 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import { IFullError } from '../../src/types';
-import * as localTypes from '../types';
+import { describe, expect, it } from '@jest/globals';
+import { IFullError } from '../../../src/types';
+import * as localTypes from '../../types';
 import supertest from 'supertest';
-import fakeData from '../fakeData.json';
-import Router from '../../src/structure';
-import Utils from '../utils';
-import { ILoginReq } from '../../src/structure/modules/users/login/types';
+import fakeData from '../../fakeData.json';
+import { ILoginReq } from '../../../src/structure/modules/users/login/types';
+import State from '../../../src/tools/state';
 
 describe('Login', () => {
   const loginData: ILoginReq = fakeData.users[0];
-  let utils: Utils;
-  const router = new Router();
-
-  beforeAll(async () => {
-    utils = new Utils();
-    await utils.init();
-    router.init();
-  });
-
-  afterAll(async () => {
-    router.close();
-    await utils.close();
-  });
+  const { app } = State.router;
 
   describe('Should throw', () => {
     describe('No data passed', () => {
@@ -29,7 +16,7 @@ describe('Login', () => {
         const clone = structuredClone(loginData);
         delete clone.login;
 
-        const res = await supertest(router.app).post('/users/login').send(clone);
+        const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('login not provided');
@@ -40,7 +27,7 @@ describe('Login', () => {
         const clone = structuredClone(loginData);
         delete clone.password;
 
-        const res = await supertest(router.app).post('/users/login').send(clone);
+        const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('password not provided');
@@ -50,7 +37,7 @@ describe('Login', () => {
 
     describe('Incorrect data', () => {
       it(`Incorrect login`, async () => {
-        const res = await supertest(router.app)
+        const res = await supertest(app)
           .post('/users/login')
           .send({ ...loginData, login: 'abc' });
         const body = res.body as IFullError;
@@ -60,7 +47,7 @@ describe('Login', () => {
       });
 
       it(`Incorrect password`, async () => {
-        const res = await supertest(router.app)
+        const res = await supertest(app)
           .post('/users/login')
           .send({ ...loginData, password: 'abc' });
         const body = res.body as IFullError;
@@ -73,7 +60,7 @@ describe('Login', () => {
 
   describe('Should pass', () => {
     it(`Validated login`, async () => {
-      const res = await supertest(router.app).post('/users/login').send(loginData);
+      const res = await supertest(app).post('/users/login').send(loginData);
       const body = res.body as localTypes.ILoginSuccessResponse;
 
       expect(body.refreshToken).not.toBeUndefined();

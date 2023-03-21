@@ -46,9 +46,9 @@ export class MissingProcessPlatform extends FullError {
 }
 
 export class NoDataProvided extends FullError {
-  constructor(target: string) {
+  constructor(target?: string) {
     super('NoDataProvided');
-    this.message = `${target} not provided`;
+    this.message = target ? `${target} not provided` : 'No data provided';
     this.name = 'NoDataProvided';
     this.code = '005';
     this.status = 400;
