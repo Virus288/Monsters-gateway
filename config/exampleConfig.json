@@ -2,5 +2,5 @@
   "amqpURI": "rabbitUrl",
   "corsOrigin": "*",
   "httpPort": 80,
-  "token": "accessToken"
+  "accessToken": "accessToken"
 }

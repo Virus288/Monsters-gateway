@@ -8,7 +8,7 @@
   "private": false,
   "scripts": {
     "start": "cross-env NODE_ENV=prod node build/src/main.js",
-    "dev": "cross-env NODE_ENV=dev nodemon build/src/main.js",
+    "start:dev": "cross-env NODE_ENV=dev TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true ts-node src/main.ts",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
@@ -40,10 +40,13 @@
     "jsonwebtoken": "^9.0.0",
     "node": "^18.7.0",
     "winston": "^3.8.2",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "ws": "^8.12.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
+    "@swc/core": "^1.3.41",
+    "@swc/helpers": "^0.4.14",
     "@types/amqplib": "^0.10.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",
@@ -51,6 +54,7 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^18.6.2",
     "@types/supertest": "^2.0.12",
+    "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "cross-env": "^7.0.3",

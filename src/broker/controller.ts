@@ -1,12 +1,22 @@
 import type * as types from '../types';
+import type { EServices } from '../enums';
 import * as enums from '../enums';
-import amqplib from 'amqplib';
-import { FullError, InternalError } from '../errors';
+import type amqplib from 'amqplib';
+import type { FullError } from '../errors';
+import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
 import { generateTempId } from '../utils';
 
 export default class Communicator {
-  private queue: Record<string, { user: types.ILocalUser; target: enums.EServices }> = {};
+  private _queue: Record<string, { user: types.ILocalUser; target: enums.EServices }> = {};
+
+  get queue(): Record<string, { user: types.ILocalUser; target: EServices }> {
+    return this._queue;
+  }
+
+  set queue(value: Record<string, { user: types.ILocalUser; target: EServices }>) {
+    this._queue = value;
+  }
 
   sendLocally(
     target: types.IRabbitTargets,
@@ -21,7 +31,6 @@ export default class Communicator {
     const tempId = generateTempId();
     res.locals.tempId = tempId;
     this.queue[res.locals.userId ?? res.locals.tempId] = { user: res, target: service };
-
     const body: types.IRabbitMessage = {
       user: {
         userId: userId,

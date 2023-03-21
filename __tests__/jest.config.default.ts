@@ -1,10 +1,9 @@
 import type { Config } from 'jest';
-import { defaults } from 'jest-config';
 
 const config: Config = {
   verbose: true,
   moduleDirectories: ['node_modules', 'src'],
-  moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts'],
+  moduleFileExtensions: ['js', 'ts', 'json'],
   testPathIgnorePatterns: ['build'],
   preset: 'ts-jest',
   testMatch: ['**/*.test.ts'],

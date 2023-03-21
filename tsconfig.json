@@ -1,9 +1,20 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": [
+      "ES6",
+      "ESNext"
+    ],
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "allowUmdGlobalAccess": true,
     "alwaysStrict": true,
+    "baseUrl": "./src",
     "declaration": false,
     "declarationMap": false,
     "emitDecoratorMetadata": true,
@@ -13,11 +24,6 @@
     "importHelpers": true,
     "incremental": true,
     "isolatedModules": false,
-    "lib": [
-      "ES6",
-      "ESNext"
-    ],
-    "module": "NodeNext",
     "moduleResolution": "node",
     "noEmit": false,
     "noFallthroughCasesInSwitch": true,
@@ -38,12 +44,10 @@
     "strictFunctionTypes": true,
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
-    "sourceMap": true,
-    "target": "ES2022",
-    "types": [
-      "node",
-      "jest"
-    ]
+    "sourceMap": true
+  },
+  "ts-node": {
+    "swc": true
   },
   "include": [
     "**/*"

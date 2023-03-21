@@ -1,4 +1,4 @@
-import Router from '../router';
+import type Router from '../structure';
 import Broker from '../broker';
 
 export interface IState {
@@ -8,7 +8,8 @@ export interface IState {
 
 export interface IConfigInterface {
   amqpURI: string;
-  token: string;
+  accessToken: string;
   corsOrigin: string;
   httpPort: number;
+  socketPort: number;
 }

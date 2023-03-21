@@ -1,17 +1,17 @@
-import { describe, expect, it } from "@jest/globals";
-import Validation from "../../../src/validation";
-import * as types from "../../../src/types";
-import * as errors from "../../../src/errors";
+import { describe, expect, it } from '@jest/globals';
+import Validation from '../../../src/structure/modules/users/validation';
+import * as errors from '../../../src/errors';
+import { ILoginReq } from '../../../src/structure/modules/users/login/types';
 
-describe("Login", () => {
-  const login: types.ILoginReq = {
-    login: "Test",
-    password: "Test123"
+describe('Login', () => {
+  const login: ILoginReq = {
+    login: 'Test',
+    password: 'Test123',
   };
 
-  describe("Should throw", () => {
-    describe("No data passed", () => {
-      Object.keys(login).forEach(k => {
+  describe('Should throw', () => {
+    describe('No data passed', () => {
+      Object.keys(login).forEach((k) => {
         return it(`Missing ${k}`, () => {
           const clone = structuredClone(login);
           delete clone[k];
@@ -23,7 +23,7 @@ describe("Login", () => {
     });
   });
 
-  describe("Should pass", () => {
+  describe('Should pass', () => {
     it(`Validated login`, () => {
       const func = () => Validation.validateLogin(login);
       expect(func).not.toThrow();
