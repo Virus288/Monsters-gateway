@@ -98,8 +98,9 @@ export default class Communicator {
 
   private setTokens(payload: types.IUserCredentials, target: types.ILocalUser): void {
     const { refreshToken, accessToken } = payload;
-    target.cookie(enums.EJwt.AccessToken, accessToken, { httpOnly: true, maxAge: enums.EJwtTime.TokenMaxAge * 1000 });
-    target.status(200).send({ refreshToken, eol: Date.now() + enums.EJwtTime.RefreshTokenMaxAge * 1000 });
+    target.set('Authorization', `Bearer ${accessToken}`);
+    target.set('X-Refresh-Token', `${refreshToken}`);
+    target.status(200).send();
   }
 
   private send(body: string, target: types.ILocalUser): void {

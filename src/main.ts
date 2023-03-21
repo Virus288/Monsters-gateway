@@ -26,6 +26,7 @@ export default class App {
 
       router.close();
       broker.close();
+      socket.close();
     }
   }
 
