@@ -64,3 +64,33 @@ export class IncorrectBodyType extends FullError {
     this.status = 400;
   }
 }
+
+export class IncorrectTarget extends FullError {
+  constructor() {
+    super('IncorrectTarget');
+    this.message = 'Incorrect target';
+    this.name = 'IncorrectTarget';
+    this.code = '007';
+    this.status = 400;
+  }
+}
+
+export class MissingArg extends FullError {
+  constructor(param: string) {
+    super('MissingArg');
+    this.message = `Missing param: ${param}`;
+    this.name = 'MissingArg';
+    this.code = '008';
+    this.status = 400;
+  }
+}
+
+export class IncorrectArg extends FullError {
+  constructor(err: string) {
+    super('IncorrectArg');
+    this.message = err;
+    this.name = 'IncorrectArg';
+    this.code = '008';
+    this.status = 400;
+  }
+}

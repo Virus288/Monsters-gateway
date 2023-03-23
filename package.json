@@ -13,13 +13,12 @@
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
-    "lint": "cross-env NODE_ENV=development eslint . --ext .ts",
+    "lint": "cross-env NODE_ENV=development eslint . --ext .ts --fix",
     "listErrors": "node_modules/.bin/tsc --skipLibCheck",
     "lintStaged": "npx lint-staged",
-    "test": "jest --runInBand --coverage --config __tests__/jest.config.ts",
-    "test:watch": "jest --watch --config __tests__/jest.config.ts",
-    "test:e2e": "jest --runInBand --config __tests__/jest.config.e2e.ts",
-    "test:unit": "jest --config __tests__/jest.config.unit.ts",
+    "test": "echo 'If you want to run all the tests, please use makefile'",
+    "test:e2e": "jest --runInBand --coverage --config __tests__/jest.config.e2e.ts",
+    "test:unit": "jest --coverage --config __tests__/jest.config.unit.ts",
     "prepare": "husky install"
   },
   "lint-staged": {
@@ -68,7 +67,7 @@
     "prettier": "^2.4.1",
     "rimraf": "^3.0",
     "supertest": "^6.2.4",
-    "ts-jest": "^29.0.3",
+    "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsutils": "^3.21.0",
     "typescript": "^4.7.0"

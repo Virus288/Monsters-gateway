@@ -24,13 +24,11 @@ describe('Profiles = get', () => {
   describe('Should throw', () => {
     describe('No data passed', () => {
       it(`Missing id`, async () => {
-        const clone = structuredClone(getProfile);
-        delete clone.id;
-
         const res = await supertest(app)
           .get('/profile')
-          .set('Cookie', [`accessToken=${accessToken}`])
-          .send(clone);
+          .query({ id: undefined })
+          .auth(accessToken, { type: 'bearer' })
+          .send();
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('id not provided');
@@ -42,8 +40,9 @@ describe('Profiles = get', () => {
       it(`Incorrect id`, async () => {
         const res = await supertest(app)
           .get('/profile')
-          .set('Cookie', [`accessToken=${accessToken}`])
-          .send({ ...getProfile, id: 'abc' });
+          .query({ id: 'abc' })
+          .auth(accessToken, { type: 'bearer' })
+          .send();
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('Provided user id is invalid');
@@ -56,8 +55,9 @@ describe('Profiles = get', () => {
     it(`Got profile`, async () => {
       const res = await supertest(app)
         .get('/profile')
-        .set('Cookie', [`accessToken=${accessToken}`])
-        .send(getProfile);
+        .query({ id: getProfile.id })
+        .auth(accessToken, { type: 'bearer' })
+        .send();
       const body = res.body as IProfileLean;
 
       expect(body._id).not.toBeUndefined();

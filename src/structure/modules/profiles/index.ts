@@ -18,7 +18,9 @@ export default class UserRouter {
   }
 
   get(req: express.Request, res: ILocalUser): void {
-    const data = req.body as IGetProfileReq;
+    const data: IGetProfileReq = {
+      id: req.query.id as string,
+    };
 
     Validator.validateGetProfile(data);
     State.broker.sendLocally(enums.EUserMainTargets.Profile, enums.EProfileTargets.Get, res, data, EServices.Users);

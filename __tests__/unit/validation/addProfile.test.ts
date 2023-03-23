@@ -22,7 +22,7 @@ describe('Profile - add', () => {
   });
 
   describe('Should pass', () => {
-    it(`Validated login`, () => {
+    it(`Add profile`, () => {
       const func = () => Validation.validateAddProfile(addProfile);
       expect(func).not.toThrow();
     });

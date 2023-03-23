@@ -1,4 +1,4 @@
-import { EUserRace } from '../../../enums';
+import type { EUserRace } from '../../../enums';
 
 export interface IGetProfileReq {
   id: string;

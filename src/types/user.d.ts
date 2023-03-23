@@ -1,5 +1,6 @@
-import * as enums from '../enums';
-import express, { Locals } from 'express';
+import type * as enums from '../enums';
+import type { Locals } from 'express';
+import type express from 'express';
 
 export interface IUsersTokens {
   userId: string | undefined;

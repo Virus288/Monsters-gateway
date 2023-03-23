@@ -1,6 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
-import * as localTypes from '../../types';
 import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
 import { ILoginReq } from '../../../src/structure/modules/users/login/types';
@@ -61,10 +60,10 @@ describe('Login', () => {
   describe('Should pass', () => {
     it(`Validated login`, async () => {
       const res = await supertest(app).post('/users/login').send(loginData);
-      const body = res.body as localTypes.ILoginSuccessResponse;
+      const { authorization } = res.headers;
 
-      expect(body.refreshToken).not.toBeUndefined();
-      expect(body.eol).not.toBeLessThan(Date.now());
+      expect(authorization).not.toBeUndefined();
+      expect(res.headers['x-refresh-token']).not.toBeUndefined();
     });
   });
 });

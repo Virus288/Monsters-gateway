@@ -3,8 +3,8 @@ import Validator from '../validation';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
 import { EServices } from '../../../../enums';
-import * as types from './types';
-import { ILocalUser } from '../../../../types';
+import type * as types from './types';
+import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
 
 export default class UserRouter {
@@ -19,8 +19,14 @@ export default class UserRouter {
   }
 
   get(req: express.Request, res: ILocalUser): void {
-    const token = req.cookies[enums.EJwt.AccessToken] as string | undefined;
-    const { type } = verify(res, token);
+    let access: string;
+    if (req.headers.authorization) {
+      const key = req.headers.authorization;
+      if (!key.includes('Bearer')) return;
+      access = req.headers.authorization.split('Bearer')[1].trim();
+    }
+
+    const { type } = verify(res, access);
     res.status(200).send({ type });
   }
 

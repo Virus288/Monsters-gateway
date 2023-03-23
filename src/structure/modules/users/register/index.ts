@@ -1,6 +1,6 @@
 import express from 'express';
-import * as types from './types';
-import { ILocalUser } from '../../../../types';
+import type * as types from './types';
+import type { ILocalUser } from '../../../../types';
 import Validator from '../validation';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
