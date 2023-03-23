@@ -2,18 +2,22 @@ import Websocket from 'ws';
 import Log from '../logger/log';
 import getConfig from '../configLoader';
 import * as errors from '../../errors';
-import type { ISocket, ISocketMessage, ISocketUser } from '../../types';
-import type * as enums from '../../enums';
-import { ESocketTargets } from '../../enums';
+import type * as types from '../../types';
+import * as enums from '../../enums';
+import { ESocketType } from '../../enums';
 import Router from './router';
 import jwt from 'jsonwebtoken';
 
 export default class WebsocketServer {
-  private _users: ISocketUser[] = [];
-  private _router: Router;
+  private _users: types.ISocketUser[] = [];
+  private readonly _router: Router;
 
   constructor() {
     this._router = new Router();
+  }
+
+  private get router(): Router {
+    return this._router;
   }
 
   private _server: Websocket.WebSocketServer;
@@ -22,7 +26,7 @@ export default class WebsocketServer {
     return this._server;
   }
 
-  start(): void {
+  init(): void {
     this._server = new Websocket.Server({
       port: getConfig().socketPort,
     });
@@ -32,27 +36,52 @@ export default class WebsocketServer {
 
   close(): void {
     this.server.close();
+    this._users.forEach((u) => {
+      u.user.close(1000, JSON.stringify(new errors.InternalError()));
+      this.userDisconnected(u.user);
+    });
   }
 
   startListeners(): void {
     this.server.on('connection', (ws, req) => {
-      this.errorWrapper(() => this.onUserConnected(ws, req.headers.authorization));
+      this.errorWrapper(() => this.onUserConnected(ws, req.headers.authorization), ws);
     });
-    this.server.on('error', (err) => this.handleError(err));
+    this.server.on('error', (err) => this.handleServerError(err));
     this.server.on('close', () => Log.error('Websocket', 'Server closed'));
   }
 
-  private onUserConnected(ws: ISocket, token: string): void {
+  sendToUser(userId: string, message: string): void {
+    const formatted: types.ISocketOutMessage = { type: ESocketType.Message, payload: message };
+    const target = this._users.find((e) => {
+      return e.userId === userId;
+    });
+
+    return target === undefined ? null : target.user.send(JSON.stringify(formatted));
+  }
+
+  isOnline(user: string): boolean {
+    const exist = this._users.find((u) => {
+      return u.userId === user;
+    });
+    return exist !== undefined;
+  }
+
+  private onUserConnected(ws: types.ISocket, token: string): void {
     this.validateUser(ws, token);
 
-    ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws)));
-    ws.on('pong', () => this.errorWrapper(() => this.pong(ws)));
-    ws.on('error', (error) => this.handleError(error));
+    ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
+    ws.on('pong', () => this.errorWrapper(() => this.pong(ws), ws));
+    ws.on('error', (error) => this.router.handleError(error as types.IFullError, ws));
     ws.on('close', () => this.userDisconnected(ws));
   }
 
-  private validateUser(ws: ISocket, token: string): void {
-    if (!token) return ws.close(1000, JSON.stringify(new errors.Unauthorized()));
+  private validateUser(ws: types.ISocket, token: string): void {
+    const errBody = JSON.stringify({
+      type: enums.ESocketType.Error,
+      payload: new errors.Unauthorized(),
+    });
+
+    if (!token) return ws.close(1000, errBody);
     const prepared = token.split(' ')[1].trim();
 
     try {
@@ -63,46 +92,48 @@ export default class WebsocketServer {
       ws.userId = id;
       this._users.push({ user: ws, userId: id, type });
     } catch (err) {
-      ws.close(1000, JSON.stringify(new errors.Unauthorized()));
+      ws.close(1000, errBody);
     }
   }
 
-  private userDisconnected(ws: ISocket): void {
+  private userDisconnected(ws: types.ISocket): void {
+    if (!ws.userId) return;
     this._users = this._users.filter((u) => {
       return u.userId !== ws.userId;
     });
   }
 
-  private handleUserMessage(mess: string, ws: ISocket): void {
-    let message: ISocketMessage = { payload: undefined, subTarget: undefined, target: undefined };
+  private handleUserMessage(mess: string, ws: types.ISocket): void {
+    let message: types.ISocketInMessage = { payload: undefined, subTarget: undefined, target: undefined };
 
     try {
-      message = JSON.parse(mess) as ISocketMessage;
+      message = JSON.parse(mess) as types.ISocketInMessage;
     } catch (err) {
-      return ws.send(JSON.stringify(new errors.IncorrectBodyType()));
+      return this.router.handleError(new errors.IncorrectBodyType(), ws);
     }
 
     switch (message.target) {
-      case ESocketTargets.Messages:
-        return this._router.handleMessage(message, ws);
+      case enums.ESocketTargets.Messages:
+        return this.router.handleMessage(message, ws);
       case undefined:
-        return ws.send(JSON.stringify(new errors.IncorrectTarget()));
+        return this.router.handleError(new errors.IncorrectTarget(), ws);
     }
   }
 
-  private pong(ws: ISocket): void {
-    ws.send('Pong');
+  private pong(ws: types.ISocket): void {
+    ws.pong();
   }
 
-  private errorWrapper(callback: () => void): void {
+  private errorWrapper(callback: () => void, ws: Websocket.WebSocket): void {
     try {
       callback();
     } catch (err) {
-      this.handleError(err);
+      this.router.handleError(err as types.IFullError, ws);
     }
   }
 
-  private handleError(err: unknown): void {
-    Log.error('Websocket', err);
+  private handleServerError(err: Error): void {
+    Log.error('Socket', err);
+    this.close();
   }
 }

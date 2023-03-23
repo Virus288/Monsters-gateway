@@ -1,5 +1,5 @@
 import type Router from '../structure';
-import Broker from '../broker';
+import type Broker from '../broker';
 
 export interface IState {
   broker: Broker;

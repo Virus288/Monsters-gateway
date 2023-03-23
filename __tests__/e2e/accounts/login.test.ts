@@ -60,8 +60,10 @@ describe('Login', () => {
   describe('Should pass', () => {
     it(`Validated login`, async () => {
       const res = await supertest(app).post('/users/login').send(loginData);
+      const { authorization } = res.headers;
 
-      expect(res.headers.Authorization).not.toBeUndefined();
+      expect(authorization).not.toBeUndefined();
+      expect(res.headers['x-refresh-token']).not.toBeUndefined();
     });
   });
 });

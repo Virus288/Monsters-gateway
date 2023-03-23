@@ -28,10 +28,7 @@ describe('Profiles - add', () => {
         const clone = structuredClone(addProfile);
         delete clone.race;
 
-        const res = await supertest(app)
-          .post('/profile')
-          .set('Cookie', [`accessToken=${accessToken}`])
-          .send(clone);
+        const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(clone);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('No data provided');
@@ -43,7 +40,7 @@ describe('Profiles - add', () => {
       it(`Incorrect race`, async () => {
         const res = await supertest(app)
           .post('/profile')
-          .set('Cookie', [`accessToken=${accessToken}`])
+          .auth(accessToken, { type: 'bearer' })
           .send({ ...addProfile, race: 'abc' });
         const body = res.body as IFullError;
 
@@ -52,10 +49,7 @@ describe('Profiles - add', () => {
       });
 
       it(`Profile already exists`, async () => {
-        const res = await supertest(app)
-          .post('/profile')
-          .set('Cookie', [`accessToken=${accessToken}`])
-          .send(addProfile);
+        const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(addProfile);
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('Profile already exists');
@@ -67,7 +61,7 @@ describe('Profiles - add', () => {
     it(`Add profile`, async () => {
       const res = await supertest(app)
         .post('/profile')
-        .set('Cookie', [`accessToken=${accessToken2}`])
+        .auth(accessToken2, { type: 'bearer' })
         .send({ ...addProfile });
 
       expect(res.status).toEqual(200);

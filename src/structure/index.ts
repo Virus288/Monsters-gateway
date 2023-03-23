@@ -6,15 +6,18 @@ import type * as types from '../types';
 import * as errors from '../errors';
 import AppRouter from './router';
 import express from 'express';
-import userValidation from '../tools/token';
 
 export default class Router {
-  readonly app: express.Express;
   private readonly _middleware: Middleware;
+  private readonly _app: express.Express;
 
   constructor() {
-    this.app = express();
+    this._app = express();
     this._middleware = new Middleware();
+  }
+
+  get app(): express.Express {
+    return this._app;
   }
 
   private get middleware(): Middleware {
@@ -65,7 +68,7 @@ export default class Router {
   private initRouter(): void {
     const router = new AppRouter(this.app);
     router.initRoutes();
-    userValidation(this.app);
+    this.middleware.userValidation(this.app);
     router.initSecured();
 
     this.app.all('*', (_req, res: types.ILocalUser) => {

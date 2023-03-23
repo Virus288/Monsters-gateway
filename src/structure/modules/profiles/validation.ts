@@ -8,6 +8,7 @@ export default class Validation {
   }
 
   static validateGetProfile(data: IGetProfileReq): void {
+    if (!data) throw new errors.NoDataProvided('id');
     if (!data?.id) throw new errors.NoDataProvided('id');
   }
 }

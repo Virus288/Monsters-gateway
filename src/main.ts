@@ -17,7 +17,7 @@ export default class App {
       State.socket = socket;
       router.init();
       broker.init();
-      socket.start();
+      socket.init();
     } catch (err) {
       Log.log('Server', 'Err while initializing app');
       Log.log('Server', JSON.stringify(err));

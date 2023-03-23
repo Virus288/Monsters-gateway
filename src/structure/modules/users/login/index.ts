@@ -19,8 +19,14 @@ export default class UserRouter {
   }
 
   get(req: express.Request, res: ILocalUser): void {
-    const token = req.cookies[enums.EJwt.AccessToken] as string | undefined;
-    const { type } = verify(res, token);
+    let access: string;
+    if (req.headers.authorization) {
+      const key = req.headers.authorization;
+      if (!key.includes('Bearer')) return;
+      access = req.headers.authorization.split('Bearer')[1].trim();
+    }
+
+    const { type } = verify(res, access);
     res.status(200).send({ type });
   }
 

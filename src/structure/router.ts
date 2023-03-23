@@ -2,7 +2,7 @@ import login from './modules/users/login/router';
 import register from './modules/users/register/router';
 import logout from './modules/users/logout/router';
 import profileRouter from './modules/profiles/router';
-import { Router } from 'express';
+import type { Router } from 'express';
 
 export default class AppRouter {
   private readonly _router: Router;

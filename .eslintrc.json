@@ -163,9 +163,9 @@
     "@typescript-eslint/no-explicit-any": 2,
     "@typescript-eslint/no-extraneous-class": 0,
     "@typescript-eslint/no-non-null-assertion": 2,
-    "@typescript-eslint/no-shadow": 0,
+    "@typescript-eslint/no-shadow": 2,
     "@typescript-eslint/no-unnecessary-condition": 0,
-    "@typescript-eslint/no-unsafe-member-access": 0,
+    "@typescript-eslint/no-unsafe-member-access": 2,
     "@typescript-eslint/no-unused-expressions": 0,
     "@typescript-eslint/no-unused-vars": [
       2,
@@ -174,7 +174,7 @@
         "varsIgnorePattern": "^_"
       }
     ],
-    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-var-requires": 2,
     "@typescript-eslint/no-this-alias": [
       2,
       {

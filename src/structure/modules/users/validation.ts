@@ -1,6 +1,6 @@
 import * as errors from '../../../errors';
-import { ILoginReq } from './login/types';
-import { IRegisterReq } from './register/types';
+import type { ILoginReq } from './login/types';
+import type { IRegisterReq } from './register/types';
 
 export default class Validation {
   static validateLogin(data: ILoginReq): void {
