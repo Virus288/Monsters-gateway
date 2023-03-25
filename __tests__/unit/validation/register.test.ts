@@ -18,7 +18,7 @@ describe('Register', () => {
           delete clone[k];
           const func = () => Validation.validateRegister(clone);
 
-          expect(func).toThrow(new errors.NoDataProvidedError(k));
+          expect(func).toThrow(new errors.MissingArgError(k));
         });
       });
     });

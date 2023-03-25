@@ -20,7 +20,7 @@ describe('Register', () => {
         const res = await supertest(app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('login not provided');
+        expect(body.message).toEqual('Missing param: login');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -31,7 +31,7 @@ describe('Register', () => {
         const res = await supertest(app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('password not provided');
+        expect(body.message).toEqual('Missing param: password');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -42,7 +42,7 @@ describe('Register', () => {
         const res = await supertest(app).post('/users/register').send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('email not provided');
+        expect(body.message).toEqual('Missing param: email');
         expect(body.code).not.toBeUndefined();
       });
     });
