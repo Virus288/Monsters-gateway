@@ -4,11 +4,11 @@ import supertest from 'supertest';
 import Utils from '../../utils/utils';
 import { EUserRace, EUserTypes } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
-import { IAddProfileReq } from '../../../src/structure/modules/profiles/types';
+import * as types from '../../types';
 import State from '../../../src/tools/state';
 
 describe('Profiles - add', () => {
-  const addProfile: IAddProfileReq = {
+  const addProfile: types.IAddProfileDto = {
     race: EUserRace.Elf,
   };
   const utils = new Utils();

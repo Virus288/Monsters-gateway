@@ -2,10 +2,10 @@ import { describe, expect, it } from '@jest/globals';
 import Validation from '../../../src/structure/modules/profiles/validation';
 import * as errors from '../../../src/errors';
 import { EUserRace } from '../../../src/enums';
-import { IAddProfileReq } from '../../../src/structure/modules/profiles/types';
+import * as types from '../../types';
 
 describe('Profile - add', () => {
-  const addProfile: IAddProfileReq = {
+  const addProfile: types.IAddProfileDto = {
     race: EUserRace.Elf,
   };
 
@@ -16,7 +16,7 @@ describe('Profile - add', () => {
         delete clone.race;
         const func = () => Validation.validateAddProfile(clone);
 
-        expect(func).toThrow(new errors.NoDataProvided());
+        expect(func).toThrow(new errors.NoDataProvidedError());
       });
     });
   });

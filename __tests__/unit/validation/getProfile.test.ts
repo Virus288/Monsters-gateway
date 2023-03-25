@@ -1,10 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import Validation from '../../../src/structure/modules/profiles/validation';
 import * as errors from '../../../src/errors';
-import { IGetProfileReq } from '../../../src/structure/modules/profiles/types';
+import * as types from '../../types';
 
 describe('Profile - get', () => {
-  const getProfile: IGetProfileReq = {
+  const getProfile: types.IGetProfileDto = {
     id: '63e55edbe8a800060941121d',
   };
 
@@ -15,7 +15,7 @@ describe('Profile - get', () => {
         delete clone.id;
         const func = () => Validation.validateGetProfile(clone);
 
-        expect(func).toThrow(new errors.NoDataProvided('id'));
+        expect(func).toThrow(new errors.NoDataProvidedError('id'));
       });
     });
   });

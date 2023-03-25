@@ -78,7 +78,7 @@ export default class WebsocketServer {
   private validateUser(ws: types.ISocket, token: string): void {
     const errBody = JSON.stringify({
       type: enums.ESocketType.Error,
-      payload: new errors.Unauthorized(),
+      payload: new errors.UnauthorizedError(),
     });
 
     if (!token) return ws.close(1000, errBody);
@@ -109,14 +109,14 @@ export default class WebsocketServer {
     try {
       message = JSON.parse(mess) as types.ISocketInMessage;
     } catch (err) {
-      return this.router.handleError(new errors.IncorrectBodyType(), ws);
+      return this.router.handleError(new errors.IncorrectBodyTypeError(), ws);
     }
 
     switch (message.target) {
       case enums.ESocketTargets.Messages:
         return this.router.handleMessage(message, ws);
       case undefined:
-        return this.router.handleError(new errors.IncorrectTarget(), ws);
+        return this.router.handleError(new errors.IncorrectTargetError(), ws);
     }
   }
 

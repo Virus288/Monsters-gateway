@@ -3,13 +3,13 @@ import { IFullError } from '../../../src/types';
 import supertest from 'supertest';
 import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
-import { IGetProfileReq } from '../../../src/structure/modules/profiles/types';
-import { IProfileLean } from '../../types';
+import type { IProfileEntity } from '../../types';
+import * as types from '../../types';
 import { EUserTypes } from '../../../src/enums';
 import State from '../../../src/tools/state';
 
 describe('Profiles = get', () => {
-  const getProfile: IGetProfileReq = {
+  const getProfile: types.IGetProfileDto = {
     id: '63e55edbe8a800060941121d',
   };
   const utils = new Utils();
@@ -58,7 +58,7 @@ describe('Profiles = get', () => {
         .query({ id: getProfile.id })
         .auth(accessToken, { type: 'bearer' })
         .send();
-      const body = res.body as IProfileLean;
+      const body = res.body as IProfileEntity;
 
       expect(body._id).not.toBeUndefined();
     });

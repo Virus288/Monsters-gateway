@@ -1,10 +1,10 @@
 import express from 'express';
 import Validator from './validation';
-import type { IAddProfileReq, IGetProfileReq } from './types';
 import type { ILocalUser } from '../../../types';
 import State from '../../../tools/state';
 import * as enums from '../../../enums';
 import { EServices } from '../../../enums';
+import type { IAddProfileDto, IGetProfileDto } from './dto';
 
 export default class UserRouter {
   private readonly _router: express.Router;
@@ -18,7 +18,7 @@ export default class UserRouter {
   }
 
   get(req: express.Request, res: ILocalUser): void {
-    const data: IGetProfileReq = {
+    const data: IGetProfileDto = {
       id: req.query.id as string,
     };
 
@@ -27,8 +27,9 @@ export default class UserRouter {
   }
 
   post(req: express.Request, res: ILocalUser): void {
-    const data = req.body as IAddProfileReq;
+    const data = req.body as IAddProfileDto;
     Validator.validateAddProfile(data);
+
     State.broker.sendLocally(
       enums.EUserMainTargets.Profile,
       enums.EProfileTargets.Create,

@@ -21,7 +21,7 @@ export default class Router {
       case enums.EMessageSubTargets.SendMessage:
         return this.sendMessage(message.payload);
       case undefined:
-        return this.handleError(new errors.IncorrectTarget(), ws);
+        return this.handleError(new errors.IncorrectTargetError(), ws);
     }
   }
 

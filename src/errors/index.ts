@@ -25,72 +25,155 @@ export class NotFoundError extends FullError {
   }
 }
 
-export class Unauthorized extends FullError {
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     UnauthorizedError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'UnauthorizedError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '003'
+ *         message:
+ *           description: Error message describing the error cause.
+ *           type: string
+ *           example: 'User not logged in'
+ */
+export class UnauthorizedError extends FullError {
   constructor() {
-    super('Unauthorized');
+    super('UnauthorizedError');
     this.message = 'User not logged in';
-    this.name = 'Unauthorized';
+    this.name = 'UnauthorizedError';
     this.code = '003';
     this.status = 401;
   }
 }
 
-export class MissingProcessPlatform extends FullError {
+export class MissingProcessPlatformError extends FullError {
   constructor() {
-    super('MissingProcessPlatform');
+    super('MissingProcessPlatformError');
     this.message = 'process.platform is missing';
-    this.name = 'MissingProcessPlatform';
+    this.name = 'MissingProcessPlatformError';
     this.code = '004';
     this.status = 400;
   }
 }
 
-export class NoDataProvided extends FullError {
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     NoDataProvidedError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'NoDataProvidedError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '005'
+ *         message:
+ *           description: Error message describing the error cause.
+ *           oneOf:
+ *             - type: string
+ *               const: "No data provided"
+ *             - type: string
+ *               pattern: "^\\w+ not provided$"
+ */
+export class NoDataProvidedError extends FullError {
   constructor(target?: string) {
-    super('NoDataProvided');
+    super('NoDataProvidedError');
     this.message = target ? `${target} not provided` : 'No data provided';
-    this.name = 'NoDataProvided';
+    this.name = 'NoDataProvidedError';
     this.code = '005';
     this.status = 400;
   }
 }
 
-export class IncorrectBodyType extends FullError {
+export class IncorrectBodyTypeError extends FullError {
   constructor() {
-    super('IncorrectBodyType');
+    super('IncorrectBodyTypeError');
     this.message = 'Incorrect body type';
-    this.name = 'IncorrectBodyType';
+    this.name = 'IncorrectBodyTypeError';
     this.code = '006';
     this.status = 400;
   }
 }
 
-export class IncorrectTarget extends FullError {
+export class IncorrectTargetError extends FullError {
   constructor() {
-    super('IncorrectTarget');
+    super('IncorrectTargetError');
     this.message = 'Incorrect target';
-    this.name = 'IncorrectTarget';
+    this.name = 'IncorrectTargetError';
     this.code = '007';
     this.status = 400;
   }
 }
 
-export class MissingArg extends FullError {
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     MissingArgError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'MissingArgError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '008'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "^Missing param: .+$"
+ */
+export class MissingArgError extends FullError {
   constructor(param: string) {
-    super('MissingArg');
+    super('MissingArgError');
     this.message = `Missing param: ${param}`;
-    this.name = 'MissingArg';
+    this.name = 'MissingArgError';
     this.code = '008';
     this.status = 400;
   }
 }
 
-export class IncorrectArg extends FullError {
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectArgError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'IncorrectArgError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '009'
+ *         message:
+ *           example: 'Data not provided'
+ *           description: Error message describing the incorrect parameter.
+ *           type: string
+ */
+export class IncorrectArgError extends FullError {
   constructor(err: string) {
-    super('IncorrectArg');
+    super('IncorrectArgError');
     this.message = err;
-    this.name = 'IncorrectArg';
-    this.code = '008';
+    this.name = 'IncorrectArgError';
+    this.code = '009';
     this.status = 400;
   }
 }

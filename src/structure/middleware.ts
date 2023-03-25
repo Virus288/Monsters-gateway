@@ -69,11 +69,11 @@ export default class Middleware {
       }
 
       try {
-        if (!access) throw new errors.Unauthorized();
+        if (!access) throw new errors.UnauthorizedError();
         verify(res, access);
         next();
       } catch (err) {
-        return handleErr(new errors.Unauthorized(), res);
+        return handleErr(new errors.UnauthorizedError(), res);
       }
     });
   }
