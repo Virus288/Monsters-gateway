@@ -61,7 +61,7 @@ export class MissingProcessPlatformError extends FullError {
     this.message = 'process.platform is missing';
     this.name = 'MissingProcessPlatformError';
     this.code = '004';
-    this.status = 400;
+    this.status = 500;
   }
 }
 
@@ -69,41 +69,28 @@ export class MissingProcessPlatformError extends FullError {
  * @openapi
  * components:
  *   schemas:
- *     NoDataProvidedError:
+ *     IncorrectBodyTypeError:
  *       type: object
  *       properties:
  *         name:
  *           type: string
  *           description: Error name describing the error cause.
- *           example: 'NoDataProvidedError'
+ *           example: 'IncorrectBodyTypeError'
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
  *           example: '005'
  *         message:
+ *           type: string
  *           description: Error message describing the error cause.
- *           oneOf:
- *             - type: string
- *               const: "No data provided"
- *             - type: string
- *               pattern: "^\\w+ not provided$"
+ *           pattern: "Incorrect body type. Data should be of type json"
  */
-export class NoDataProvidedError extends FullError {
-  constructor(target?: string) {
-    super('NoDataProvidedError');
-    this.message = target ? `${target} not provided` : 'No data provided';
-    this.name = 'NoDataProvidedError';
-    this.code = '005';
-    this.status = 400;
-  }
-}
-
 export class IncorrectBodyTypeError extends FullError {
   constructor() {
     super('IncorrectBodyTypeError');
-    this.message = 'Incorrect body type';
+    this.message = 'Incorrect body type. Data should be of type json';
     this.name = 'IncorrectBodyTypeError';
-    this.code = '006';
+    this.code = '005';
     this.status = 400;
   }
 }
@@ -113,7 +100,7 @@ export class IncorrectTargetError extends FullError {
     super('IncorrectTargetError');
     this.message = 'Incorrect target';
     this.name = 'IncorrectTargetError';
-    this.code = '007';
+    this.code = '006';
     this.status = 400;
   }
 }
@@ -132,7 +119,7 @@ export class IncorrectTargetError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '008'
+ *           example: '007'
  *         message:
  *           type: string
  *           description: Error message describing the error cause.
@@ -143,7 +130,7 @@ export class MissingArgError extends FullError {
     super('MissingArgError');
     this.message = `Missing param: ${param}`;
     this.name = 'MissingArgError';
-    this.code = '008';
+    this.code = '007';
     this.status = 400;
   }
 }
@@ -162,7 +149,7 @@ export class MissingArgError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '009'
+ *           example: '008'
  *         message:
  *           example: 'Data not provided'
  *           description: Error message describing the incorrect parameter.
@@ -173,6 +160,36 @@ export class IncorrectArgError extends FullError {
     super('IncorrectArgError');
     this.message = err;
     this.name = 'IncorrectArgError';
+    this.code = '008';
+    this.status = 400;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     NoDataProvidedError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'NoDataProvidedError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '009'
+ *         message:
+ *           example: 'No data provided'
+ *           description: Error message describing the incorrect parameter.
+ *           type: string
+ */
+export class NoDataProvidedError extends FullError {
+  constructor() {
+    super('NoDataProvidedError');
+    this.message = 'No data provided';
+    this.name = 'NoDataProvidedError';
     this.code = '009';
     this.status = 400;
   }

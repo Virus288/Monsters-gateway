@@ -15,7 +15,7 @@ describe('Profile - get', () => {
         delete clone.id;
         const func = () => Validation.validateGetProfile(clone);
 
-        expect(func).toThrow(new errors.NoDataProvidedError('id'));
+        expect(func).toThrow(new errors.MissingArgError('id'));
       });
     });
   });

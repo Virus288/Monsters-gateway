@@ -31,7 +31,7 @@ describe('Profiles = get', () => {
           .send();
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('id not provided');
+        expect(body.message).toEqual('Missing param: id');
         expect(body.code).not.toBeUndefined();
       });
     });
