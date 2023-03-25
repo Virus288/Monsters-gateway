@@ -31,7 +31,7 @@ describe('Socket', () => {
       it(`User not logged in`, async () => {
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.Unauthorized();
+        const targetErr = new errors.UnauthorizedError();
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -54,7 +54,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectTarget();
+        const targetErr = new errors.IncorrectTargetError();
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -67,7 +67,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectTarget();
+        const targetErr = new errors.IncorrectTargetError();
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -80,7 +80,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.MissingArg('payload');
+        const targetErr = new errors.MissingArgError('payload');
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -93,7 +93,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.MissingArg('target');
+        const targetErr = new errors.MissingArgError('target');
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -106,7 +106,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.MissingArg('message');
+        const targetErr = new errors.MissingArgError('message');
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -120,7 +120,7 @@ describe('Socket', () => {
       //   await utils.sendMessage(clone);
       //   const { payload } = utils.getLastMessage();
       //   const { code, name } = payload as IFullError;
-      //   const targetErr = new errors.MissingArg('message');
+      //   const targetErr = new errors.MissingArgError('message');
       //
       //   expect(code).toEqual(targetErr.code);
       //   expect(name).toEqual(targetErr.name);
@@ -144,7 +144,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArg('Message length should ne exceed 200 characters');
+        const targetErr = new errors.IncorrectArgError('Message length should ne exceed 200 characters');
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -157,7 +157,7 @@ describe('Socket', () => {
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArg('Target is not valid mongoose id');
+        const targetErr = new errors.IncorrectArgError('Target is not valid mongoose id');
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);

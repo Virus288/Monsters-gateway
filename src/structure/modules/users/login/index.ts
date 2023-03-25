@@ -3,9 +3,9 @@ import Validator from '../validation';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
 import { EServices } from '../../../../enums';
-import type * as types from './types';
 import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
+import type ILoginUserDto from './dto';
 
 export default class UserRouter {
   private readonly _router: express.Router;
@@ -31,7 +31,7 @@ export default class UserRouter {
   }
 
   post(req: express.Request, res: ILocalUser): void {
-    const data = req.body as types.ILoginReq;
+    const data = req.body as ILoginUserDto;
     Validator.validateLogin(data);
     State.broker.sendLocally(enums.EUserMainTargets.User, enums.EUserTargets.Login, res, data, EServices.Users);
   }

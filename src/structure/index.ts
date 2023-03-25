@@ -10,14 +10,20 @@ import express from 'express';
 export default class Router {
   private readonly _middleware: Middleware;
   private readonly _app: express.Express;
+  private readonly _router: AppRouter;
 
   constructor() {
     this._app = express();
     this._middleware = new Middleware();
+    this._router = new AppRouter(this.app);
   }
 
   get app(): express.Express {
     return this._app;
+  }
+
+  get router(): AppRouter {
+    return this._router;
   }
 
   private get middleware(): Middleware {
@@ -31,6 +37,7 @@ export default class Router {
   }
 
   init(): void {
+    this.initDocumentation();
     this.initMiddleware();
     this.initRouter();
     this.initServer();
@@ -63,13 +70,19 @@ export default class Router {
   }
 
   /**
+   * Init swagger documentation
+   */
+  private initDocumentation(): void {
+    this.router.generateDocumentation();
+  }
+
+  /**
    * Init basic routes. Add "debug" route while in development mode
    */
   private initRouter(): void {
-    const router = new AppRouter(this.app);
-    router.initRoutes();
+    this.router.initRoutes();
     this.middleware.userValidation(this.app);
-    router.initSecured();
+    this.router.initSecured();
 
     this.app.all('*', (_req, res: types.ILocalUser) => {
       const { message, code, name, status } = new errors.NotFoundError();

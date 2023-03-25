@@ -2,11 +2,11 @@ import { describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
 import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
-import { ILoginReq } from '../../../src/structure/modules/users/login/types';
 import State from '../../../src/tools/state';
+import * as types from '../../types';
 
 describe('Login', () => {
-  const loginData: ILoginReq = fakeData.users[0];
+  const loginData: types.ILoginUserDto = fakeData.users[0];
   const { app } = State.router;
 
   describe('Should throw', () => {

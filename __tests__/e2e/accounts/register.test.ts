@@ -1,14 +1,14 @@
 import { describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
 import * as localTypes from '../../types';
+import * as types from '../../types';
 import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
 import { generateRandomName } from '../../../src/utils';
-import { IRegisterReq } from '../../../src/structure/modules/users/register/types';
 import State from '../../../src/tools/state';
 
 describe('Register', () => {
-  const registerData: IRegisterReq = fakeData.users[2];
+  const registerData: types.IRegisterUserDto = fakeData.users[2];
   const { app } = State.router;
 
   describe('Should throw', () => {
@@ -32,17 +32,6 @@ describe('Register', () => {
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('password not provided');
-        expect(body.code).not.toBeUndefined();
-      });
-
-      it(`Missing password2`, async () => {
-        const clone = structuredClone(registerData);
-        delete clone.password2;
-
-        const res = await supertest(app).post('/users/register').send(clone);
-        const body = res.body as IFullError;
-
-        expect(body.message).toEqual('password2 not provided');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -134,16 +123,6 @@ describe('Register', () => {
         const body = res.body as IFullError;
 
         expect(body.message).toEqual('password should be less than 200 characters');
-        expect(body.code).not.toBeUndefined();
-      });
-
-      it(`Passwords do not match`, async () => {
-        const res = await supertest(app)
-          .post('/users/register')
-          .send({ ...registerData, password2: 'a' });
-        const body = res.body as IFullError;
-
-        expect(body.message).toEqual('Passwords not the same');
         expect(body.code).not.toBeUndefined();
       });
 

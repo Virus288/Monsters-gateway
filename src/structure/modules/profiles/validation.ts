@@ -1,14 +1,14 @@
 import * as errors from '../../../errors';
-import type { IAddProfileReq, IGetProfileReq } from './types';
+import type { IAddProfileDto, IGetProfileDto } from './dto';
 
 export default class Validation {
-  static validateAddProfile(data: IAddProfileReq): void {
-    if (!data || Object.keys(data).length === 0) throw new errors.NoDataProvided();
-    if (!data?.race) throw new errors.NoDataProvided('race');
+  static validateAddProfile(data: IAddProfileDto): void {
+    if (!data || Object.keys(data).length === 0) throw new errors.NoDataProvidedError();
+    if (!data?.race) throw new errors.NoDataProvidedError('race');
   }
 
-  static validateGetProfile(data: IGetProfileReq): void {
-    if (!data) throw new errors.NoDataProvided('id');
-    if (!data?.id) throw new errors.NoDataProvided('id');
+  static validateGetProfile(data: IGetProfileDto): void {
+    if (!data) throw new errors.NoDataProvidedError('id');
+    if (!data?.id) throw new errors.NoDataProvidedError('id');
   }
 }

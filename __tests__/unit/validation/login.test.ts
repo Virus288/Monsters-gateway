@@ -1,10 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import Validation from '../../../src/structure/modules/users/validation';
 import * as errors from '../../../src/errors';
-import { ILoginReq } from '../../../src/structure/modules/users/login/types';
+import * as types from '../../types';
 
 describe('Login', () => {
-  const login: ILoginReq = {
+  const login: types.ILoginUserDto = {
     login: 'Test',
     password: 'Test123',
   };
@@ -17,7 +17,7 @@ describe('Login', () => {
           delete clone[k];
           const func = () => Validation.validateLogin(clone);
 
-          expect(func).toThrow(new errors.NoDataProvided(k));
+          expect(func).toThrow(new errors.NoDataProvidedError(k));
         });
       });
     });

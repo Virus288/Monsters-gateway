@@ -1,20 +1,19 @@
 import * as errors from '../../../errors';
-import type { ILoginReq } from './login/types';
-import type { IRegisterReq } from './register/types';
+import type ILoginUserDto from './login/dto';
+import type IRegisterUserDto from './register/dto';
 
 export default class Validation {
-  static validateLogin(data: ILoginReq): void {
+  static validateLogin(data: ILoginUserDto): void {
     const { password, login } = data;
 
-    if (!password) throw new errors.NoDataProvided('password');
-    if (!login) throw new errors.NoDataProvided('login');
+    if (!password) throw new errors.NoDataProvidedError('password');
+    if (!login) throw new errors.NoDataProvidedError('login');
   }
 
-  static validateRegister(data: IRegisterReq): void {
-    const { password2, email } = data;
+  static validateRegister(data: IRegisterUserDto): void {
+    const { email } = data;
     this.validateLogin(data);
 
-    if (!password2) throw new errors.NoDataProvided('password2');
-    if (!email) throw new errors.NoDataProvided('email');
+    if (!email) throw new errors.NoDataProvidedError('email');
   }
 }
