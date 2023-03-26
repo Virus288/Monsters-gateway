@@ -2,7 +2,7 @@
  * @openapi
  * components:
  *   schemas:
- *     ILoginUserDto:
+ *     ILoginDto:
  *       type: object
  *       properties:
  *         login:
@@ -17,7 +17,7 @@
  *           pattern: "^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\\d).*$"
  *           description: Password should contain at least 1 digit, 6 letters, 1 uppercase letter, and 1 lowercase letter.
  */
-export default class ILoginUserDto {
+export default class ILoginDto {
   login: string;
   password: string;
 }

@@ -8,7 +8,7 @@ import { generateRandomName } from '../../../src/utils';
 import State from '../../../src/tools/state';
 
 describe('Register', () => {
-  const registerData: types.IRegisterUserDto = fakeData.users[2];
+  const registerData: types.IRegisterDto = fakeData.users[2];
   const { app } = State.router;
 
   describe('Should throw', () => {

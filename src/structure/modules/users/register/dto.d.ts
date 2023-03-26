@@ -2,12 +2,13 @@
  * @openapi
  * components:
  *   schemas:
- *     IRegisterUserDto:
+ *     IRegisterDto:
  *       type: object
  *       properties:
  *         email:
  *           type: string
  *           format: email
+ *           maxLength: 200
  *         login:
  *           type: string
  *           minLength: 3
@@ -20,7 +21,7 @@
  *           pattern: "^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\\d).*$"
  *           description: Password should contain at least 1 digit, 6 letters, 1 uppercase letter, and 1 lowercase letter.
  */
-export default class IRegisterUserDto {
+export default class IRegisterDto {
   email: string;
   login: string;
   password: string;

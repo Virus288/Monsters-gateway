@@ -13,7 +13,7 @@ describe('Profile - get', () => {
       it(`Missing id`, () => {
         const clone = structuredClone(getProfile);
         delete clone.id;
-        const func = () => Validation.validateGetProfile(clone);
+        const func = () => Validation.validateGet(clone);
 
         expect(func).toThrow(new errors.MissingArgError('id'));
       });
@@ -22,7 +22,7 @@ describe('Profile - get', () => {
 
   describe('Should pass', () => {
     it(`Validated req`, () => {
-      const func = () => Validation.validateGetProfile(getProfile);
+      const func = () => Validation.validateGet(getProfile);
       expect(func).not.toThrow();
     });
   });

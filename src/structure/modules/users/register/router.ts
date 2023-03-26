@@ -18,7 +18,7 @@ const service = new Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/IRegisterUserDto'
+ *             $ref: '#/components/schemas/IRegisterDto'
  *     responses:
  *       200:
  *         description: Success. User registered.

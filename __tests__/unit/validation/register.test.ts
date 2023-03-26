@@ -4,7 +4,7 @@ import * as errors from '../../../src/errors';
 import * as types from '../../types';
 
 describe('Register', () => {
-  const register: types.IRegisterUserDto = {
+  const register: types.IRegisterDto = {
     login: 'Test',
     password: 'Test123',
     email: 'test@test.test',
