@@ -14,7 +14,7 @@ describe('Profile - add', () => {
       it(`Missing race`, () => {
         const clone = structuredClone(addProfile);
         delete clone.race;
-        const func = () => Validation.validateAddProfile(clone);
+        const func = () => Validation.validateAdd(clone);
 
         expect(func).toThrow(new errors.NoDataProvidedError());
       });
@@ -23,7 +23,7 @@ describe('Profile - add', () => {
 
   describe('Should pass', () => {
     it(`Add profile`, () => {
-      const func = () => Validation.validateAddProfile(addProfile);
+      const func = () => Validation.validateAdd(addProfile);
       expect(func).not.toThrow();
     });
   });

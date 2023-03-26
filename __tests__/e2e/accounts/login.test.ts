@@ -6,7 +6,7 @@ import State from '../../../src/tools/state';
 import * as types from '../../types';
 
 describe('Login', () => {
-  const loginData: types.ILoginUserDto = fakeData.users[0];
+  const loginData: types.ILoginDto = fakeData.users[0];
   const { app } = State.router;
 
   describe('Should throw', () => {

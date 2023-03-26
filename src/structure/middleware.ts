@@ -10,8 +10,19 @@ import Log from '../tools/logger/log';
 import type * as types from '../types';
 import handleErr from '../errors/utils';
 import { verify } from '../tools/token';
+import Validation from './validation';
 
 export default class Middleware {
+  private readonly _validation: Validation;
+
+  constructor() {
+    this._validation = new Validation();
+  }
+
+  private get validation(): Validation {
+    return this._validation;
+  }
+
   generateMiddleware(app: Express): void {
     app.use(express.json({ limit: '500kb' }));
     app.use(cookieParser());
@@ -22,10 +33,12 @@ export default class Middleware {
       }),
     );
 
-    app.use((_req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+    app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
       res.header('Content-Type', 'application/json;charset=UTF-8');
       res.header('Access-Control-Allow-Credentials', 'true');
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
+      this.validation.validate(req);
       next();
     });
   }
@@ -38,10 +51,10 @@ export default class Middleware {
         res: types.ILocalUser,
         _next: express.NextFunction,
       ) => {
-        Log.error('Middleware', 'Generic err', err.name);
         errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
 
         if (err.name === 'SyntaxError') {
+          Log.error('Middleware', 'Generic err', err.name);
           const { message, code, name, status } = new InternalError();
           return res.status(status).json({ message, code, name });
         } else {
@@ -50,6 +63,7 @@ export default class Middleware {
             const { message, code, name, status } = error;
             return res.status(status).json({ message, code, name });
           } else {
+            Log.error('Middleware', 'Generic err', err.name);
             const { message, code, name, status } = new InternalError();
             return res.status(status).json({ message, code, name });
           }

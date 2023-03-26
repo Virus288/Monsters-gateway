@@ -4,7 +4,7 @@ import * as errors from '../../../src/errors';
 import * as types from '../../types';
 
 describe('Login', () => {
-  const login: types.ILoginUserDto = {
+  const login: types.ILoginDto = {
     login: 'Test',
     password: 'Test123',
   };

@@ -45,7 +45,7 @@ service.router.get('/login', (req, res: types.ILocalUser) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ILoginUserDto'
+ *             $ref: '#/components/schemas/ILoginDto'
  *     responses:
  *       200:
  *         description: Success. The user is logged in.

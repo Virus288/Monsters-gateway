@@ -1,23 +1,13 @@
-import express from 'express';
-import Validator from '../validation';
+import type express from 'express';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
 import { EServices } from '../../../../enums';
 import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
-import type ILoginUserDto from './dto';
+import type ILoginDto from './dto';
+import RouterFactory from '../../../../tools/abstracts/router';
 
-export default class UserRouter {
-  private readonly _router: express.Router;
-
-  constructor() {
-    this._router = express.Router();
-  }
-
-  get router(): express.Router {
-    return this._router;
-  }
-
+export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {
     let access: string;
     if (req.headers.authorization) {
@@ -31,8 +21,7 @@ export default class UserRouter {
   }
 
   post(req: express.Request, res: ILocalUser): void {
-    const data = req.body as ILoginUserDto;
-    Validator.validateLogin(data);
+    const data = req.body as ILoginDto;
     State.broker.sendLocally(enums.EUserMainTargets.User, enums.EUserTargets.Login, res, data, EServices.Users);
   }
 }
