@@ -2,7 +2,7 @@ import type express from 'express';
 import type { ILocalUser } from '../../../../types';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
-import type IRegisterDto from './dto';
+import type { IRegisterDto } from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
 
 export default class UserRouter extends RouterFactory {

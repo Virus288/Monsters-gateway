@@ -20,7 +20,7 @@ export default class UserRouter extends RouterFactory {
       enums.EUserMainTargets.Profile,
       enums.EProfileTargets.Create,
       res,
-      data,
+      { ...data, id: res.locals.userId },
       enums.EServices.Users,
     );
   }

@@ -1,6 +1,6 @@
 import type express from 'express';
-import type ILoginDto from './modules/users/login/dto';
-import type IRegisterDto from './modules/users/register/dto';
+import type { ILoginDto } from './modules/users/login/dto';
+import type { IRegisterDto } from './modules/users/register/dto';
 import type { IAddProfileDto, IGetProfileDto } from './modules/profiles/dto';
 import UserValidator from './modules/users/validation';
 import ProfileValidator from './modules/profiles/validation';
