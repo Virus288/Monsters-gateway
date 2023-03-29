@@ -4,7 +4,7 @@ import * as enums from '../../../../enums';
 import { EServices } from '../../../../enums';
 import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
-import type ILoginDto from './dto';
+import type { ILoginDto } from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
 
 export default class UserRouter extends RouterFactory {

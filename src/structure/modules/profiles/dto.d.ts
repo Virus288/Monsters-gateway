@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import type { EUserRace } from '../../../enums';
 
 /**
@@ -12,7 +11,7 @@ import type { EUserRace } from '../../../enums';
  *           type: string
  *           enum: ['human', 'elf']
  */
-export class IAddProfileDto {
+export interface IAddProfileDto {
   race: EUserRace;
 }
 
@@ -28,6 +27,6 @@ export class IAddProfileDto {
  *         schema:
  *           type: string
  */
-export class IGetProfileDto {
+export interface IGetProfileDto {
   id: string;
 }

@@ -21,7 +21,7 @@
  *           pattern: "^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\\d).*$"
  *           description: Password should contain at least 1 digit, 6 letters, 1 uppercase letter, and 1 lowercase letter.
  */
-export default class IRegisterDto {
+export interface IRegisterDto {
   email: string;
   login: string;
   password: string;
