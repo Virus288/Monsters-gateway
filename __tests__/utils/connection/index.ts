@@ -18,7 +18,7 @@ export default class Utils {
 
       setTimeout(() => {
         resolve(undefined);
-      }, 4000);
+      }, 5000);
     });
   }
 
@@ -30,7 +30,7 @@ export default class Utils {
 
       setTimeout(() => {
         resolve(undefined);
-      }, 1000);
+      }, 2000);
     });
   }
 }

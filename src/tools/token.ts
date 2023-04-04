@@ -20,6 +20,19 @@ export const verify = (res: types.ILocalUser, token: string): { id: string; type
   return payload;
 };
 
+export const verifyRefresh = (res: types.ILocalUser, token: string): { id: string; type: enums.EUserTypes } => {
+  if (!token) throw new errors.UnauthorizedError();
+  const payload = jwt.verify(token, getConfig().refToken) as {
+    id: string;
+    type: enums.EUserTypes;
+  };
+
+  res.locals.userId = payload.id;
+  res.locals.type = payload.type;
+  res.locals.validated = true;
+  return payload;
+};
+
 export const generateToken = (id: string, type: enums.EUserTypes): string => {
   return jwt.sign({ id, type }, getConfig().accessToken, {
     expiresIn: jwtTime.TokenMaxAge,

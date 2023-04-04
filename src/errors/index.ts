@@ -2,7 +2,6 @@
 export class FullError extends Error {
   code = '000';
   status = 500;
-  userId = undefined;
 }
 
 export class InternalError extends FullError {
@@ -191,6 +190,36 @@ export class NoDataProvidedError extends FullError {
     this.message = 'No data provided';
     this.name = 'NoDataProvidedError';
     this.code = '009';
+    this.status = 400;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectRefreshTokenError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'IncorrectRefreshTokenError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '010'
+ *         message:
+ *           example: 'Refresh token is missing or is incorrect'
+ *           description: Error message describing the incorrect parameter.
+ *           type: string
+ */
+export class IncorrectRefreshTokenError extends FullError {
+  constructor() {
+    super('IncorrectRefreshTokenError');
+    this.message = 'Refresh token is missing or is incorrect';
+    this.name = 'IncorrectRefreshTokenError';
+    this.code = '010';
     this.status = 400;
   }
 }
