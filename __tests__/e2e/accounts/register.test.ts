@@ -72,7 +72,7 @@ describe('Register', () => {
           .send({ ...registerData, login: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('login should be at least 3 characters');
+        expect(body.message).toEqual('Elm login should be more than 3 and less than 30 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -86,7 +86,7 @@ describe('Register', () => {
           });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('login should be less than 30 characters');
+        expect(body.message).toEqual('Elm login should be more than 3 and less than 30 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -108,7 +108,7 @@ describe('Register', () => {
           .send({ ...registerData, password: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('password should be at least 6 characters long');
+        expect(body.message).toEqual('Elm password should be more than 6 and less than 200 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -122,7 +122,7 @@ describe('Register', () => {
           });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('password should be less than 200 characters');
+        expect(body.message).toEqual('Elm password should be more than 6 and less than 200 characters');
         expect(body.code).not.toBeUndefined();
       });
 

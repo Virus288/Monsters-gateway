@@ -31,7 +31,7 @@ describe('Profiles - add', () => {
         const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('No data provided');
+        expect(body.message).toEqual('Missing param: race');
         expect(body.code).not.toBeUndefined();
       });
     });

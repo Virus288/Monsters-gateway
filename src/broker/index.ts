@@ -118,7 +118,7 @@ export default class Broker {
     await this._channel.consume(
       enums.EAmqQueues.Gateway,
       (message) => {
-        if (!message) return Log.warn('Rabbit', 'Received empty message to gateway');
+        if (!message) return Log.warn('Rabbit', 'Received empty message');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
           this.validateHeartbeat(payload.payload as types.IAvailableServices);

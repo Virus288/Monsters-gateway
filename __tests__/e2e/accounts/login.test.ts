@@ -18,7 +18,7 @@ describe('Login', () => {
         const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Missing param: login');
+        expect(body.message).toEqual('Incorrect credentials');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -29,7 +29,7 @@ describe('Login', () => {
         const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Missing param: password');
+        expect(body.message).toEqual('Incorrect credentials');
         expect(body.code).not.toBeUndefined();
       });
     });
@@ -41,7 +41,7 @@ describe('Login', () => {
           .send({ ...loginData, login: 'abc' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Incorrect login or password');
+        expect(body.message).toEqual('Incorrect credentials');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -51,7 +51,7 @@ describe('Login', () => {
           .send({ ...loginData, password: 'abc' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Incorrect login or password');
+        expect(body.message).toEqual('Incorrect credentials');
         expect(body.code).not.toBeUndefined();
       });
     });

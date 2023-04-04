@@ -1,5 +1,6 @@
 import login from './modules/users/login/router';
 import register from './modules/users/register/router';
+import refresh from './modules/users/refreshToken/router';
 import profileRouter from './modules/profiles/router';
 import type { Router } from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
@@ -25,7 +26,10 @@ export default class AppRouter {
 
   initSecured(): void {
     const profiles = '/profile';
+    const users = '/users';
+
     this.router.use(profiles, profileRouter.router);
+    this.router.use(users, refresh.router);
   }
 
   generateDocumentation(): void {
@@ -48,6 +52,11 @@ export default class AppRouter {
             bearerAuth: {
               type: 'http',
               scheme: 'bearer',
+              bearerFormat: 'JWT',
+            },
+            refreshToken: {
+              type: 'http',
+              scheme: 'X-Refresh-Token',
               bearerFormat: 'JWT',
             },
           },

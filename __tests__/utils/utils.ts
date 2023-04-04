@@ -19,6 +19,12 @@ export default class Utils {
     });
   };
 
+  generateRefreshToken = (id: string, type: types.EUserTypes): string => {
+    return jwt.sign({ id, type }, getConfig().refToken, {
+      expiresIn: enums.jwtTime.RefreshTokenMaxAge,
+    });
+  };
+
   async createSocketConnection(token?: string): Promise<void> {
     return new Promise((resolve) => {
       this.socket = new Websocket(`ws://localhost:${getConfig().socketPort}`, {
