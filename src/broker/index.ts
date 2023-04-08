@@ -1,4 +1,5 @@
 import * as enums from '../enums';
+import { EConnectionType, ESocketType } from '../enums';
 import type * as types from '../types';
 import amqplib from 'amqplib';
 import getConfig from '../tools/configLoader';
@@ -7,6 +8,7 @@ import Controller from './controller';
 import type { FullError } from '../errors';
 import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
+import State from '../tools/state';
 
 export default class Broker {
   private _retryTimeout: NodeJS.Timeout;
@@ -32,10 +34,10 @@ export default class Broker {
     this.initCommunication();
   }
 
-  sendLocally(
+  sendLocally<T extends EConnectionType>(
     target: types.IRabbitTargets,
     subTarget: types.IRabbitSubTargets,
-    res: types.ILocalUser,
+    res: { target: T; res: types.IConnectionType[T] },
     payload: unknown,
     service: enums.EServices,
   ): void {
@@ -232,9 +234,22 @@ export default class Broker {
     });
   }
 
-  private sendError(user: types.ILocalUser, error: FullError): void {
+  private sendError<T extends EConnectionType>(
+    user: {
+      target: T;
+      res: types.IConnectionType[T];
+    },
+    error: FullError,
+  ): void {
     const { message, code, name, status } = error;
-    user.status(status).send(JSON.stringify({ message, code, name }));
+    const { target, res } = user;
+
+    if (target === EConnectionType.Socket) {
+      State.socket.sendToUser(res as string, error, ESocketType.Error);
+    } else {
+      const localUser = res as types.ILocalUser;
+      localUser.status(status).send(JSON.stringify({ message, code, name }));
+    }
   }
 
   private errorWrapper(func: () => void): void {

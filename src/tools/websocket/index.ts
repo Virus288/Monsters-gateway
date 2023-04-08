@@ -3,17 +3,22 @@ import Log from '../logger/log';
 import getConfig from '../configLoader';
 import * as errors from '../../errors';
 import type * as types from '../../types';
+import type { ESocketType } from '../../enums';
 import * as enums from '../../enums';
-import { ESocketType } from '../../enums';
 import Router from './router';
 import jwt from 'jsonwebtoken';
 
 export default class WebsocketServer {
-  private _users: types.ISocketUser[] = [];
   private readonly _router: Router;
 
   constructor() {
     this._router = new Router();
+  }
+
+  private _users: types.ISocketUser[] = [];
+
+  private get users(): types.ISocketUser[] {
+    return this._users;
   }
 
   private get router(): Router {
@@ -36,7 +41,7 @@ export default class WebsocketServer {
 
   close(): void {
     this.server.close();
-    this._users.forEach((u) => {
+    this.users.forEach((u) => {
       u.user.close(1000, JSON.stringify(new errors.InternalError()));
       this.userDisconnected(u.user);
     });
@@ -50,17 +55,17 @@ export default class WebsocketServer {
     this.server.on('close', () => Log.error('Websocket', 'Server closed'));
   }
 
-  sendToUser(userId: string, message: string): void {
-    const formatted: types.ISocketOutMessage = { type: ESocketType.Message, payload: message };
-    const target = this._users.find((e) => {
+  sendToUser(userId: string, payload: unknown, type: ESocketType = enums.ESocketType.Message): void {
+    const formatted: types.ISocketOutMessage = { type, payload };
+    const target = this.users.find((e) => {
       return e.userId === userId;
     });
 
-    return target === undefined ? null : target.user.send(JSON.stringify(formatted));
+    if (target) target.user.send(JSON.stringify(formatted));
   }
 
   isOnline(user: string): boolean {
-    const exist = this._users.find((u) => {
+    const exist = this.users.find((u) => {
       return u.userId === user;
     });
     return exist !== undefined;
@@ -98,7 +103,7 @@ export default class WebsocketServer {
 
   private userDisconnected(ws: types.ISocket): void {
     if (!ws.userId) return;
-    this._users = this._users.filter((u) => {
+    this._users = this.users.filter((u) => {
       return u.userId !== ws.userId;
     });
   }
@@ -113,9 +118,9 @@ export default class WebsocketServer {
     }
 
     switch (message.target) {
-      case enums.ESocketTargets.Messages:
-        return this.router.handleMessage(message, ws);
-      case undefined:
+      case enums.ESocketTargets.Chat:
+        return this.router.handleChatMessage(message, ws);
+      default:
         return this.router.handleError(new errors.IncorrectTargetError(), ws);
     }
   }
@@ -124,7 +129,7 @@ export default class WebsocketServer {
     ws.pong();
   }
 
-  private errorWrapper(callback: () => void, ws: Websocket.WebSocket): void {
+  private errorWrapper(callback: () => void, ws: types.ISocket): void {
     try {
       callback();
     } catch (err) {

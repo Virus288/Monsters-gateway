@@ -14,7 +14,7 @@ describe('Socket', () => {
   const accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
-    subTarget: EMessageSubTargets.SendMessage,
+    subTarget: EMessageSubTargets.Send,
     target: enums.ESocketTargets.Messages,
   };
 

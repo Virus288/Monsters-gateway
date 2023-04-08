@@ -1,9 +1,10 @@
 import type * as types from '../../types';
-import type Websocket from 'ws';
 import * as errors from '../../errors';
 import * as enums from '../../enums';
+import { EConnectionType, EServices } from '../../enums';
 import State from '../state';
 import Validation from './validation';
+import type { IGetMessageDto, IReadMessageDto, ISendMessageDto } from './types/dto';
 
 export default class Router {
   private readonly _validator: Validation;
@@ -16,16 +17,24 @@ export default class Router {
     return this._validator;
   }
 
-  handleMessage(message: types.ISocketInMessage, ws: Websocket.WebSocket): void {
+  handleChatMessage(message: types.ISocketInMessage, ws: types.ISocket): void {
+    this.validator.preValidate(message);
+
     switch (message.subTarget) {
-      case enums.EMessageSubTargets.SendMessage:
-        return this.sendMessage(message.payload);
-      case undefined:
+      case enums.EMessageSubTargets.Send:
+        return this.sendMessage(message.payload as types.ISocketSendMessage, ws);
+      case enums.EMessageSubTargets.Read:
+        return this.readMessage(message.payload as IReadMessageDto, ws);
+      case enums.EMessageSubTargets.Get:
+        return this.getMessage(message.payload as IGetMessageDto, ws);
+      case enums.EMessageSubTargets.GetUnread:
+        return this.getUnread(message.payload as IGetMessageDto, ws);
+      default:
         return this.handleError(new errors.IncorrectTargetError(), ws);
     }
   }
 
-  handleError(err: types.IFullError, ws: Websocket.WebSocket): void {
+  handleError(err: types.IFullError, ws: types.ISocket): void {
     if (process.env.NODE_END !== 'prod') console.trace(err);
     const { message, code, name } = err;
 
@@ -40,15 +49,61 @@ export default class Router {
     return ws.send(body);
   }
 
-  private sendMessage(data: types.ISocketSendMessage): void {
+  private sendMessage(data: types.ISocketSendMessage, ws: types.ISocket): void {
     this.validator.validateSendMessage(data);
     const { message, target } = data;
 
     const isOnline = State.socket.isOnline(target);
-    if (!isOnline) {
-      // Send req to server in order to ask if user does exist. Keep in mind that you'll have to keep whole message payload in rabbit's class memory for as long as service does not response
-      // Add fetching user from redis. Even if selected user goes offline, redis should still have his id valid for at least 30m
-    }
-    return State.socket.sendToUser(target, message);
+    if (isOnline) State.socket.sendToUser(target, message);
+
+    const prepared: ISendMessageDto = {
+      body: data.message,
+      receiver: data.target,
+      sender: ws.userId,
+    };
+
+    State.broker.sendLocally(
+      enums.EMessageMainTargets.Chat,
+      enums.EMessageSubTargets.Send,
+      { target: EConnectionType.Socket, res: ws.userId },
+      prepared,
+      EServices.Messages,
+    );
+  }
+
+  private readMessage(data: IReadMessageDto, ws: types.ISocket): void {
+    this.validator.validateReadMessage(data);
+
+    State.broker.sendLocally(
+      enums.EMessageMainTargets.Chat,
+      enums.EMessageSubTargets.Read,
+      { target: EConnectionType.Socket, res: ws.userId },
+      { ...data, user: ws.userId },
+      EServices.Messages,
+    );
+  }
+
+  private getMessage(data: IGetMessageDto, ws: types.ISocket): void {
+    this.validator.validateGetMessage(data);
+
+    State.broker.sendLocally(
+      enums.EMessageMainTargets.Chat,
+      enums.EMessageSubTargets.Get,
+      { target: EConnectionType.Socket, res: ws.userId },
+      data,
+      EServices.Messages,
+    );
+  }
+
+  private getUnread(data: IGetMessageDto, ws: types.ISocket): void {
+    this.validator.validateGetMessage(data);
+
+    State.broker.sendLocally(
+      enums.EMessageMainTargets.Chat,
+      enums.EMessageSubTargets.GetUnread,
+      { target: EConnectionType.Socket, res: ws.userId },
+      data,
+      EServices.Messages,
+    );
   }
 }

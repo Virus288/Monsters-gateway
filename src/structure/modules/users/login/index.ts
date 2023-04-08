@@ -1,11 +1,12 @@
 import type express from 'express';
 import State from '../../../../tools/state';
 import * as enums from '../../../../enums';
-import { EServices } from '../../../../enums';
+import { EConnectionType, EServices } from '../../../../enums';
 import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
 import type { ILoginDto } from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
+import Validation from '../validation';
 
 export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {
@@ -22,6 +23,17 @@ export default class UserRouter extends RouterFactory {
 
   post(req: express.Request, res: ILocalUser): void {
     const data = req.body as ILoginDto;
-    State.broker.sendLocally(enums.EUserMainTargets.User, enums.EUserTargets.Login, res, data, EServices.Users);
+    Validation.validateLogin(data);
+
+    State.broker.sendLocally(
+      enums.EUserMainTargets.User,
+      enums.EUserTargets.Login,
+      {
+        target: EConnectionType.Api,
+        res,
+      },
+      data,
+      EServices.Users,
+    );
   }
 }

@@ -1,6 +1,7 @@
 import Router from './index';
 import type * as types from '../../../../types';
 import handleErr from '../../../../errors/utils';
+import limitRate from '../../utils';
 
 const service = new Router();
 
@@ -32,7 +33,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/register', (req, res: types.ILocalUser) => {
+service.router.post('/register', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.post(req, res);
   } catch (err) {

@@ -10,19 +10,9 @@ import Log from '../tools/logger/log';
 import type * as types from '../types';
 import handleErr from '../errors/utils';
 import { verify } from '../tools/token';
-import Validation from './validation';
+import helmet from 'helmet';
 
 export default class Middleware {
-  private readonly _validation: Validation;
-
-  constructor() {
-    this._validation = new Validation();
-  }
-
-  private get validation(): Validation {
-    return this._validation;
-  }
-
   generateMiddleware(app: Express): void {
     app.use(express.json({ limit: '500kb' }));
     app.use(cookieParser());
@@ -32,13 +22,12 @@ export default class Middleware {
         credentials: true,
       }),
     );
+    app.use(helmet());
 
-    app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+    app.use((_req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
       res.header('Content-Type', 'application/json;charset=UTF-8');
       res.header('Access-Control-Allow-Credentials', 'true');
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
-      this.validation.validate(req);
       next();
     });
   }

@@ -4,7 +4,8 @@ export enum EUserMainTargets {
 }
 
 export enum EMessageMainTargets {
-  Message = 'message',
+  Messages = 'messages',
+  Chat = 'chat',
 }
 
 export enum EUserTargets {
