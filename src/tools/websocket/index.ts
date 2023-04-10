@@ -42,8 +42,10 @@ export default class WebsocketServer {
   close(): void {
     this.server.close();
     this.users.forEach((u) => {
-      u.user.close(1000, JSON.stringify(new errors.InternalError()));
-      this.userDisconnected(u.user);
+      u.clients.forEach((c) => {
+        c.close(1000, JSON.stringify(new errors.InternalError()));
+        this.userDisconnected(c);
+      });
     });
   }
 
@@ -61,7 +63,7 @@ export default class WebsocketServer {
       return e.userId === userId;
     });
 
-    if (target) target.user.send(JSON.stringify(formatted));
+    if (target) target.clients.forEach((c) => c.send(JSON.stringify(formatted)));
   }
 
   isOnline(user: string): boolean {
@@ -95,7 +97,19 @@ export default class WebsocketServer {
         type: enums.EUserTypes;
       };
       ws.userId = id;
-      this._users.push({ user: ws, userId: id, type });
+
+      const isAlreadyOnline = this.users.findIndex((u) => {
+        return u.userId === id;
+      });
+
+      if (isAlreadyOnline > -1) {
+        this._users[isAlreadyOnline] = {
+          ...this.users[isAlreadyOnline],
+          clients: [...this.users[isAlreadyOnline].clients, ws],
+        };
+      } else {
+        this._users.push({ clients: [ws], userId: id, type });
+      }
     } catch (err) {
       ws.close(1000, errBody);
     }

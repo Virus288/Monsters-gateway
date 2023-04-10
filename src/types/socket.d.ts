@@ -9,7 +9,7 @@ export interface ISocketInMessage {
 }
 
 export interface ISocketUser {
-  user: ISocket;
+  clients: ISocket[];
   userId: string;
   type: enums.EUserTypes;
 }

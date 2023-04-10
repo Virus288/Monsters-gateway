@@ -245,8 +245,9 @@ export default class Broker {
     const { target, res } = user;
 
     if (target === EConnectionType.Socket) {
-      State.socket.sendToUser(res as string, error, ESocketType.Error);
+      State.socket.sendToUser(res as string, { message, code, name, status }, ESocketType.Error);
     } else {
+      1;
       const localUser = res as types.ILocalUser;
       localUser.status(status).send(JSON.stringify({ message, code, name }));
     }
