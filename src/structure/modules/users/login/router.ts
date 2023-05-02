@@ -56,7 +56,7 @@ service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
  *             schema:
  *               type: string
  *             example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *           X-Refresh-Token:
+ *           x-refresh-token:
  *             description: The user's refresh token.
  *             schema:
  *               type: string

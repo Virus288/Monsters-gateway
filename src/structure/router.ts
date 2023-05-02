@@ -1,7 +1,9 @@
 import login from './modules/users/login/router';
 import register from './modules/users/register/router';
 import refresh from './modules/users/refreshToken/router';
-import profileRouter from './modules/profiles/router';
+import getProfileRouter from './modules/profiles/get/router';
+import addProfileRouter from './modules/profiles/add/router';
+import detailsRouter from './modules/users/details/router';
 import type { Router } from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -28,8 +30,8 @@ export default class AppRouter {
     const profiles = '/profile';
     const users = '/users';
 
-    this.router.use(profiles, profileRouter.router);
-    this.router.use(users, refresh.router);
+    this.router.use(profiles, addProfileRouter.router).use(profiles, getProfileRouter.router);
+    this.router.use(users, refresh.router).use(users, detailsRouter.router);
   }
 
   generateDocumentation(): void {
@@ -56,7 +58,7 @@ export default class AppRouter {
             },
             refreshToken: {
               type: 'http',
-              scheme: 'X-Refresh-Token',
+              scheme: 'x-refresh-token',
               bearerFormat: 'JWT',
             },
           },
@@ -69,12 +71,11 @@ export default class AppRouter {
       },
       apis: [
         './src/errors/index.ts',
-        './src/structure/modules/*/router.ts',
-        './src/structure/modules/*/entity.d.ts',
-        './src/structure/modules/*/dto.d.ts',
         './src/structure/modules/*/*/router.ts',
+        './src/structure/modules/*/entity.d.ts',
+        './src/structure/modules/*/types.d.ts',
         './src/structure/modules/*/*/entity.d.ts',
-        './src/structure/modules/*/*/dto.d.ts',
+        './src/structure/modules/*/*/types.d.ts',
       ],
     };
 

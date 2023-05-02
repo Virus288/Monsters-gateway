@@ -14,96 +14,6 @@ export class InternalError extends FullError {
   }
 }
 
-export class NotFoundError extends FullError {
-  constructor() {
-    super('NotFoundError');
-    this.message = 'Resource not found';
-    this.name = 'NotFoundError';
-    this.code = '002';
-    this.status = 404;
-  }
-}
-
-/**
- * @openapi
- * components:
- *   schemas:
- *     UnauthorizedError:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           description: Error name describing the error cause.
- *           example: 'UnauthorizedError'
- *         code:
- *           type: string
- *           description: Unique code associated with the error.
- *           example: '003'
- *         message:
- *           description: Error message describing the error cause.
- *           type: string
- *           example: 'User not logged in'
- */
-export class UnauthorizedError extends FullError {
-  constructor() {
-    super('UnauthorizedError');
-    this.message = 'User not logged in';
-    this.name = 'UnauthorizedError';
-    this.code = '003';
-    this.status = 401;
-  }
-}
-
-export class MissingProcessPlatformError extends FullError {
-  constructor() {
-    super('MissingProcessPlatformError');
-    this.message = 'process.platform is missing';
-    this.name = 'MissingProcessPlatformError';
-    this.code = '004';
-    this.status = 500;
-  }
-}
-
-/**
- * @openapi
- * components:
- *   schemas:
- *     IncorrectBodyTypeError:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           description: Error name describing the error cause.
- *           example: 'IncorrectBodyTypeError'
- *         code:
- *           type: string
- *           description: Unique code associated with the error.
- *           example: '005'
- *         message:
- *           type: string
- *           description: Error message describing the error cause.
- *           pattern: "Incorrect body type. Data should be of type json"
- */
-export class IncorrectBodyTypeError extends FullError {
-  constructor() {
-    super('IncorrectBodyTypeError');
-    this.message = 'Incorrect body type. Data should be of type json';
-    this.name = 'IncorrectBodyTypeError';
-    this.code = '005';
-    this.status = 400;
-  }
-}
-
-export class IncorrectTargetError extends FullError {
-  constructor() {
-    super('IncorrectTargetError');
-    this.message = 'Incorrect target';
-    this.name = 'IncorrectTargetError';
-    this.code = '006';
-    this.status = 400;
-  }
-}
-
 /**
  * @openapi
  * components:
@@ -118,7 +28,7 @@ export class IncorrectTargetError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '007'
+ *           example: '002'
  *         message:
  *           type: string
  *           description: Error message describing the error cause.
@@ -129,7 +39,7 @@ export class MissingArgError extends FullError {
     super('MissingArgError');
     this.message = `Missing param: ${param}`;
     this.name = 'MissingArgError';
-    this.code = '007';
+    this.code = '002';
     this.status = 400;
   }
 }
@@ -148,7 +58,7 @@ export class MissingArgError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '008'
+ *           example: '003'
  *         message:
  *           example: 'Data not provided'
  *           description: Error message describing the incorrect parameter.
@@ -159,7 +69,87 @@ export class IncorrectArgError extends FullError {
     super('IncorrectArgError');
     this.message = err;
     this.name = 'IncorrectArgError';
-    this.code = '008';
+    this.code = '003';
+    this.status = 400;
+  }
+}
+
+export class NotFoundError extends FullError {
+  constructor() {
+    super('NotFoundError');
+    this.message = 'Resource not found';
+    this.name = 'NotFoundError';
+    this.code = '004';
+    this.status = 404;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     UnauthorizedError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'UnauthorizedError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '005'
+ *         message:
+ *           description: Error message describing the error cause.
+ *           type: string
+ *           example: 'User not logged in'
+ */
+export class UnauthorizedError extends FullError {
+  constructor() {
+    super('UnauthorizedError');
+    this.message = 'User not logged in';
+    this.name = 'UnauthorizedError';
+    this.code = '005';
+    this.status = 401;
+  }
+}
+
+export class MissingProcessPlatformError extends FullError {
+  constructor() {
+    super('MissingProcessPlatformError');
+    this.message = 'process.platform is missing';
+    this.name = 'MissingProcessPlatformError';
+    this.code = '006';
+    this.status = 500;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectBodyTypeError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'IncorrectBodyTypeError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '007'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "Incorrect body type. Data should be of type json"
+ */
+export class IncorrectBodyTypeError extends FullError {
+  constructor() {
+    super('IncorrectBodyTypeError');
+    this.message = 'Incorrect body type. Data should be of type json';
+    this.name = 'IncorrectBodyTypeError';
+    this.code = '007';
     this.status = 400;
   }
 }
@@ -178,7 +168,7 @@ export class IncorrectArgError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '009'
+ *           example: '008'
  *         message:
  *           example: 'No data provided'
  *           description: Error message describing the incorrect parameter.
@@ -189,7 +179,7 @@ export class NoDataProvidedError extends FullError {
     super('NoDataProvidedError');
     this.message = 'No data provided';
     this.name = 'NoDataProvidedError';
-    this.code = '009';
+    this.code = '008';
     this.status = 400;
   }
 }
@@ -208,7 +198,7 @@ export class NoDataProvidedError extends FullError {
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
- *           example: '010'
+ *           example: '009'
  *         message:
  *           example: 'Refresh token is missing or is incorrect'
  *           description: Error message describing the incorrect parameter.
@@ -219,7 +209,47 @@ export class IncorrectRefreshTokenError extends FullError {
     super('IncorrectRefreshTokenError');
     this.message = 'Refresh token is missing or is incorrect';
     this.name = 'IncorrectRefreshTokenError';
+    this.code = '009';
+    this.status = 400;
+  }
+}
+
+export class IncorrectTargetError extends FullError {
+  constructor() {
+    super('IncorrectTargetError');
+    this.message = 'Incorrect target';
+    this.name = 'IncorrectTargetError';
     this.code = '010';
+    this.status = 400;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     MissingArgError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'MissingArgError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '002'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "^Missing param: .+$"
+ */
+export class IncorrectTokenError extends FullError {
+  constructor() {
+    super('IncorrectTokenError');
+    this.message = 'Provided key is incorrect';
+    this.name = 'IncorrectTokenError';
+    this.code = '011';
     this.status = 400;
   }
 }

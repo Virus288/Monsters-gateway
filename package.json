@@ -17,8 +17,8 @@
     "listErrors": "node_modules/.bin/tsc --skipLibCheck",
     "lintStaged": "npx lint-staged",
     "test": "echo 'If you want to run all the tests, please use makefile'",
-    "test:e2e": "jest --runInBand --coverage --config __tests__/jest.config.e2e.ts",
-    "test:unit": "jest --coverage --config __tests__/jest.config.unit.ts",
+    "test:e2e": "cross-env NODE_ENV=test jest --runInBand --coverage --config __tests__/jest.config.e2e.ts",
+    "test:unit": "cross-env NODE_ENV=test jest --coverage --config __tests__/jest.config.unit.ts",
     "prepare": "husky install"
   },
   "lint-staged": {
@@ -48,8 +48,8 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
-    "@swc/core": "^1.3.41",
-    "@swc/helpers": "^0.4.14",
+    "@swc/core": "^1.3.56",
+    "@swc/helpers": "^0.5.1",
     "@types/amqplib": "^0.10.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",

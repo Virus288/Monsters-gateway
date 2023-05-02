@@ -11,6 +11,7 @@ import Log from '../tools/logger/log';
 import State from '../tools/state';
 
 export default class Broker {
+  R;
   private _retryTimeout: NodeJS.Timeout;
   private _connection: amqplib.Connection;
   private _connectionTries = 0;
@@ -43,7 +44,7 @@ export default class Broker {
   ): void {
     const queue = this._services[service as types.IAvailableServices];
     if (queue.dead) return this.sendError(res, new InternalError());
-    this.controller.sendLocally(target, subTarget, res, payload, service, this._channel);
+    return this.controller.sendLocally(target, subTarget, res, payload, service, this._channel);
   }
 
   close(): void {
@@ -87,7 +88,7 @@ export default class Broker {
 
   private createChannels(): void {
     if (this._channel) return;
-    if (this._channelTries++ > enums.ERabbit.RetryLimit) {
+    if (this._channelTries++ > parseInt(enums.ERabbit.RetryLimit.toString())) {
       Log.error('Rabbit', 'Error creating rabbit connection channel, stopped retrying');
     }
 
@@ -123,10 +124,9 @@ export default class Broker {
         if (!message) return Log.warn('Rabbit', 'Received empty message');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
-          this.validateHeartbeat(payload.payload as types.IAvailableServices);
-        } else {
-          this.errorWrapper(() => this.controller.sendExternally(payload));
+          return this.validateHeartbeat(payload.payload as types.IAvailableServices);
         }
+        return this.errorWrapper(() => this.controller.sendExternally(payload));
       },
       { noAck: true },
     );
@@ -191,6 +191,8 @@ export default class Broker {
       case enums.EServices.Messages:
         await this._channel.purgeQueue(enums.EAmqQueues.Messages);
         break;
+      default:
+        Log.error('Socket', 'Got req to close socket that does not exist');
     }
     return this.controller.fulfillDeadQueue(target);
   };

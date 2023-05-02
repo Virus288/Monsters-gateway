@@ -4,13 +4,12 @@ import * as enums from '../../../../enums';
 import { EConnectionType, EServices } from '../../../../enums';
 import type { ILocalUser } from '../../../../types';
 import { verify } from '../../../../tools/token';
-import type { ILoginDto } from './dto';
+import LoginDto from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
-import Validation from '../validation';
 
 export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {
-    let access: string;
+    let access: string | null = null;
     if (req.headers.authorization) {
       const key = req.headers.authorization;
       if (!key.includes('Bearer')) return;
@@ -22,8 +21,7 @@ export default class UserRouter extends RouterFactory {
   }
 
   post(req: express.Request, res: ILocalUser): void {
-    const data = req.body as ILoginDto;
-    Validation.validateLogin(data);
+    const data = new LoginDto(req.body as LoginDto);
 
     State.broker.sendLocally(
       enums.EUserMainTargets.User,

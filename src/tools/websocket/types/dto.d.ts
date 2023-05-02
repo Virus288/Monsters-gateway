@@ -10,6 +10,6 @@ export interface IGetMessageDto {
 }
 
 export interface IReadMessageDto {
-  id: string;
+  chatId: string;
   user: string;
 }

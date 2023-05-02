@@ -17,14 +17,14 @@ export default class Validation {
   }
 
   validateReadMessage(data: IReadMessageDto): void {
-    if (data.id === undefined) throw new errors.MissingArgError('message');
+    if (data.chatId === undefined) throw new errors.MissingArgError('chatId');
 
-    const { id } = data;
-    if (id.length !== 24) throw new errors.IncorrectArgError('Id is not valid mongoose id');
+    const { chatId } = data;
+    if (chatId.length !== 24) throw new errors.IncorrectArgError('Id is not valid mongoose id');
   }
 
   validateGetMessage(data: IGetMessageDto): void {
-    if (data.page === undefined) throw new errors.MissingArgError('message');
+    if (data.page === undefined) throw new errors.MissingArgError('page');
 
     const { page } = data;
     if (typeof page !== 'number') throw new errors.IncorrectArgError('Page is not number');

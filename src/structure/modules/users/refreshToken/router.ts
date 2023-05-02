@@ -11,7 +11,7 @@ const service = new Router();
  *   get:
  *     tags:
  *       - user
- *     description: Validate if user's token is valid
+ *     description: Refresh user's access token
  *     security:
  *       - refreshToken: []
  *     responses:

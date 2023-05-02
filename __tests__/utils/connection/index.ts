@@ -18,7 +18,7 @@ export default class Utils {
 
       setTimeout(() => {
         resolve(undefined);
-      }, 5000);
+      }, 3000);
     });
   }
 
@@ -27,10 +27,7 @@ export default class Utils {
       State.broker.close();
       State.router.close();
       State.socket.close();
-
-      setTimeout(() => {
-        resolve(undefined);
-      }, 2000);
+      resolve(undefined);
     });
   }
 }

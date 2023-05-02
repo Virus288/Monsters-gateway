@@ -1,12 +1,12 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
-import fakeData from '../../../fakeData.json';
-import Utils from '../../../utils/utils';
-import * as enums from '../../../../src/enums';
-import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../../src/enums';
-import * as errors from '../../../../src/errors';
-import { IFullError, ISocketInMessage, ISocketOutMessage } from '../../../../src/types';
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import fakeData from '../../fakeData.json';
+import Utils from '../../utils/utils';
+import * as enums from '../../../src/enums';
+import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
+import * as errors from '../../../src/errors';
+import { IFullError, ISocketInMessage, ISocketOutMessage } from '../../../src/types';
 
-describe('Socket', () => {
+describe('Socket - generic tests', () => {
   const utils = new Utils();
   const fakeUser = fakeData.users[0];
   const fakeUser2 = fakeData.users[1];
@@ -15,23 +15,28 @@ describe('Socket', () => {
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
     subTarget: EMessageSubTargets.Send,
-    target: enums.ESocketTargets.Messages,
+    target: enums.ESocketTargets.Chat,
   };
+
+  beforeAll(async () => {
+    await utils.createSocketConnection(accessToken);
+  });
+
+  afterAll(async () => {
+    await utils.killSocket();
+  });
 
   describe('Should throw', () => {
     describe('Not logged in', () => {
-      beforeAll(async () => {
-        await utils.createSocketConnection();
-      });
-
-      afterAll(async () => {
-        await utils.killSocket();
-      });
+      const utils2 = new Utils();
 
       it(`User not logged in`, async () => {
-        const { payload } = utils.getLastMessage();
+        await utils2.createSocketConnection();
+        const { payload } = utils2.getLastMessage();
+
         const { code, name } = payload as IFullError;
         const targetErr = new errors.UnauthorizedError();
+        await utils2.killSocket();
 
         expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
@@ -39,14 +44,6 @@ describe('Socket', () => {
     });
 
     describe('No data passed', () => {
-      beforeEach(async () => {
-        await utils.createSocketConnection(accessToken);
-      });
-
-      afterEach(async () => {
-        await utils.killSocket();
-      });
-
       it(`Target not provided`, async () => {
         const clone = structuredClone(message);
         delete clone.target;
@@ -112,30 +109,21 @@ describe('Socket', () => {
         expect(name).toEqual(targetErr.name);
       });
 
-      // #TODO Add code in messages to properly fetch user's data.
-      // it(`Targeted user does not exist`, async () => {
-      //   const clone = structuredClone(message);
-      //   clone.payload.target = 'a';
-      //
-      //   await utils.sendMessage(clone);
-      //   const { payload } = utils.getLastMessage();
-      //   const { code, name } = payload as IFullError;
-      //   const targetErr = new errors.MissingArgError('message');
-      //
-      //   expect(code).toEqual(targetErr.code);
-      //   expect(name).toEqual(targetErr.name);
-      // });
+      it(`Targeted user does not exist`, async () => {
+        const clone = structuredClone(message);
+        clone.payload.target = 'a';
+
+        await utils.sendMessage(clone);
+        const { payload } = utils.getLastMessage();
+        const { code, name } = payload as IFullError;
+        const targetErr = new errors.IncorrectArgError('message');
+
+        expect(code).toEqual(targetErr.code);
+        expect(name).toEqual(targetErr.name);
+      });
     });
 
     describe('Incorrect data', () => {
-      beforeEach(async () => {
-        await utils.createSocketConnection(accessToken);
-      });
-
-      afterEach(async () => {
-        await utils.killSocket();
-      });
-
       it(`Message too long`, async () => {
         const clone = structuredClone(message);
         clone.payload.message =
@@ -166,14 +154,6 @@ describe('Socket', () => {
   });
 
   describe('Should pass', () => {
-    beforeEach(async () => {
-      await utils.createSocketConnection(accessToken);
-    });
-
-    afterEach(async () => {
-      await utils.killSocket();
-    });
-
     it(`Message sent`, async () => {
       const secondConnection = new Utils();
       await secondConnection.createSocketConnection(accessToken2);

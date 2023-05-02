@@ -11,6 +11,7 @@ export enum EMessageMainTargets {
 export enum EUserTargets {
   Register = 'register',
   Login = 'login',
+  GetName = 'getName',
 }
 
 export enum EProfileTargets {

@@ -7,10 +7,15 @@ import { ISocketInMessage, ISocketOutMessage } from '../../src/types';
 
 export default class Utils {
   socket: Websocket;
+
   private _messages: ISocketOutMessage[] = [];
 
   private get messages(): ISocketOutMessage[] {
     return this._messages;
+  }
+
+  private set messages(value: ISocketOutMessage[]) {
+    this._messages = value;
   }
 
   generateAccessToken = (id: string, type: types.EUserTypes): string => {
@@ -25,13 +30,17 @@ export default class Utils {
     });
   };
 
+  cleanUp(): void {
+    this.messages = [];
+  }
+
   async createSocketConnection(token?: string): Promise<void> {
     return new Promise((resolve) => {
       this.socket = new Websocket(`ws://localhost:${getConfig().socketPort}`, {
         headers: token === undefined ? {} : { Authorization: `Bearer: ${token}` },
       });
       this.socket.on('open', () => {
-        setTimeout(() => resolve(), 1000);
+        setTimeout(() => resolve(), 3000);
       });
       this.socket.on('message', (m: string) => {
         this.messages.push(JSON.parse(m) as ISocketOutMessage);
@@ -52,16 +61,14 @@ export default class Utils {
   }
 
   async sendMessage(message: ISocketInMessage): Promise<void> {
+    this.socket.send(JSON.stringify(message));
     return new Promise((resolve) => {
-      this.socket.send(JSON.stringify(message));
       setTimeout(() => resolve(), 1000);
     });
   }
 
   getLastMessage(): ISocketOutMessage {
     const lastMess = this.messages[this._messages.length - 1];
-    console.log('All messages');
-    console.log(JSON.stringify(this.messages));
     this._messages.pop();
     return lastMess;
   }
