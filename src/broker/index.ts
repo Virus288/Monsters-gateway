@@ -1,4 +1,5 @@
 import * as enums from '../enums';
+import { EConnectionType, ESocketType } from '../enums';
 import type * as types from '../types';
 import amqplib from 'amqplib';
 import getConfig from '../tools/configLoader';
@@ -7,8 +8,10 @@ import Controller from './controller';
 import type { FullError } from '../errors';
 import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
+import State from '../tools/state';
 
 export default class Broker {
+  R;
   private _retryTimeout: NodeJS.Timeout;
   private _connection: amqplib.Connection;
   private _connectionTries = 0;
@@ -32,16 +35,16 @@ export default class Broker {
     this.initCommunication();
   }
 
-  sendLocally(
+  sendLocally<T extends EConnectionType>(
     target: types.IRabbitTargets,
     subTarget: types.IRabbitSubTargets,
-    res: types.ILocalUser,
+    res: { target: T; res: types.IConnectionType[T] },
     payload: unknown,
     service: enums.EServices,
   ): void {
     const queue = this._services[service as types.IAvailableServices];
     if (queue.dead) return this.sendError(res, new InternalError());
-    this.controller.sendLocally(target, subTarget, res, payload, service, this._channel);
+    return this.controller.sendLocally(target, subTarget, res, payload, service, this._channel);
   }
 
   close(): void {
@@ -85,7 +88,7 @@ export default class Broker {
 
   private createChannels(): void {
     if (this._channel) return;
-    if (this._channelTries++ > enums.ERabbit.RetryLimit) {
+    if (this._channelTries++ > parseInt(enums.ERabbit.RetryLimit.toString())) {
       Log.error('Rabbit', 'Error creating rabbit connection channel, stopped retrying');
     }
 
@@ -121,10 +124,9 @@ export default class Broker {
         if (!message) return Log.warn('Rabbit', 'Received empty message');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
-          this.validateHeartbeat(payload.payload as types.IAvailableServices);
-        } else {
-          this.errorWrapper(() => this.controller.sendExternally(payload));
+          return this.validateHeartbeat(payload.payload as types.IAvailableServices);
         }
+        return this.errorWrapper(() => this.controller.sendExternally(payload));
       },
       { noAck: true },
     );
@@ -189,6 +191,8 @@ export default class Broker {
       case enums.EServices.Messages:
         await this._channel.purgeQueue(enums.EAmqQueues.Messages);
         break;
+      default:
+        Log.error('Socket', 'Got req to close socket that does not exist');
     }
     return this.controller.fulfillDeadQueue(target);
   };
@@ -232,9 +236,23 @@ export default class Broker {
     });
   }
 
-  private sendError(user: types.ILocalUser, error: FullError): void {
+  private sendError<T extends EConnectionType>(
+    user: {
+      target: T;
+      res: types.IConnectionType[T];
+    },
+    error: FullError,
+  ): void {
     const { message, code, name, status } = error;
-    user.status(status).send(JSON.stringify({ message, code, name }));
+    const { target, res } = user;
+
+    if (target === EConnectionType.Socket) {
+      State.socket.sendToUser(res as string, { message, code, name, status }, ESocketType.Error);
+    } else {
+      1;
+      const localUser = res as types.ILocalUser;
+      localUser.status(status).send(JSON.stringify({ message, code, name }));
+    }
   }
 
   private errorWrapper(func: () => void): void {

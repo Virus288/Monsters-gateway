@@ -1,6 +1,7 @@
 import Router from './index';
 import type * as types from '../../../../types';
 import handleErr from '../../../../errors/utils';
+import limitRate from '../../utils';
 
 const service = new Router();
 
@@ -23,7 +24,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-service.router.get('/login', (req, res: types.ILocalUser) => {
+service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.get(req, res);
   } catch (err) {
@@ -55,7 +56,7 @@ service.router.get('/login', (req, res: types.ILocalUser) => {
  *             schema:
  *               type: string
  *             example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *           X-Refresh-Token:
+ *           x-refresh-token:
  *             description: The user's refresh token.
  *             schema:
  *               type: string
@@ -70,7 +71,7 @@ service.router.get('/login', (req, res: types.ILocalUser) => {
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/login', (req, res: types.ILocalUser) => {
+service.router.post('/login', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.post(req, res);
   } catch (err) {

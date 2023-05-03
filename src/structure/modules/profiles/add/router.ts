@@ -1,28 +1,28 @@
 import Router from './index';
-import type * as types from '../../../../types';
 import handleErr from '../../../../errors/utils';
-import limitRate from '../../utils';
+import type * as types from '../../../../types';
 
 const service = new Router();
 
 /**
  * @openapi
- * /users/register:
+ * /profile:
  *   post:
  *     tags:
- *       - user
- *     description: Register user
- *     security: []
+ *       - profile
+ *     description: Add user profile
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
- *       description: Request body for registering user
+ *       description: Request body for adding a user profile
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/IRegisterDto'
+ *             $ref: '#/components/schemas/IAddProfileDto'
  *     responses:
  *       200:
- *         description: Success. User registered.
+ *         description: Success. Empty response.
  *       400:
  *         description: Bad request.
  *         content:
@@ -32,8 +32,14 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/NoDataProvidedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
-service.router.post('/register', limitRate, (req, res: types.ILocalUser) => {
+service.router.post('/', (req, res: types.ILocalUser) => {
   try {
     return service.post(req, res);
   } catch (err) {

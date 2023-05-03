@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import Validation from '../../../src/structure/modules/users/validation';
 import * as errors from '../../../src/errors';
 import * as types from '../../types';
+import RegisterDto from '../../../src/structure/modules/users/register/dto';
 
 describe('Register', () => {
   const register: types.IRegisterDto = {
@@ -16,7 +16,7 @@ describe('Register', () => {
         return it(`Missing ${k}`, () => {
           const clone = structuredClone(register);
           delete clone[k];
-          const func = () => Validation.validateRegister(clone);
+          const func = () => new RegisterDto(clone);
 
           expect(func).toThrow(new errors.MissingArgError(k));
         });
@@ -26,7 +26,7 @@ describe('Register', () => {
 
   describe('Should pass', () => {
     it(`Validated registry`, () => {
-      const func = () => Validation.validateRegister(register);
+      const func = () => new RegisterDto(register);
       expect(func).not.toThrow();
     });
   });

@@ -1,6 +1,7 @@
 import Router from './index';
 import type * as types from '../../../../types';
 import handleErr from '../../../../errors/utils';
+import limitRate from '../../utils';
 
 const service = new Router();
 
@@ -10,7 +11,7 @@ const service = new Router();
  *   get:
  *     tags:
  *       - user
- *     description: Validate if user's token is valid
+ *     description: Refresh user's access token
  *     security:
  *       - refreshToken: []
  *     responses:
@@ -29,7 +30,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/IncorrectRefreshTokenError'
  */
-service.router.get('/refresh', (req, res: types.ILocalUser) => {
+service.router.get('/refresh', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.get(req, res);
   } catch (err) {

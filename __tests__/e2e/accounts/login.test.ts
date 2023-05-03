@@ -4,6 +4,7 @@ import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
 import State from '../../../src/tools/state';
 import * as types from '../../types';
+import { MissingArgError } from '../../../src/errors';
 
 describe('Login', () => {
   const loginData: types.ILoginDto = fakeData.users[0];
@@ -17,8 +18,9 @@ describe('Login', () => {
 
         const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
+        const target = new MissingArgError('login');
 
-        expect(body.message).toEqual('Incorrect credentials');
+        expect(body.message).toEqual(target.message);
         expect(body.code).not.toBeUndefined();
       });
 
@@ -28,8 +30,9 @@ describe('Login', () => {
 
         const res = await supertest(app).post('/users/login').send(clone);
         const body = res.body as IFullError;
+        const target = new MissingArgError('password');
 
-        expect(body.message).toEqual('Incorrect credentials');
+        expect(body.message).toEqual(target.message);
         expect(body.code).not.toBeUndefined();
       });
     });

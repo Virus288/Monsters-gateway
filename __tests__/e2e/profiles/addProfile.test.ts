@@ -6,6 +6,7 @@ import { EUserRace, EUserTypes } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
 import State from '../../../src/tools/state';
+import { MissingArgError } from '../../../src/errors';
 
 describe('Profiles - add', () => {
   const addProfile: types.IAddProfileDto = {
@@ -30,8 +31,9 @@ describe('Profiles - add', () => {
 
         const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(clone);
         const body = res.body as IFullError;
+        const target = new MissingArgError('race');
 
-        expect(body.message).toEqual('Missing param: race');
+        expect(body.message).toEqual(target.message);
         expect(body.code).not.toBeUndefined();
       });
     });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import Validation from '../../../src/structure/modules/users/validation';
 import * as errors from '../../../src/errors';
 import * as types from '../../types';
+import LoginDto from '../../../src/structure/modules/users/login/dto';
 
 describe('Login', () => {
   const login: types.ILoginDto = {
@@ -15,7 +15,7 @@ describe('Login', () => {
         return it(`Missing ${k}`, () => {
           const clone = structuredClone(login);
           delete clone[k];
-          const func = () => Validation.validateLogin(clone);
+          const func = () => new LoginDto(clone);
 
           expect(func).toThrow(new errors.MissingArgError(k));
         });
@@ -25,7 +25,7 @@ describe('Login', () => {
 
   describe('Should pass', () => {
     it(`Validated login`, () => {
-      const func = () => Validation.validateLogin(login);
+      const func = () => new LoginDto(login);
       expect(func).not.toThrow();
     });
   });
