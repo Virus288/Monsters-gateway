@@ -41,7 +41,7 @@ export default class AppRouter {
         description: 'This is a REST API for monsters game',
         servers: [
           {
-            url: 'http://localhost:5003',
+            url: 'http://localhost',
             description: 'Development server',
           },
         ],
@@ -76,6 +76,9 @@ export default class AppRouter {
         './src/structure/modules/*/types.d.ts',
         './src/structure/modules/*/*/entity.d.ts',
         './src/structure/modules/*/*/types.d.ts',
+        './src/tools/websocket/docs/index.ts',
+        './src/tools/websocket/dto.d.ts',
+        './src/tools/websocket/entities.d.ts',
       ],
     };
 

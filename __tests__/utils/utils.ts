@@ -14,10 +14,6 @@ export default class Utils {
     return this._messages;
   }
 
-  private set messages(value: ISocketOutMessage[]) {
-    this._messages = value;
-  }
-
   generateAccessToken = (id: string, type: types.EUserTypes): string => {
     return jwt.sign({ id, type }, getConfig().accessToken, {
       expiresIn: enums.jwtTime.TokenMaxAge,
@@ -30,13 +26,9 @@ export default class Utils {
     });
   };
 
-  cleanUp(): void {
-    this.messages = [];
-  }
-
   async createSocketConnection(token?: string): Promise<void> {
     return new Promise((resolve) => {
-      this.socket = new Websocket(`ws://localhost:${getConfig().socketPort}`, {
+      this.socket = new Websocket(`ws://localhost:${getConfig().socketPort}/ws`, {
         headers: token === undefined ? {} : { Authorization: `Bearer: ${token}` },
       });
       this.socket.on('open', () => {

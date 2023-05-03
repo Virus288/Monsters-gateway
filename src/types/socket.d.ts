@@ -1,6 +1,28 @@
 import type { WebSocket } from 'ws';
 import type * as enums from '../enums';
-import type { IGetMessageDto, IReadMessageDto, ISendMessageDto } from '../tools/websocket/types/dto';
+import type { IGetMessageDto, IReadMessageDto } from '../tools/websocket/dto';
+
+export interface ISendMessageDto {
+  body: string;
+  receiver: string;
+  sender: string;
+}
+
+export interface ISocketPayload {
+  [enums.EMessageSubTargets.Send]: ISendMessageDto;
+  [enums.EMessageSubTargets.Get]: IGetMessageDto;
+  [enums.EMessageSubTargets.Read]: IReadMessageDto;
+  [enums.EMessageSubTargets.GetUnread]: IGetMessageDto;
+}
+
+export interface ISocket extends WebSocket {
+  userId?: string;
+}
+
+export interface ISocketSubTargets {
+  [enums.ESocketTargets.Messages]: enums.EMessageSubTargets;
+  [enums.ESocketTargets.Chat]: enums.EMessageSubTargets;
+}
 
 export interface ISocketInMessage {
   target: enums.ESocketTargets;
@@ -14,28 +36,26 @@ export interface ISocketUser {
   type: enums.EUserTypes;
 }
 
-export interface ISocketSubTargets {
-  [enums.ESocketTargets.Messages]: enums.EMessageSubTargets;
-  [enums.ESocketTargets.Chat]: enums.EMessageSubTargets;
+export interface ISocketOutMessage {
+  type: enums.ESocketType;
+  payload: unknown;
 }
 
-export interface ISocketPayload {
-  [enums.EMessageSubTargets.Send]: ISendMessageDto;
-  [enums.EMessageSubTargets.Get]: IGetMessageDto;
-  [enums.EMessageSubTargets.Read]: IReadMessageDto;
-  [enums.EMessageSubTargets.GetUnread]: IGetMessageDto;
-}
-
-export interface ISocketSendMessage {
+export interface ISocketSendMessageBody {
   target: string;
   message: string;
 }
 
-export interface ISocket extends WebSocket {
-  userId?: string;
+export interface IReadMessageBody {
+  chatId: string;
+  user: string;
 }
 
-export interface ISocketOutMessage {
-  type: enums.ESocketType;
-  payload: unknown;
+export interface IGetDetailedBody {
+  page: number;
+  target: string;
+}
+
+export interface IGetMessageBody {
+  page: number;
 }

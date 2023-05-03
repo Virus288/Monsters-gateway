@@ -1,10 +1,10 @@
 import type * as types from '../../types';
+import type { IGetMessageBody, IReadMessageBody, ISocketSendMessageBody } from '../../types';
 import * as errors from '../../errors';
 import * as enums from '../../enums';
 import { EConnectionType, EServices } from '../../enums';
 import State from '../state';
 import Validation from './validation';
-import type { IGetMessageDto, IReadMessageDto, ISendMessageDto } from './types/dto';
 
 export default class Router {
   private readonly _validator: Validation;
@@ -22,13 +22,13 @@ export default class Router {
 
     switch (message.subTarget) {
       case enums.EMessageSubTargets.Send:
-        return this.sendMessage(message.payload as types.ISocketSendMessage, ws);
+        return this.sendMessage(message.payload as ISocketSendMessageBody, ws);
       case enums.EMessageSubTargets.Read:
-        return this.readMessage(message.payload as IReadMessageDto, ws);
+        return this.readMessage(message.payload as IReadMessageBody, ws);
       case enums.EMessageSubTargets.Get:
-        return this.getMessage(message.payload as IGetMessageDto, ws);
+        return this.getMessage(message.payload as IGetMessageBody, ws);
       case enums.EMessageSubTargets.GetUnread:
-        return this.getUnread(message.payload as IGetMessageDto, ws);
+        return this.getUnread(message.payload as IGetMessageBody, ws);
       default:
         return this.handleError(new errors.IncorrectTargetError(), ws);
     }
@@ -49,14 +49,14 @@ export default class Router {
     return ws.send(body);
   }
 
-  private sendMessage(data: types.ISocketSendMessage, ws: types.ISocket): void {
+  private sendMessage(data: ISocketSendMessageBody, ws: types.ISocket): void {
     this.validator.validateSendMessage(data);
     const { message, target } = data;
 
     const isOnline = State.socket.isOnline(target);
     if (isOnline) State.socket.sendToUser(target, message);
 
-    const prepared: ISendMessageDto = {
+    const prepared: types.ISendMessageDto = {
       body: data.message,
       receiver: data.target,
       sender: ws.userId,
@@ -71,7 +71,7 @@ export default class Router {
     );
   }
 
-  private readMessage(data: IReadMessageDto, ws: types.ISocket): void {
+  private readMessage(data: IReadMessageBody, ws: types.ISocket): void {
     this.validator.validateReadMessage(data);
 
     State.broker.sendLocally(
@@ -83,7 +83,7 @@ export default class Router {
     );
   }
 
-  private getMessage(data: IGetMessageDto, ws: types.ISocket): void {
+  private getMessage(data: IGetMessageBody, ws: types.ISocket): void {
     this.validator.validateGetMessage(data);
 
     State.broker.sendLocally(
@@ -95,7 +95,7 @@ export default class Router {
     );
   }
 
-  private getUnread(data: IGetMessageDto, ws: types.ISocket): void {
+  private getUnread(data: IGetMessageBody, ws: types.ISocket): void {
     this.validator.validateGetMessage(data);
 
     State.broker.sendLocally(

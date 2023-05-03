@@ -34,6 +34,7 @@ export default class WebsocketServer {
   init(): void {
     this._server = new Websocket.Server({
       port: getConfig().socketPort,
+      path: '/ws',
     });
     Log.log('Socket', `Started socket on port ${getConfig().socketPort}`);
     this.startListeners();
@@ -107,11 +108,12 @@ export default class WebsocketServer {
           ...this.users[isAlreadyOnline],
           clients: [...this.users[isAlreadyOnline].clients, ws],
         };
-      } else {
-        this._users.push({ clients: [ws], userId: id, type });
+        return undefined;
       }
+      this._users.push({ clients: [ws], userId: id, type });
+      return undefined;
     } catch (err) {
-      ws.close(1000, errBody);
+      return ws.close(1000, errBody);
     }
   }
 
