@@ -4,6 +4,7 @@ import refresh from './modules/users/refreshToken/router';
 import getProfileRouter from './modules/profiles/get/router';
 import addProfileRouter from './modules/profiles/add/router';
 import detailsRouter from './modules/users/details/router';
+import removeRouter from './modules/users/remove/router';
 import type { Router } from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -31,7 +32,7 @@ export default class AppRouter {
     const users = '/users';
 
     this.router.use(profiles, addProfileRouter.router).use(profiles, getProfileRouter.router);
-    this.router.use(users, refresh.router).use(users, detailsRouter.router);
+    this.router.use(users, refresh.router).use(users, detailsRouter.router).use(users, removeRouter.router);
   }
 
   generateDocumentation(): void {

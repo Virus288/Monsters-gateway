@@ -1,6 +1,7 @@
 import Router from './index';
 import handleErr from '../../../../errors/utils';
 import type * as types from '../../../../types';
+import limitRate from '../../../utils';
 
 const service = new Router();
 
@@ -39,7 +40,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-service.router.post('/', (req, res: types.ILocalUser) => {
+service.router.post('/', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.post(req, res);
   } catch (err) {

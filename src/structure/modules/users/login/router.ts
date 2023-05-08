@@ -1,7 +1,7 @@
 import Router from './index';
 import type * as types from '../../../../types';
 import handleErr from '../../../../errors/utils';
-import limitRate from '../../utils';
+import limitRate from '../../../utils';
 
 const service = new Router();
 

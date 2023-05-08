@@ -1,6 +1,7 @@
 export enum EUserMainTargets {
   User = 'user',
   Profile = 'profile',
+  Shared = 'shared',
 }
 
 export enum EMessageMainTargets {
@@ -17,4 +18,8 @@ export enum EUserTargets {
 export enum EProfileTargets {
   Create = 'createProfile',
   Get = 'getProfile',
+}
+
+export enum ESharedTargets {
+  RemoveUser = 'removeUser',
 }
