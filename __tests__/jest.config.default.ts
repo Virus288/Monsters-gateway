@@ -7,6 +7,10 @@ const config: Config = {
   testPathIgnorePatterns: ['build'],
   preset: 'ts-jest',
   testMatch: ['**/*.test.ts'],
+  transform: {
+    '^.+\\.(t|j)sx?$': '@swc/jest',
+  },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!(mongodb-memory-server/index.d.ts))'],
   testEnvironment: 'node',
   forceExit: true,
   clearMocks: true,
