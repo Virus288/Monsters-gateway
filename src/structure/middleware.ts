@@ -11,6 +11,7 @@ import type * as types from '../types';
 import handleErr from '../errors/utils';
 import { verify } from '../tools/token';
 import helmet from 'helmet';
+import State from '../tools/state';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
@@ -46,23 +47,21 @@ export default class Middleware {
           Log.error('Middleware', 'Generic err', err.name);
           const { message, code, name, status } = new InternalError();
           return res.status(status).json({ message, code, name });
-        } else {
-          const error = err as types.IFullError;
-          if (error.code !== undefined) {
-            const { message, code, name, status } = error;
-            return res.status(status).json({ message, code, name });
-          } else {
-            Log.error('Middleware', 'Generic err', err.name);
-            const { message, code, name, status } = new InternalError();
-            return res.status(status).json({ message, code, name });
-          }
         }
+        const error = err as types.IFullError;
+        if (error.code !== undefined) {
+          const { message, code, name, status } = error;
+          return res.status(status).json({ message, code, name });
+        }
+        Log.error('Middleware', 'Generic err', err.name);
+        const { message, code, name, status } = new InternalError();
+        return res.status(status).json({ message, code, name });
       },
     );
   }
 
   userValidation(app: express.Express): void {
-    app.use((req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+    app.use(async (req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
       let access: string;
       if (req.headers.authorization) {
         const key = req.headers.authorization;
@@ -73,8 +72,12 @@ export default class Middleware {
 
       try {
         if (!access) throw new errors.UnauthorizedError();
-        verify(res, access);
-        next();
+        const { id } = verify(res, access);
+
+        const user = await State.redis.getRemovedUsers(id);
+        if (user) throw new errors.UnauthorizedError();
+
+        return next();
       } catch (err) {
         return handleErr(new errors.UnauthorizedError(), res);
       }

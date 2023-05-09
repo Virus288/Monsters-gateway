@@ -13,4 +13,6 @@ export interface IConfigInterface {
   corsOrigin: string;
   httpPort: number;
   socketPort: number;
+  redisTestURI: string;
+  redisURI: string;
 }

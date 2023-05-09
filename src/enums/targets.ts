@@ -1,7 +1,6 @@
 export enum EUserMainTargets {
   User = 'user',
   Profile = 'profile',
-  Shared = 'shared',
 }
 
 export enum EMessageMainTargets {

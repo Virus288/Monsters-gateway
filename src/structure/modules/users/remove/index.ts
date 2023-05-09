@@ -11,7 +11,7 @@ export default class UserRouter extends RouterFactory {
     const data = new RemoveUserDto(req.body as RemoveUserDto);
 
     State.broker.sendLocally(
-      enums.EUserMainTargets.Shared,
+      enums.EUserMainTargets.User,
       enums.ESharedTargets.RemoveUser,
       { target: EConnectionType.Api, res },
       data,
