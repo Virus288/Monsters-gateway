@@ -18,3 +18,7 @@ export enum EProfileTargets {
   Create = 'createProfile',
   Get = 'getProfile',
 }
+
+export enum ESharedTargets {
+  RemoveUser = 'removeUser',
+}

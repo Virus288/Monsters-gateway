@@ -1,5 +1,6 @@
 {
   "amqpURI": "rabbitUrl",
+  "redisURI": "redisUrl",
   "corsOrigin": "*",
   "httpPort": 80,
   "accessToken": "accessToken",

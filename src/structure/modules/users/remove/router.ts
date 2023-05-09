@@ -7,22 +7,22 @@ const service = new Router();
 
 /**
  * @openapi
- * /users/register:
- *   post:
+ * /users:
+ *   delete:
  *     tags:
  *       - user
- *     description: Register user
+ *     description: Remove user
  *     security: []
  *     requestBody:
- *       description: Request body for registering user
+ *       description: Request body for removing user
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/IRegisterDto'
+ *             $ref: '#/components/schemas/IRemoveUserDto'
  *     responses:
  *       200:
- *         description: Success. User registered.
+ *         description: Success. User removed.
  *       400:
  *         description: Bad request.
  *         content:
@@ -33,9 +33,9 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/register', limitRate, (req, res: types.ILocalUser) => {
+service.router.delete('/', limitRate, (req, res: types.ILocalUser) => {
   try {
-    return service.post(req, res);
+    return service.delete(req, res);
   } catch (err) {
     return handleErr(err as types.IFullError, res);
   }

@@ -2,6 +2,7 @@ import type Broker from '../broker';
 import type Router from '../structure';
 import type { IState } from '../types';
 import type WebsocketServer from './websocket';
+import type Redis from './redis';
 
 class State implements IState {
   private _broker: Broker;
@@ -22,6 +23,16 @@ class State implements IState {
 
   set socket(value: WebsocketServer) {
     this._socket = value;
+  }
+
+  private _redis: Redis;
+
+  get redis(): Redis {
+    return this._redis;
+  }
+
+  set redis(value: Redis) {
+    this._redis = value;
   }
 
   private _router: Router;
