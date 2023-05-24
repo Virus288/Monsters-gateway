@@ -1,12 +1,14 @@
+import type * as types from './index';
 import type { IUsersTokens } from './user';
 import type * as enums from '../enums';
-import type * as types from './index';
 
 export type IRabbitSubTargets =
   | enums.EProfileTargets
   | enums.EUserTargets
   | enums.EMessageSubTargets
-  | enums.ESharedTargets;
+  | enums.ESharedTargets
+  | enums.EItemsTargets
+  | enums.EPartyTargets;
 
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets | enums.EMessageMainTargets;
 

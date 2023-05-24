@@ -1,17 +1,17 @@
-import type { Express } from 'express';
-import express from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
 import * as errors from '../errors';
 import { InternalError } from '../errors';
-import getConfig from '../tools/configLoader';
-import errLogger from '../tools/logger/logger';
-import Log from '../tools/logger/log';
-import type * as types from '../types';
 import handleErr from '../errors/utils';
-import { verify } from '../tools/token';
-import helmet from 'helmet';
+import getConfig from '../tools/configLoader';
+import Log from '../tools/logger/log';
+import errLogger from '../tools/logger/logger';
 import State from '../tools/state';
+import { verify } from '../tools/token';
+import type * as types from '../types';
+import type { Express } from 'express';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
@@ -62,11 +62,11 @@ export default class Middleware {
 
   userValidation(app: express.Express): void {
     app.use(async (req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
-      let access: string;
+      let access: string | undefined = undefined;
       if (req.headers.authorization) {
         const key = req.headers.authorization;
         if (key.includes('Bearer')) {
-          access = req.headers.authorization.split('Bearer')[1].trim();
+          access = req.headers.authorization.split('Bearer')[1]!.trim();
         }
       }
 

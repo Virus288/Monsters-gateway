@@ -5,6 +5,7 @@ import Utils from '../../utils/utils';
 import { EUserRace, EUserTypes } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
+import { IUserEntity } from '../../types';
 import State from '../../../src/tools/state';
 import { MissingArgError } from '../../../src/errors';
 
@@ -15,7 +16,7 @@ describe('Profiles - add', () => {
   const utils = new Utils();
   let accessToken;
   let accessToken2;
-  const fakeUser = fakeData.users[0];
+  const fakeUser = fakeData.users[0] as IUserEntity;
   const { app } = State.router;
 
   beforeAll(async () => {

@@ -1,8 +1,8 @@
-import type express from 'express';
-import type { ILocalUser } from '../../../../types';
-import { generateToken, verifyRefresh } from '../../../../tools/token';
-import RouterFactory from '../../../../tools/abstracts/router';
 import { IncorrectRefreshTokenError } from '../../../../errors';
+import RouterFactory from '../../../../tools/abstracts/router';
+import { generateToken, verifyRefresh } from '../../../../tools/token';
+import type { ILocalUser } from '../../../../types';
+import type express from 'express';
 
 export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {

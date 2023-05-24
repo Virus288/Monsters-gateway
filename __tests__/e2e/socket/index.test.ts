@@ -5,11 +5,12 @@ import * as enums from '../../../src/enums';
 import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
 import * as errors from '../../../src/errors';
 import { IFullError, ISocketInMessage, ISocketOutMessage } from '../../../src/types';
+import { IUserEntity } from '../../types';
 
 describe('Socket - generic tests', () => {
   const utils = new Utils();
-  const fakeUser = fakeData.users[0];
-  const fakeUser2 = fakeData.users[1];
+  const fakeUser = fakeData.users[0] as IUserEntity;
+  const fakeUser2 = fakeData.users[1] as IUserEntity;
   const accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
   const accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
   const message: ISocketInMessage = {
@@ -46,7 +47,7 @@ describe('Socket - generic tests', () => {
     describe('No data passed', () => {
       it(`Target not provided`, async () => {
         const clone = structuredClone(message);
-        delete clone.target;
+        clone.target = undefined!;
 
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();
@@ -59,7 +60,7 @@ describe('Socket - generic tests', () => {
 
       it(`SubTarget not provided`, async () => {
         const clone = structuredClone(message);
-        delete clone.subTarget;
+        clone.subTarget = undefined!;
 
         await utils.sendMessage(clone);
         const { payload } = utils.getLastMessage();

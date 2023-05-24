@@ -1,11 +1,11 @@
-import type express from 'express';
-import State from '../../../../tools/state';
+import LoginDto from './dto';
 import * as enums from '../../../../enums';
 import { EConnectionType, EServices } from '../../../../enums';
-import type { ILocalUser } from '../../../../types';
-import { verify } from '../../../../tools/token';
-import LoginDto from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
+import State from '../../../../tools/state';
+import { verify } from '../../../../tools/token';
+import type { ILocalUser } from '../../../../types';
+import type express from 'express';
 
 export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {
@@ -13,7 +13,7 @@ export default class UserRouter extends RouterFactory {
     if (req.headers.authorization) {
       const key = req.headers.authorization;
       if (!key.includes('Bearer')) return;
-      access = req.headers.authorization.split('Bearer')[1].trim();
+      access = req.headers.authorization.split('Bearer')[1]!.trim();
     }
 
     const { type } = verify(res, access);

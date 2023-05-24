@@ -1,15 +1,11 @@
-import login from './modules/users/login/router';
-import register from './modules/users/register/router';
-import refresh from './modules/users/refreshToken/router';
-import getProfileRouter from './modules/profiles/get/router';
-import addProfileRouter from './modules/profiles/add/router';
-import detailsRouter from './modules/users/details/router';
-import removeRouter from './modules/users/remove/router';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import item from './modules/inventory';
+import profile from './modules/profiles';
+import user from './modules/users';
+import { version } from '../../package.json';
 import type { Router } from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
-import swaggerJSDoc from 'swagger-jsdoc';
-import { version } from '../../package.json';
-import swaggerUi from 'swagger-ui-express';
 
 export default class AppRouter {
   private readonly _router: Router;
@@ -24,15 +20,17 @@ export default class AppRouter {
 
   initRoutes(): void {
     const users = '/users';
-    this.router.use(users, login.router).use(users, register.router);
+    this.router.use(users, user.login).use(users, user.register);
   }
 
   initSecured(): void {
-    const profiles = '/profile';
     const users = '/users';
+    const profiles = '/profile';
+    const inventories = '/inventory';
 
-    this.router.use(profiles, addProfileRouter.router).use(profiles, getProfileRouter.router);
-    this.router.use(users, refresh.router).use(users, detailsRouter.router).use(users, removeRouter.router);
+    this.router.use(profiles, profile.add).use(profiles, profile.get);
+    this.router.use(users, user.refreshToken).use(users, user.getDetails).use(users, user.remove);
+    this.router.use(inventories, item.drop).use(inventories, item.use).use(inventories, item.get);
   }
 
   generateDocumentation(): void {

@@ -1,37 +1,38 @@
+import amqplib from 'amqplib';
+import Controller from './controller';
 import * as enums from '../enums';
 import { EConnectionType, ESocketType } from '../enums';
-import type * as types from '../types';
-import amqplib from 'amqplib';
-import getConfig from '../tools/configLoader';
-import type Communicator from './controller';
-import Controller from './controller';
-import type { FullError } from '../errors';
 import { InternalError } from '../errors';
+import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import State from '../tools/state';
+import type Communicator from './controller';
+import type { FullError } from '../errors';
+import type * as types from '../types';
 
 export default class Broker {
-  R;
-  private _retryTimeout: NodeJS.Timeout;
-  private _connection: amqplib.Connection;
+  private _retryTimeout: NodeJS.Timeout | null = null;
+  private _connection: amqplib.Connection | null = null;
   private _connectionTries = 0;
-  private _channel: amqplib.Channel;
+  private _channel: amqplib.Channel | null = null;
   private _channelTries = 0;
   private _services: {
-    [key in types.IAvailableServices]: { timeout: NodeJS.Timeout; retries: number; dead: boolean };
+    [key in types.IAvailableServices]: { timeout: NodeJS.Timeout | null; retries: number; dead: boolean };
   } = {
     [enums.EServices.Users]: { timeout: null, retries: 0, dead: true },
     [enums.EServices.Messages]: { timeout: null, retries: 0, dead: true },
   };
+  private readonly _controller: Controller;
 
-  private _controller: Controller;
+  constructor() {
+    this._controller = new Controller();
+  }
 
   private get controller(): Communicator {
     return this._controller;
   }
 
   init(): void {
-    this._controller = new Controller();
     this.initCommunication();
   }
 
@@ -44,14 +45,13 @@ export default class Broker {
   ): void {
     const queue = this._services[service as types.IAvailableServices];
     if (queue.dead) return this.sendError(res, new InternalError());
-    return this.controller.sendLocally(target, subTarget, res, payload, service, this._channel);
+    return this.controller.sendLocally(target, subTarget, res, payload, service, this._channel!);
   }
 
   close(): void {
     if (this._retryTimeout) clearTimeout(this._retryTimeout);
     this.cleanAll();
-    this._connection
-      .close()
+    this._connection!.close()
       .then(() => {
         if (this._retryTimeout) clearTimeout(this._retryTimeout);
         this.cleanAll();
@@ -65,7 +65,7 @@ export default class Broker {
   }
 
   private initCommunication(): void {
-    if (this._connectionTries++ > enums.ERabbit.RetryLimit) {
+    if (this._connectionTries++ > Number(enums.ERabbit.RetryLimit)) {
       Log.error('Rabbit', 'Gave up connecting to rabbit. Is rabbit dead?');
       return;
     }
@@ -88,12 +88,11 @@ export default class Broker {
 
   private createChannels(): void {
     if (this._channel) return;
-    if (this._channelTries++ > parseInt(enums.ERabbit.RetryLimit.toString())) {
+    if (this._channelTries++ > parseInt(Number(enums.ERabbit.RetryLimit).toString())) {
       Log.error('Rabbit', 'Error creating rabbit connection channel, stopped retrying');
     }
 
-    this._connection
-      .createChannel()
+    this._connection!.createChannel()
       .then((channel) => {
         Log.log('Rabbit', 'Channel connected');
         this._channel = channel;
@@ -114,11 +113,11 @@ export default class Broker {
   private async createQueue(): Promise<void> {
     await Promise.all(
       Object.values(enums.EAmqQueues).map(async (queue) => {
-        await this._channel.assertQueue(queue, { durable: true });
+        await this._channel!.assertQueue(queue, { durable: true });
       }),
     );
 
-    await this._channel.consume(
+    await this._channel!.consume(
       enums.EAmqQueues.Gateway,
       (message) => {
         if (!message) return Log.warn('Rabbit', 'Received empty message');
@@ -135,7 +134,7 @@ export default class Broker {
 
   private validateHeartbeat(target: types.IAvailableServices): void {
     const service = this._services[target];
-    clearTimeout(service.timeout);
+    clearTimeout(service.timeout!);
 
     if (service.dead) {
       Log.log(target, 'Resurrected');
@@ -172,24 +171,24 @@ export default class Broker {
       });
     } else {
       Log.warn(target, `Is down!. Trying to connect for ${service.retries + 1} time.`);
-      this.controller.sendHeartbeat(this._channel, target);
+      this.controller.sendHeartbeat(this._channel!, target);
       service.timeout = setTimeout(() => this.retryHeartbeat(target), 5000);
       service.retries++;
     }
   }
 
   private checkHeartbeat(target: types.IAvailableServices): void {
-    this.controller.sendHeartbeat(this._channel, target);
+    this.controller.sendHeartbeat(this._channel!, target);
     this._services[target].timeout = setTimeout(() => this.retryHeartbeat(target), 5000);
   }
 
   private closeDeadQueue = async (target: types.IAvailableServices): Promise<void> => {
     switch (target) {
       case enums.EServices.Users:
-        await this._channel.purgeQueue(enums.EAmqQueues.Users);
+        await this._channel!.purgeQueue(enums.EAmqQueues.Users);
         break;
       case enums.EServices.Messages:
-        await this._channel.purgeQueue(enums.EAmqQueues.Messages);
+        await this._channel!.purgeQueue(enums.EAmqQueues.Messages);
         break;
       default:
         Log.error('Socket', 'Got req to close socket that does not exist');
@@ -203,12 +202,12 @@ export default class Broker {
     }
     await Promise.all(
       Object.values(enums.EAmqQueues).map(async (queue) => {
-        await this._channel.purgeQueue(queue);
-        await this._channel.deleteQueue(queue);
+        await this._channel!.purgeQueue(queue);
+        await this._channel!.deleteQueue(queue);
       }),
     );
 
-    await this._channel.close();
+    await this._channel!.close();
     this._channel = null;
     this._channelTries = 0;
   }
@@ -229,9 +228,9 @@ export default class Broker {
     this._channel = null;
     this._connectionTries = 0;
     this._channelTries = 0;
-    clearTimeout(this._retryTimeout);
+    clearTimeout(this._retryTimeout!);
     Object.entries(this._services).forEach((s) => {
-      clearTimeout(s[1].timeout);
+      clearTimeout(s[1].timeout!);
       delete this._services[s[0]];
     });
   }
@@ -249,7 +248,6 @@ export default class Broker {
     if (target === EConnectionType.Socket) {
       State.socket.sendToUser(res as string, { message, code, name, status }, ESocketType.Error);
     } else {
-      1;
       const localUser = res as types.ILocalUser;
       localUser.status(status).send(JSON.stringify({ message, code, name }));
     }

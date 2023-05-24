@@ -5,12 +5,12 @@ import * as enums from '../../../src/enums';
 import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
 import * as errors from '../../../src/errors';
 import { IFullError, ISocketInMessage } from '../../../src/types';
-import { IFullMessageEntity } from '../../types';
+import { IFullMessageEntity, IUserEntity } from '../../types';
 
 describe('Socket - chat', () => {
   const utils = new Utils();
-  const fakeUser = fakeData.users[0];
-  const fakeUser2 = fakeData.users[1];
+  const fakeUser = fakeData.users[0] as IUserEntity;
+  const fakeUser2 = fakeData.users[1] as IUserEntity;
   const accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
   const accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
   const message: ISocketInMessage = {
@@ -86,7 +86,7 @@ describe('Socket - chat', () => {
       await secondConnection.sendMessage(getMessage);
       const userMessage = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage.payload).length).toBeGreaterThan(0);
+      expect(Object.keys(userMessage.payload as Record<string, string>).length).toBeGreaterThan(0);
       await secondConnection.killSocket();
     });
 
@@ -101,7 +101,7 @@ describe('Socket - chat', () => {
 
       await secondConnection.sendMessage({
         ...readMessage,
-        payload: { chatId: Object.keys(userMessage.payload)[0], user: fakeUser2._id },
+        payload: { chatId: Object.keys(userMessage.payload as Record<string, string>)[0], user: fakeUser2._id },
       });
 
       const userMessage2 = secondConnection.getLastMessage();
@@ -111,7 +111,7 @@ describe('Socket - chat', () => {
       await secondConnection.sendMessage(getUnread);
       const userMessage3 = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage3.payload).length).toEqual(0);
+      expect(Object.keys(userMessage3.payload as Record<string, string>).length).toEqual(0);
       await secondConnection.killSocket();
     });
 
@@ -124,11 +124,11 @@ describe('Socket - chat', () => {
       await secondConnection.sendMessage(getMessage);
       const userMessage = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage.payload).length).toBeGreaterThan(0);
+      expect(Object.keys(userMessage.payload as Record<string, string>).length).toBeGreaterThan(0);
 
       await secondConnection.sendMessage({
         ...getWithDetails,
-        payload: { ...getWithDetails.payload, target: Object.keys(userMessage.payload)[0] },
+        payload: { ...getWithDetails.payload, target: Object.keys(userMessage.payload as Record<string, string>)[0] },
       });
       const userMessage2 = secondConnection.getLastMessage();
       const payload = userMessage2.payload as IFullMessageEntity[];

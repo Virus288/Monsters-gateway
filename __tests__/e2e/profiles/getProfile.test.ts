@@ -5,6 +5,7 @@ import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
 import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
+import { IUserEntity } from '../../types';
 import { EUserTypes } from '../../../src/enums';
 import State from '../../../src/tools/state';
 
@@ -14,7 +15,7 @@ describe('Profiles = get', () => {
   };
   const utils = new Utils();
   let accessToken;
-  const fakeUser = fakeData.users[0];
+  const fakeUser = fakeData.users[0] as IUserEntity;
   const { app } = State.router;
 
   beforeAll(async () => {
