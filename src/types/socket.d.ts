@@ -1,6 +1,6 @@
-import type { WebSocket } from 'ws';
 import type * as enums from '../enums';
 import type { IGetMessageDto, IReadMessageDto } from '../tools/websocket/dto';
+import type { WebSocket } from 'ws';
 
 export interface ISendMessageDto {
   body: string;
@@ -16,7 +16,7 @@ export interface ISocketPayload {
 }
 
 export interface ISocket extends WebSocket {
-  userId?: string;
+  userId: string;
 }
 
 export interface ISocketSubTargets {

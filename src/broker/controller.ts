@@ -1,13 +1,12 @@
-import type * as types from '../types';
-import type { IWebsocketRabbitTarget } from '../types';
 import * as enums from '../enums';
 import { EConnectionType, ESocketType, EUserTypes } from '../enums';
-import type amqplib from 'amqplib';
-import type { FullError } from '../errors';
 import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
-import { generateTempId } from '../utils';
 import State from '../tools/state';
+import { generateTempId } from '../utils';
+import type { FullError } from '../errors';
+import type * as types from '../types';
+import type amqplib from 'amqplib';
 
 export default class Communicator {
   private _queue: types.ICommunicationQueue = {
@@ -17,10 +16,6 @@ export default class Communicator {
 
   get queue(): types.ICommunicationQueue {
     return this._queue;
-  }
-
-  set queue(value: types.ICommunicationQueue) {
-    this._queue = value;
   }
 
   sendLocally<T extends enums.EConnectionType>(
@@ -34,8 +29,8 @@ export default class Communicator {
     const tempId = generateTempId();
     const body: types.IRabbitMessage = {
       user: {
+        tempId,
         userId: undefined,
-        tempId: undefined,
         validated: false,
         type: EUserTypes.User,
       },
@@ -51,7 +46,7 @@ export default class Communicator {
       body.user = {
         ...body.user,
         userId: localUser.locals.userId,
-        tempId: tempId,
+        tempId,
         validated: localUser.locals.validated,
         type: localUser.locals.type,
       };
@@ -61,8 +56,9 @@ export default class Communicator {
       body.user = {
         ...body.user,
         userId: userTarget.id,
-        tempId: tempId,
+        tempId,
         validated: true,
+        type: EUserTypes.User,
       };
     }
 
@@ -73,6 +69,8 @@ export default class Communicator {
       case enums.EServices.Messages:
         channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)));
         return;
+      default:
+        throw new Error('Incorrect service target');
     }
   }
 
@@ -80,7 +78,7 @@ export default class Communicator {
     const body: types.IRabbitMessage = {
       user: undefined,
       payload: undefined,
-      subTarget: undefined,
+      subTarget: enums.EMessageSubTargets.Send,
       target: enums.EMessageTypes.Heartbeat,
     };
 
@@ -91,13 +89,15 @@ export default class Communicator {
       case enums.EServices.Messages:
         channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)));
         return;
+      default:
+        throw new Error('Unknown message target');
     }
   };
 
   sendExternally(payload: types.IRabbitMessage): void {
     Log.log('Server', 'Got new message');
     Log.log('Server', JSON.stringify(payload));
-    const target = this.findTarget(payload.user.userId ?? payload.user.tempId, true);
+    const target = this.findTarget(payload.user!.userId ?? payload.user!.tempId, true);
 
     if (target.type === EConnectionType.Socket) {
       return this.sendWs(target.target as types.IWebsocketRabbitTarget, payload);
@@ -158,21 +158,21 @@ export default class Communicator {
     remove = false,
   ): {
     type: EConnectionType;
-    target: types.ILocalUser | IWebsocketRabbitTarget;
+    target: types.ILocalUser | types.IWebsocketRabbitTarget;
   } {
     const api = Object.keys(this.queue.api).find((e) => {
       return e === target;
     });
     if (api) {
-      const res = { target: this.queue.api[api].user, type: enums.EConnectionType.Api };
+      const res = { target: this.queue.api[api]!.user, type: enums.EConnectionType.Api };
       if (remove) delete this.queue.api[api];
       return res;
     }
 
     const socket = Object.keys(this.queue.socket).find((e) => {
       return e === target;
-    });
-    const res = { target: this.queue.socket[socket].user, type: enums.EConnectionType.Socket };
+    })!;
+    const res = { target: this.queue.socket[socket]!.user, type: enums.EConnectionType.Socket };
     if (remove) delete this.queue.socket[socket];
     return res;
   }

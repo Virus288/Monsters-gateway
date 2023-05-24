@@ -1,11 +1,11 @@
-import type { RedisClientType } from 'redis';
 import { createClient } from 'redis';
+import { RedisMemoryServer } from 'redis-memory-server';
+import Rooster from './rooster';
+import * as enums from '../../enums';
 import getConfig from '../configLoader';
 import Log from '../logger/log';
-import Rooster from './rooster';
-import { RedisMemoryServer } from 'redis-memory-server';
+import type { RedisClientType } from 'redis';
 import * as process from 'process';
-import * as enums from '../../enums';
 
 export default class Redis {
   private readonly _client: RedisClientType;

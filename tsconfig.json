@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "es2022",
     "module": "NodeNext",
     "types": [
       "node",
@@ -19,17 +19,21 @@
     "declarationMap": false,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "incremental": true,
-    "isolatedModules": false,
+    "inlineSources": true,
+    "isolatedModules": true,
     "moduleResolution": "node",
     "noEmit": false,
+    "noEmitOnError": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "build",
@@ -42,8 +46,8 @@
     "strict": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
-    "strictNullChecks": false,
-    "strictPropertyInitialization": false,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
     "sourceMap": true
   },
   "ts-node": {

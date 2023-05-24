@@ -1,5 +1,5 @@
-import type { IGetMessageBody, IReadMessageBody, ISocketInMessage, ISocketSendMessageBody } from '../../types';
 import * as errors from '../../errors';
+import type { IGetMessageBody, IReadMessageBody, ISocketInMessage, ISocketSendMessageBody } from '../../types';
 
 export default class Validation {
   preValidate(data: ISocketInMessage): void {

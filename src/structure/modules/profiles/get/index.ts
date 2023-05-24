@@ -1,9 +1,9 @@
-import RouterFactory from '../../../../tools/abstracts/router';
-import type express from 'express';
-import type { ILocalUser } from '../../../../types';
-import State from '../../../../tools/state';
 import GetProfileDto from './dto';
 import * as enums from '../../../../enums';
+import RouterFactory from '../../../../tools/abstracts/router';
+import State from '../../../../tools/state';
+import type { ILocalUser } from '../../../../types';
+import type express from 'express';
 
 export default class GetProfileRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {

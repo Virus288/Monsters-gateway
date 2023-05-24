@@ -1,6 +1,6 @@
+import type * as types from './index';
 import type { IUsersTokens } from './user';
 import type * as enums from '../enums';
-import type * as types from './index';
 
 export type IRabbitSubTargets =
   | enums.EProfileTargets

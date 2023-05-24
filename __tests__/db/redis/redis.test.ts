@@ -4,7 +4,7 @@ import fakeData from '../../fakeData.json';
 import { IUserEntity } from '../../types';
 
 describe('Redis', () => {
-  const fakeUser: IUserEntity = fakeData.users[0];
+  const fakeUser: IUserEntity = fakeData.users[0] as IUserEntity;
 
   describe('Should pass', () => {
     it(`No data in redis`, async () => {

@@ -1,15 +1,15 @@
-import login from './modules/users/login/router';
-import register from './modules/users/register/router';
-import refresh from './modules/users/refreshToken/router';
-import getProfileRouter from './modules/profiles/get/router';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import addProfileRouter from './modules/profiles/add/router';
+import getProfileRouter from './modules/profiles/get/router';
 import detailsRouter from './modules/users/details/router';
+import login from './modules/users/login/router';
+import refresh from './modules/users/refreshToken/router';
+import register from './modules/users/register/router';
 import removeRouter from './modules/users/remove/router';
+import { version } from '../../package.json';
 import type { Router } from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
-import swaggerJSDoc from 'swagger-jsdoc';
-import { version } from '../../package.json';
-import swaggerUi from 'swagger-ui-express';
 
 export default class AppRouter {
   private readonly _router: Router;

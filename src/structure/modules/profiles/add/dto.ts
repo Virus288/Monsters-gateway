@@ -1,6 +1,6 @@
+import * as errors from '../../../../errors';
 import type { IAddProfileDto } from './types';
 import type { EUserRace } from '../../../../enums';
-import * as errors from '../../../../errors';
 
 export default class AddProfileDto implements IAddProfileDto {
   race: EUserRace;

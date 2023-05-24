@@ -1,11 +1,11 @@
+import express from 'express';
 import Middleware from './middleware';
-import http from 'http';
+import AppRouter from './router';
+import * as errors from '../errors';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import type * as types from '../types';
-import * as errors from '../errors';
-import AppRouter from './router';
-import express from 'express';
+import http from 'http';
 
 export default class Router {
   private readonly _middleware: Middleware;
@@ -30,10 +30,10 @@ export default class Router {
     return this._middleware;
   }
 
-  private _server: http.Server;
+  private _server: http.Server | undefined = undefined;
 
   private get server(): http.Server {
-    return this._server;
+    return this._server!;
   }
 
   init(): void {

@@ -1,6 +1,6 @@
 import rateLimit from 'express-rate-limit';
-import * as process from 'process';
 import type express from 'express';
+import * as process from 'process';
 
 const limiter =
   process.env.NODE_ENV === 'test'

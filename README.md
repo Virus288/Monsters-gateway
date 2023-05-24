@@ -52,3 +52,7 @@ yarn test:watch = run tests in 'watch' mode
 ```
 
 #### Alongside tests, this app includes 'test mode' which will help you run e2e tests. It runs in memory instance of mongoDB and fill it with "fakeData.json" data
+
+### 3,3 Docs
+
+#### This project is using swagger docs. You can access them by route http://localhost:5008/docs

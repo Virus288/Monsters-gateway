@@ -55,7 +55,6 @@ export default class Log {
       case enums.ELogTypes.Log:
       default:
         errLogger.info(mess);
-        return;
     }
   }
 }

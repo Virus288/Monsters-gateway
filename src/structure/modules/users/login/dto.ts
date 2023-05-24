@@ -1,5 +1,5 @@
-import type { ILoginDto } from './types';
 import * as errors from '../../../../errors';
+import type { ILoginDto } from './types';
 
 export default class LoginDto implements ILoginDto {
   login: string;

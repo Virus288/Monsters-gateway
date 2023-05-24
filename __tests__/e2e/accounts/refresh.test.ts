@@ -6,9 +6,10 @@ import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
 import { IFullError } from '../../../src/types';
 import { IncorrectRefreshTokenError, UnauthorizedError } from '../../../src/errors';
+import { IUserEntity } from '../../types';
 
 describe('Refresh', () => {
-  const fakeUser = fakeData.users[0];
+  const fakeUser = fakeData.users[0] as IUserEntity;
   const utils = new Utils();
   let accessToken;
   let refreshToken;

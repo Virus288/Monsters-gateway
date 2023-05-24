@@ -6,7 +6,7 @@ import Websocket from 'ws';
 import { ISocketInMessage, ISocketOutMessage } from '../../src/types';
 
 export default class Utils {
-  socket: Websocket;
+  socket: Websocket | undefined = undefined;
 
   private _messages: ISocketOutMessage[] = [];
 
@@ -53,7 +53,7 @@ export default class Utils {
   }
 
   async sendMessage(message: ISocketInMessage): Promise<void> {
-    this.socket.send(JSON.stringify(message));
+    this.socket!.send(JSON.stringify(message));
     return new Promise((resolve) => {
       setTimeout(() => resolve(), 1000);
     });
@@ -62,6 +62,6 @@ export default class Utils {
   getLastMessage(): ISocketOutMessage {
     const lastMess = this.messages[this._messages.length - 1];
     this._messages.pop();
-    return lastMess;
+    return lastMess!;
   }
 }

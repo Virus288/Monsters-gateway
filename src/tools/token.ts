@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
+import getConfig from './configLoader';
+import { jwtTime } from '../enums';
 import * as errors from '../errors';
 import type * as enums from '../enums';
-import { jwtTime } from '../enums';
 import type * as types from '../types';
-import getConfig from './configLoader';
 
 export const verify = (res: types.ILocalUser, token: string | null): { id: string; type: enums.EUserTypes } => {
   if (!token) throw new errors.UnauthorizedError();

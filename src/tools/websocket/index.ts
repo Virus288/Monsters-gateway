@@ -1,12 +1,12 @@
-import Websocket from 'ws';
-import Log from '../logger/log';
-import getConfig from '../configLoader';
-import * as errors from '../../errors';
-import type * as types from '../../types';
-import type { ESocketType } from '../../enums';
-import * as enums from '../../enums';
-import Router from './router';
 import jwt from 'jsonwebtoken';
+import Websocket from 'ws';
+import Router from './router';
+import * as enums from '../../enums';
+import * as errors from '../../errors';
+import getConfig from '../configLoader';
+import Log from '../logger/log';
+import type { ESocketType } from '../../enums';
+import type * as types from '../../types';
 
 export default class WebsocketServer {
   private readonly _router: Router;
@@ -25,10 +25,10 @@ export default class WebsocketServer {
     return this._router;
   }
 
-  private _server: Websocket.WebSocketServer;
+  private _server: Websocket.WebSocketServer | null = null;
 
   private get server(): Websocket.WebSocketServer {
-    return this._server;
+    return this._server!;
   }
 
   init(): void {
@@ -51,7 +51,7 @@ export default class WebsocketServer {
   }
 
   startListeners(): void {
-    this.server.on('connection', (ws, req) => {
+    this.server.on('connection', (ws: types.ISocket, req) => {
       this.errorWrapper(() => this.onUserConnected(ws, req.headers.authorization), ws);
     });
     this.server.on('error', (err) => this.handleServerError(err));
@@ -74,7 +74,7 @@ export default class WebsocketServer {
     return exist !== undefined;
   }
 
-  private onUserConnected(ws: types.ISocket, token: string): void {
+  private onUserConnected(ws: types.ISocket, token: string | undefined): void {
     this.validateUser(ws, token);
 
     ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
@@ -83,14 +83,14 @@ export default class WebsocketServer {
     ws.on('close', () => this.userDisconnected(ws));
   }
 
-  private validateUser(ws: types.ISocket, token: string): void {
+  private validateUser(ws: types.ISocket, token: string | undefined): void {
     const errBody = JSON.stringify({
       type: enums.ESocketType.Error,
       payload: new errors.UnauthorizedError(),
     });
 
     if (!token) return ws.close(1000, errBody);
-    const prepared = token.split(' ')[1].trim();
+    const prepared = token.split(' ')[1]!.trim();
 
     try {
       const { id, type } = jwt.verify(prepared, getConfig().accessToken) as {
@@ -106,7 +106,9 @@ export default class WebsocketServer {
       if (isAlreadyOnline > -1) {
         this._users[isAlreadyOnline] = {
           ...this.users[isAlreadyOnline],
-          clients: [...this.users[isAlreadyOnline].clients, ws],
+          userId: this.users[isAlreadyOnline]!.userId,
+          type: this.users[isAlreadyOnline]!.type,
+          clients: [...this.users[isAlreadyOnline]!.clients, ws],
         };
         return undefined;
       }
@@ -125,7 +127,7 @@ export default class WebsocketServer {
   }
 
   private handleUserMessage(mess: string, ws: types.ISocket): void {
-    let message: types.ISocketInMessage = { payload: undefined, subTarget: undefined, target: undefined };
+    let message: types.ISocketInMessage = { payload: undefined, subTarget: undefined!, target: undefined! };
 
     try {
       message = JSON.parse(mess) as types.ISocketInMessage;
