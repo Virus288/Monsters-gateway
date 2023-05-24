@@ -1,5 +1,4 @@
 export enum ESocketTargets {
-  Messages = 'messages',
   Chat = 'chat',
 }
 

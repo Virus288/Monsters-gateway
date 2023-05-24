@@ -6,7 +6,10 @@ export type IRabbitSubTargets =
   | enums.EProfileTargets
   | enums.EUserTargets
   | enums.EMessageSubTargets
-  | enums.ESharedTargets;
+  | enums.ESharedTargets
+  | enums.EItemsTargets
+  | enums.EPartyTargets
+  | enums.EMessageTargets;
 
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets | enums.EMessageMainTargets;
 
