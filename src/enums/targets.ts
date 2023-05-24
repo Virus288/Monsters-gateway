@@ -2,6 +2,7 @@ export enum EUserMainTargets {
   User = 'user',
   Party = 'party',
   Profile = 'profile',
+  Messages = 'messages',
   Inventory = 'inventory',
 }
 
@@ -25,6 +26,13 @@ export enum EItemsTargets {
   Get = 'get',
   Use = 'use',
   Drop = 'drop',
+}
+
+export enum EMessageTargets {
+  Send = 'send',
+  Get = 'get',
+  Read = 'read',
+  GetUnread = 'getUnread',
 }
 
 export enum EPartyTargets {

@@ -1,6 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import item from './modules/inventory';
+import party from './modules/party';
 import profile from './modules/profiles';
 import user from './modules/users';
 import { version } from '../../package.json';
@@ -25,12 +26,14 @@ export default class AppRouter {
 
   initSecured(): void {
     const users = '/users';
+    const parties = '/party';
     const profiles = '/profile';
     const inventories = '/inventory';
 
     this.router.use(profiles, profile.add).use(profiles, profile.get);
     this.router.use(users, user.refreshToken).use(users, user.getDetails).use(users, user.remove);
     this.router.use(inventories, item.drop).use(inventories, item.use).use(inventories, item.get);
+    this.router.use(parties, party.get);
   }
 
   generateDocumentation(): void {

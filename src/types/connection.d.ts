@@ -8,7 +8,8 @@ export type IRabbitSubTargets =
   | enums.EMessageSubTargets
   | enums.ESharedTargets
   | enums.EItemsTargets
-  | enums.EPartyTargets;
+  | enums.EPartyTargets
+  | enums.EMessageTargets;
 
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets | enums.EMessageMainTargets;
 

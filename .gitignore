@@ -26,6 +26,10 @@ yarn.lock
 # Optional eslint cache
 .eslintcache
 
+# Swc cache
+swc/
+.swc/
+
 # Misc
 .DS_Store
 dist/

@@ -26,7 +26,7 @@
  *        - bearerAuth: []
  *      tags:
  *        - websocket
- *      description: Request to get user messages
+ *      description: Request to get user chat messages
  *      requestBody:
  *        description: Request body getting user messages
  *        required: true
@@ -59,7 +59,7 @@
  *        - websocket
  *      description: Read message.
  *      requestBody:
- *        description: Request body read user message
+ *        description: Request body read user chat message
  *        required: true
  *        content:
  *          application/json:
@@ -120,7 +120,7 @@
  *        - bearerAuth: []
  *      tags:
  *        - websocket
- *      description: Get messages from 1 conversion with details.
+ *      description: Get chat messages from 1 conversion with details.
  *      requestBody:
  *        description: Request body to get detailed messages
  *        required: true

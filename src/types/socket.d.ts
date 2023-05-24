@@ -20,7 +20,6 @@ export interface ISocket extends WebSocket {
 }
 
 export interface ISocketSubTargets {
-  [enums.ESocketTargets.Messages]: enums.EMessageSubTargets;
   [enums.ESocketTargets.Chat]: enums.EMessageSubTargets;
 }
 

@@ -7,3 +7,6 @@ test:
 	&& npm run test:unit \
 	&& npm run test:db \
 	&& npm run test:e2e
+
+buildDocker:
+	 sudo docker build -t monstersGateway .
