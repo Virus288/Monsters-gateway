@@ -7,27 +7,27 @@ const service = new Router();
 
 /**
  * @openapi
- * /messages/read:
- *   put:
+ * /messages/send:
+ *   get:
  *     tags:
  *       - messages
- *     description: Send message to user
- *    parameters:
- *      - in: query
- *        name: body
- *        required: true
- *        schema:
- *          type: string
- *      - in: query
- *        name: receiver
- *        required: true
- *        schema:
- *          type: string
+ *     description: Send user messages
+ *     parameters:
+ *       - in: query
+ *         name: receiver
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: body
+ *         required: true
+ *         schema:
+ *           type: string
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Message sent
+ *         description: Success. Sent message
  *       400:
  *         description: Bad request.
  *         content:
@@ -44,6 +44,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
+
 service.router.put('/send', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.put(req, res);

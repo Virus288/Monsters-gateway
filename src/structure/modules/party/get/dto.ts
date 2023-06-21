@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IGetPartyDto } from './types';
 
 export default class GetPartyDto implements IGetPartyDto {
@@ -11,6 +11,6 @@ export default class GetPartyDto implements IGetPartyDto {
   }
 
   validate(): void {
-    if (!this.id) throw new errors.MissingArgError('leader');
+    new Validation(this.id, 'id').isDefined();
   }
 }

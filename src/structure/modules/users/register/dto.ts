@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IRegisterDto } from './types';
 
 export default class RegisterDto implements IRegisterDto {
@@ -15,8 +15,8 @@ export default class RegisterDto implements IRegisterDto {
   }
 
   validate(): void {
-    if (!this.password) throw new errors.MissingArgError('password');
-    if (!this.login) throw new errors.MissingArgError('login');
-    if (!this.email) throw new errors.MissingArgError('email');
+    new Validation(this.email, 'email').isDefined();
+    new Validation(this.login, 'login').isDefined();
+    new Validation(this.password, 'password').isDefined();
   }
 }

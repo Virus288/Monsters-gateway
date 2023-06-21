@@ -9,13 +9,15 @@ describe('Redis', () => {
   describe('Should pass', () => {
     it(`No data in redis`, async () => {
       const user = await State.redis.getRemovedUsers('');
-      expect(user).toEqual(null);
+      expect(user).toEqual(undefined);
     });
 
     it(`Name in redis`, async () => {
       await State.redis.addRemovedUser(fakeUser.login, fakeUser._id);
       const user = await State.redis.getRemovedUsers(fakeUser._id);
       expect(user).toEqual(fakeUser.login);
+
+      await State.redis.removeRemovedUser(fakeUser._id);
     });
   });
 });

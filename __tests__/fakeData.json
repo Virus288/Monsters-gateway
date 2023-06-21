@@ -34,7 +34,7 @@
       "password": "qwerty111",
       "password2": "qwerty111",
       "verified": false,
-      "type": "user"
+      "type": "admin"
     },
     {
       "_id": "63e55edbe8a800060941125d",
@@ -71,43 +71,301 @@
       "friends": [],
       "lvl": 1,
       "exp": [
-        7,
+        0,
         10
-      ]
-    },
-    {
-      "user": "63e56c96de824fb83daba1c2",
-      "race": "elf",
-      "friends": [
-        "63e55edbe8a800060941121e"
       ],
-      "lvl": 4,
-      "exp": [
-        40,
-        70
-      ]
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f766225",
+      "party": "64649e334e19dfa5f70fd7ba",
+      "_id": "64649e334e19dfa5f70fd7bd"
     },
     {
-      "user": "63e56c96de824fb83daba1c1",
-      "race": "human",
-      "friends": [
-        "63e55edbe8a800060941121g"
-      ],
-      "lvl": 2,
-      "exp": [
-        1,
-        20
-      ]
-    },
-    {
-      "user": "63e56c96de824fb83daba1c3",
+      "user": "63e55edbe8a800060941121e",
       "race": "human",
       "friends": [],
-      "lvl": 10,
+      "lvl": 1,
       "exp": [
-        421,
-        1000
-      ]
+        0,
+        10
+      ],
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f766229",
+      "party": "64649e334e19dfa5f70fd7c1",
+      "_id": "64649e334e19dfa5f70fd7c3"
+    },
+    {
+      "user": "63e55edbe8a800060941123d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "initialized": true,
+      "inventory": "6465b8bb0466b9fe1f76622b",
+      "party": "64649e334e19dfa5f70fd7c7",
+      "_id": "64649e334e19dfa5f70fd7c9"
+    },
+    {
+      "user": "63e55edbe8a800060941124d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f76622d",
+      "party": "64649e344e19dfa5f70fd7cd",
+      "_id": "64649e344e19dfa5f70fd7cf"
+    },
+    {
+      "user": "63e55edbe8a800060941125d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f76622f",
+      "party": "64649e344e19dfa5f70fd7d3",
+      "_id": "64649e344e19dfa5f70fd7d5"
+    },
+    {
+      "user": "63e55edbe8a800060941126d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f766231",
+      "party": "64649e344e19dfa5f70fd7d9",
+      "_id": "64649e344e19dfa5f70fd7db"
+    },
+    {
+      "user": "63e55edbe8a800060941127d",
+      "race": "human",
+      "friends": [],
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "initialized": false,
+      "inventory": "6465b8bb0466b9fe1f766233",
+      "party": "64649e344e19dfa5f70fd7df",
+      "_id": "64649e344e19dfa5f70fd7e1"
+    }
+  ],
+  "inventories": [
+    {
+      "_id": "6465b8bb0466b9fe1f766225",
+      "userId": "63e55edbe8a800060941121d",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f766229",
+      "userId": "63e55edbe8a800060941121e",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f76622b",
+      "userId": "63e55edbe8a800060941123d",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f76622d",
+      "userId": "63e55edbe8a800060941124d",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f76622f",
+      "userId": "63e55edbe8a800060941125d",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f766231",
+      "userId": "63e55edbe8a800060941126d",
+      "items": []
+    },
+    {
+      "_id": "6465b8bb0466b9fe1f766233",
+      "userId": "63e55edbe8a800060941127d",
+      "items": []
+    }
+  ],
+  "parties": [
+    {
+      "leader": "63e55edbe8a800060941121d",
+      "characters": [],
+      "_id": "64649e334e19dfa5f70fd7ba"
+    },
+    {
+      "leader": "63e55edbe8a800060941121e",
+      "characters": [],
+      "_id": "64649e334e19dfa5f70fd7c1"
+    },
+    {
+      "leader": "63e55edbe8a800060941123d",
+      "characters": [],
+      "_id": "64649e334e19dfa5f70fd7c7"
+    },
+    {
+      "leader": "63e55edbe8a800060941124d",
+      "characters": [],
+      "_id": "64649e344e19dfa5f70fd7cd"
+    },
+    {
+      "leader": "63e55edbe8a800060941125d",
+      "characters": [],
+      "_id": "64649e344e19dfa5f70fd7d3"
+    },
+    {
+      "leader": "63e55edbe8a800060941126d",
+      "characters": [],
+      "_id": "64649e344e19dfa5f70fd7d9"
+    },
+    {
+      "leader": "63e55edbe8a800060941127d",
+      "characters": [],
+      "_id": "64649e344e19dfa5f70fd7df"
+    }
+  ],
+  "characters": [
+    {
+      "name": "Clarence",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeaa5",
+      "_id": "6465bd2cc9f753720afeeaa9"
+    },
+    {
+      "name": "Alia",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeaab",
+      "_id": "6465bd2cc9f753720afeeaad"
+    },
+    {
+      "name": "Scarlet",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeaaf",
+      "_id": "6465bd2cc9f753720afeeab1"
+    },
+    {
+      "name": "Jonah",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeab3",
+      "_id": "6465bd2cc9f753720afeeab5"
+    },
+    {
+      "name": "Jeremy",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeab7",
+      "_id": "6465bd2cc9f753720afeeab9"
+    },
+    {
+      "name": "Amaya",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeabb",
+      "_id": "6465bd2cc9f753720afeeabd"
+    },
+    {
+      "name": "Harun",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeabf",
+      "_id": "6465bd2cc9f753720afeeac1"
+    },
+    {
+      "name": "Florence",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeac3",
+      "_id": "6465bd2cc9f753720afeeac5"
+    },
+    {
+      "name": "Sebastien",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeac7",
+      "_id": "6465bd2cc9f753720afeeac9"
+    },
+    {
+      "name": "Aarav",
+      "race": "human",
+      "lvl": 1,
+      "exp": [
+        0,
+        10
+      ],
+      "inventory": "6465bd2cc9f753720afeeacb",
+      "_id": "6465bd2cc9f753720afeeacd"
+    }
+  ],
+  "items": [
+    {
+      "name": "Mana potion",
+      "_id": "6465bf53ff5c803a5dabe2e1"
+    },
+    {
+      "name": "Health potion",
+      "_id": "6465bf53ff5c803a5dabe2e5"
+    },
+    {
+      "name": "Rusty dagger",
+      "_id": "6465bf53ff5c803a5dabe2e7"
+    },
+    {
+      "name": "Old shield",
+      "_id": "6465bf53ff5c803a5dabe2e9"
     }
   ]
 }

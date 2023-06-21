@@ -8,23 +8,23 @@ const service = new Router();
 /**
  * @openapi
  * /messages/read:
- *   patch:
+ *   get:
  *     tags:
  *       - messages
- *     description: Read message from chat
- *    parameters:
- *      - in: query
- *        name: receiver
- *        required: true
- *        schema:
- *          type: string
- *      - in: query
- *        name: chatId
- *        required: true
- *        schema:
- *          type: string
+ *     description: Read user messages
+ *     parameters:
+ *       - in: query
+ *         name: receiver
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: chatId
+ *         required: true
+ *         schema:
+ *           type: string
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success. Read message
@@ -44,6 +44,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
+
 service.router.patch('/read', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.patch(req, res);

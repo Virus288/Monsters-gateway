@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IGetProfileDto } from './types';
 
 export default class GetProfileDto implements IGetProfileDto {
@@ -11,7 +11,6 @@ export default class GetProfileDto implements IGetProfileDto {
   }
 
   private validate(): void {
-    if (!this.id) throw new errors.MissingArgError('id');
-    if (typeof this.id !== 'string') throw new errors.IncorrectArgError('Id is not string');
+    new Validation(this.id, 'id').isDefined();
   }
 }

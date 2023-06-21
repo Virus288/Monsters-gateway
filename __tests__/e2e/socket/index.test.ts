@@ -19,13 +19,8 @@ describe('Socket - generic tests', () => {
     target: enums.ESocketTargets.Chat,
   };
 
-  beforeAll(async () => {
-    await utils.createSocketConnection(accessToken);
-  });
-
-  afterAll(async () => {
-    await utils.killSocket();
-  });
+  beforeAll(async () => await utils.createSocketConnection(accessToken));
+  afterAll(async () => await utils.killSocket());
 
   describe('Should throw', () => {
     describe('Not logged in', () => {
@@ -50,6 +45,7 @@ describe('Socket - generic tests', () => {
         clone.target = undefined!;
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
         const targetErr = new errors.IncorrectTargetError();
@@ -63,6 +59,7 @@ describe('Socket - generic tests', () => {
         clone.subTarget = undefined!;
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
         const targetErr = new errors.IncorrectTargetError();
@@ -76,6 +73,7 @@ describe('Socket - generic tests', () => {
         delete clone.payload;
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
         const targetErr = new errors.MissingArgError('payload');
@@ -89,6 +87,7 @@ describe('Socket - generic tests', () => {
         delete clone.payload.target;
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
         const targetErr = new errors.MissingArgError('target');
@@ -102,6 +101,7 @@ describe('Socket - generic tests', () => {
         delete clone.payload.message;
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { code, name } = payload as IFullError;
         const targetErr = new errors.MissingArgError('message');
@@ -110,16 +110,16 @@ describe('Socket - generic tests', () => {
         expect(name).toEqual(targetErr.name);
       });
 
-      it(`Targeted user does not exist`, async () => {
+      it(`Target user does not exist`, async () => {
         const clone = structuredClone(message);
         clone.payload.target = 'a';
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgError('message');
+        const { name } = payload as IFullError;
+        const targetErr = new errors.IncorrectArgLengthError('receiver', 24, 24);
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
     });
@@ -127,15 +127,16 @@ describe('Socket - generic tests', () => {
     describe('Incorrect data', () => {
       it(`Message too long`, async () => {
         const clone = structuredClone(message);
-        clone.payload.message =
-          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        for (let x = 0; x < 1000; x++) {
+          clone.payload.message += 'A';
+        }
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgError('Message length should ne exceed 200 characters');
+        const { name } = payload as IFullError;
+        const targetErr = new errors.IncorrectArgLengthError('body', 2, 1000);
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
@@ -144,11 +145,11 @@ describe('Socket - generic tests', () => {
         clone.payload.target = 'a';
 
         await utils.sendMessage(clone);
+        await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgError('Target is not valid mongoose id');
+        const { name } = payload as IFullError;
+        const targetErr = new errors.IncorrectArgLengthError('receiver', 24, 24);
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
     });
@@ -160,6 +161,7 @@ describe('Socket - generic tests', () => {
       await secondConnection.createSocketConnection(accessToken2);
 
       await utils.sendMessage(message);
+      await utils.sleep(1500);
       const ms = secondConnection.getLastMessage();
       const { payload, type } = ms as ISocketOutMessage;
 

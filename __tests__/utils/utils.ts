@@ -38,6 +38,7 @@ export default class Utils {
         this.messages.push(JSON.parse(m) as ISocketOutMessage);
       });
       this.socket.on('close', (_code, mess) => {
+        console.log('Client closed');
         try {
           this.messages.push(JSON.parse(mess.toString()));
         } catch (err) {}
@@ -46,22 +47,25 @@ export default class Utils {
   }
 
   async killSocket(): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.socket) this.socket.close();
-      setTimeout(() => resolve(), 1000);
-    });
+    console.log('Killing socket');
+    if (this.socket) this.socket.close();
   }
 
   async sendMessage(message: ISocketInMessage): Promise<void> {
     this.socket!.send(JSON.stringify(message));
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(), 1000);
-    });
   }
 
   getLastMessage(): ISocketOutMessage {
     const lastMess = this.messages[this._messages.length - 1];
     this._messages.pop();
     return lastMess!;
+  }
+
+  async sleep(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, milliseconds);
+    });
   }
 }

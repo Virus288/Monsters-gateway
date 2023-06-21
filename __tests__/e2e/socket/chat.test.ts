@@ -39,13 +39,8 @@ describe('Socket - chat', () => {
     subTarget: EMessageSubTargets.Get,
   };
 
-  beforeAll(async () => {
-    await utils.createSocketConnection(accessToken);
-  });
-
-  afterAll(async () => {
-    await utils.killSocket();
-  });
+  beforeAll(async () => await utils.createSocketConnection(accessToken));
+  afterAll(async () => await utils.killSocket());
 
   describe('Should throw', () => {
     describe('Not logged in', () => {
@@ -84,10 +79,11 @@ describe('Socket - chat', () => {
       await secondConnection.createSocketConnection(accessToken2);
 
       await secondConnection.sendMessage(getMessage);
+      await utils.sleep(1500);
       const userMessage = secondConnection.getLastMessage();
-
-      expect(Object.keys(userMessage.payload as Record<string, string>).length).toBeGreaterThan(0);
       await secondConnection.killSocket();
+
+      expect(Object.keys(userMessage?.payload as Record<string, string>).length).toBeGreaterThan(0);
     });
 
     it(`Read chat`, async () => {
@@ -97,21 +93,24 @@ describe('Socket - chat', () => {
       await secondConnection.createSocketConnection(accessToken2);
 
       await secondConnection.sendMessage(getMessage);
+      await utils.sleep(1500);
       const userMessage = secondConnection.getLastMessage();
 
       await secondConnection.sendMessage({
         ...readMessage,
-        payload: { chatId: Object.keys(userMessage.payload as Record<string, string>)[0], user: fakeUser2._id },
+        payload: { chatId: Object.keys(userMessage?.payload as Record<string, string>)[0], user: fakeUser2._id },
       });
+      await utils.sleep(1500);
 
       const userMessage2 = secondConnection.getLastMessage();
 
-      expect(userMessage2.type).toEqual(ESocketType.Confirmation);
+      expect(userMessage2?.type).toEqual(ESocketType.Confirmation);
 
       await secondConnection.sendMessage(getUnread);
+      await utils.sleep(1500);
       const userMessage3 = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage3.payload as Record<string, string>).length).toEqual(0);
+      expect(Object.keys(userMessage3?.payload as Record<string, string>).length).toEqual(0);
       await secondConnection.killSocket();
     });
 
@@ -122,16 +121,19 @@ describe('Socket - chat', () => {
       await secondConnection.createSocketConnection(accessToken2);
 
       await secondConnection.sendMessage(getMessage);
+      await utils.sleep(1500);
       const userMessage = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage.payload as Record<string, string>).length).toBeGreaterThan(0);
+      expect(Object.keys(userMessage?.payload as Record<string, string>).length).toBeGreaterThan(0);
 
       await secondConnection.sendMessage({
         ...getWithDetails,
         payload: { ...getWithDetails.payload, target: Object.keys(userMessage.payload as Record<string, string>)[0] },
       });
+      await utils.sleep(1500);
       const userMessage2 = secondConnection.getLastMessage();
-      const payload = userMessage2.payload as IFullMessageEntity[];
+      await utils.sleep(1500);
+      const payload = userMessage2?.payload as IFullMessageEntity[];
 
       expect(payload.length).toBeGreaterThan(0);
       await secondConnection.killSocket();

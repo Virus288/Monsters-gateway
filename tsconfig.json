@@ -15,8 +15,10 @@
     "allowUmdGlobalAccess": true,
     "alwaysStrict": true,
     "baseUrl": "./src",
+    "checkJs": false,
     "declaration": false,
     "declarationMap": false,
+    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": false,
@@ -33,6 +35,7 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -40,6 +43,7 @@
     "rootDir": ".",
     "preserveSymlinks": true,
     "pretty": true,
+    "preserveConstEnums": true,
     "removeComments": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -48,12 +52,11 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "sourceMap": true
-  },
-  "ts-node": {
-    "swc": true
+    "sourceMap": true,
+    "useDefineForClassFields": false
   },
   "include": [
     "**/*"
   ]
 }
+

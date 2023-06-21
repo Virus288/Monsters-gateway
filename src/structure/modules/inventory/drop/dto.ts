@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IDropItemDto } from './types';
 
 export default class InventoryDropDto implements IDropItemDto {
@@ -13,7 +13,7 @@ export default class InventoryDropDto implements IDropItemDto {
   }
 
   validate(): void {
-    if (!this.itemId) throw new errors.MissingArgError('itemId');
-    if (this.amount === undefined) throw new errors.MissingArgError('amount');
+    new Validation(this.itemId, 'itemId').isDefined();
+    new Validation(this.amount, 'amount').isDefined();
   }
 }

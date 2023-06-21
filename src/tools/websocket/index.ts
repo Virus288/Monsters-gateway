@@ -7,6 +7,7 @@ import getConfig from '../configLoader';
 import Log from '../logger/log';
 import type { ESocketType } from '../../enums';
 import type * as types from '../../types';
+import type { IFullError } from '../../types';
 
 export default class WebsocketServer {
   private readonly _router: Router;
@@ -55,7 +56,7 @@ export default class WebsocketServer {
       this.errorWrapper(() => this.onUserConnected(ws, req.headers.authorization), ws);
     });
     this.server.on('error', (err) => this.handleServerError(err));
-    this.server.on('close', () => Log.error('Websocket', 'Server closed'));
+    this.server.on('close', () => Log.log('Websocket', 'Server closed'));
   }
 
   sendToUser(userId: string, payload: unknown, type: ESocketType = enums.ESocketType.Message): void {
@@ -103,6 +104,7 @@ export default class WebsocketServer {
         return u.userId === id;
       });
 
+      // #TODO This is broken and incorrectly sends messages back to user, who is logged in on 2 devices
       if (isAlreadyOnline > -1) {
         this._users[isAlreadyOnline] = {
           ...this.users[isAlreadyOnline],
@@ -156,7 +158,8 @@ export default class WebsocketServer {
   }
 
   private handleServerError(err: Error): void {
-    Log.error('Socket', err);
+    const error = err as IFullError;
+    Log.error('Socket', error.message, error.stack);
     this.close();
   }
 }

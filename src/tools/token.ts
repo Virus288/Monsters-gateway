@@ -15,6 +15,7 @@ export const verify = (res: types.ILocalUser, token: string | null): { id: strin
   res.locals.userId = payload.id;
   res.locals.type = payload.type;
   res.locals.validated = true;
+
   return payload;
 };
 

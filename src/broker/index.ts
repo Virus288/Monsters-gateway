@@ -14,7 +14,6 @@ export default class Broker {
   private _retryTimeout: NodeJS.Timeout | null = null;
   private _connection: amqplib.Connection | null = null;
   private _connectionTries = 0;
-  private _channel: amqplib.Channel | null = null;
   private _channelTries = 0;
   private _services: {
     [key in types.IAvailableServices]: { timeout: NodeJS.Timeout | null; retries: number; dead: boolean };
@@ -28,12 +27,18 @@ export default class Broker {
     this._controller = new Controller();
   }
 
+  private _channel: amqplib.Channel | null = null;
+
+  get channel(): amqplib.Channel | null {
+    return this._channel;
+  }
+
   private get controller(): Communicator {
     return this._controller;
   }
 
-  init(): void {
-    this.initCommunication();
+  async init(): Promise<void> {
+    await this.initCommunication();
   }
 
   sendLocally<T extends EConnectionType>(
@@ -45,7 +50,7 @@ export default class Broker {
   ): void {
     const queue = this._services[service as types.IAvailableServices];
     if (queue.dead) return this.sendError(res, new InternalError());
-    return this.controller.sendLocally(target, subTarget, res, payload, service, this._channel!);
+    return this.controller.sendLocally(target, subTarget, res, payload, service, this.channel!);
   }
 
   close(): void {
@@ -59,35 +64,40 @@ export default class Broker {
       .catch(() => undefined);
   }
 
-  private reconnect(): void {
+  private async reconnect(): Promise<void> {
     this.close();
-    this.initCommunication();
+    await this.initCommunication();
   }
 
-  private initCommunication(): void {
-    if (this._connectionTries++ > Number(enums.ERabbit.RetryLimit)) {
-      Log.error('Rabbit', 'Gave up connecting to rabbit. Is rabbit dead?');
-      return;
-    }
+  private initCommunication(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this._connectionTries++ > Number(enums.ERabbit.RetryLimit)) {
+        Log.error('Rabbit', 'Gave up connecting to rabbit. Is rabbit dead?');
+        return;
+      }
 
-    amqplib
-      .connect(getConfig().amqpURI)
-      .then((connection) => {
-        Log.log('Rabbit', 'Connected to rabbit');
-        this._connection = connection;
-        connection.on('close', () => this.close());
-        connection.on('error', () => this.reconnect());
-        this.createChannels();
-      })
-      .catch((err) => {
-        Log.warn('Rabbit', 'Error connecting to RabbitMQ, retrying in 1 second');
-        Log.error('Rabbit', err);
-        this._retryTimeout = setTimeout(() => this.initCommunication(), 1000);
-      });
+      amqplib
+        .connect(getConfig().amqpURI)
+        .then((connection) => {
+          Log.log('Rabbit', 'Connected to rabbit');
+          this._connection = connection;
+          connection.on('close', () => this.close());
+          connection.on('error', async () => this.reconnect());
+          this.createChannels();
+          resolve();
+        })
+        .catch((err) => {
+          Log.warn('Rabbit', 'Error connecting to RabbitMQ, retrying in 1 second');
+          const error = err as types.IFullError;
+          Log.error('Rabbit', error.message, error.stack);
+          this._retryTimeout = setTimeout(async () => this.initCommunication(), 1000);
+          reject(err);
+        });
+    });
   }
 
   private createChannels(): void {
-    if (this._channel) return;
+    if (this.channel) return;
     if (this._channelTries++ > parseInt(Number(enums.ERabbit.RetryLimit).toString())) {
       Log.error('Rabbit', 'Error creating rabbit connection channel, stopped retrying');
     }
@@ -96,28 +106,34 @@ export default class Broker {
       .then((channel) => {
         Log.log('Rabbit', 'Channel connected');
         this._channel = channel;
-        channel.on('close', () => this.cleanAll());
-        channel.on('error', () => this.reconnectChannel());
+        this.listen();
         return this.createQueue();
       })
       .catch((err) => {
-        Log.error('Rabbit', err);
+        const error = err as types.IFullError;
         Log.error(
           'Rabbit',
           `Error creating rabbit connection channel, retrying in 1 second: ${(err as types.IFullError).message}`,
         );
+        Log.error('Rabbit', error.message, error.stack);
+
         this._retryTimeout = setTimeout(() => this.createChannels(), 1000);
       });
+  }
+
+  private listen(): void {
+    this.channel!.on('close', () => this.cleanAll());
+    this.channel!.on('error', () => this.reconnectChannel());
   }
 
   private async createQueue(): Promise<void> {
     await Promise.all(
       Object.values(enums.EAmqQueues).map(async (queue) => {
-        await this._channel!.assertQueue(queue, { durable: true });
+        await this.channel!.assertQueue(queue, { durable: true });
       }),
     );
 
-    await this._channel!.consume(
+    await this.channel!.consume(
       enums.EAmqQueues.Gateway,
       (message) => {
         if (!message) return Log.warn('Rabbit', 'Received empty message');
@@ -167,28 +183,29 @@ export default class Broker {
       Log.error(target, `Is down!. Stopped retrying after ${service.retries} tries.`);
       this.closeDeadQueue(target).catch((err) => {
         Log.error('Rabbit', "Couldn't clear queue");
-        Log.error('Rabbit', err);
+        const error = err as types.IFullError;
+        Log.error('Rabbit', error.message, error.stack);
       });
     } else {
       Log.warn(target, `Is down!. Trying to connect for ${service.retries + 1} time.`);
-      this.controller.sendHeartbeat(this._channel!, target);
+      this.controller.sendHeartbeat(this.channel!, target);
       service.timeout = setTimeout(() => this.retryHeartbeat(target), 5000);
       service.retries++;
     }
   }
 
   private checkHeartbeat(target: types.IAvailableServices): void {
-    this.controller.sendHeartbeat(this._channel!, target);
+    this.controller.sendHeartbeat(this.channel!, target);
     this._services[target].timeout = setTimeout(() => this.retryHeartbeat(target), 5000);
   }
 
   private closeDeadQueue = async (target: types.IAvailableServices): Promise<void> => {
     switch (target) {
       case enums.EServices.Users:
-        await this._channel!.purgeQueue(enums.EAmqQueues.Users);
+        await this.channel!.purgeQueue(enums.EAmqQueues.Users);
         break;
       case enums.EServices.Messages:
-        await this._channel!.purgeQueue(enums.EAmqQueues.Messages);
+        await this.channel!.purgeQueue(enums.EAmqQueues.Messages);
         break;
       default:
         Log.error('Socket', 'Got req to close socket that does not exist');
@@ -202,12 +219,12 @@ export default class Broker {
     }
     await Promise.all(
       Object.values(enums.EAmqQueues).map(async (queue) => {
-        await this._channel!.purgeQueue(queue);
-        await this._channel!.deleteQueue(queue);
+        await this.channel!.purgeQueue(queue);
+        await this.channel!.deleteQueue(queue);
       }),
     );
 
-    await this._channel!.close();
+    await this.channel!.close();
     this._channel = null;
     this._channelTries = 0;
   }
@@ -219,8 +236,9 @@ export default class Broker {
         this.createChannels();
       })
       .catch((err) => {
+        const error = err as types.IFullError;
         Log.error('Rabbit', "Couldn't create channels");
-        Log.error('Rabbit', err);
+        return Log.error('Rabbit', error.message, error.stack);
       });
   }
 
@@ -255,9 +273,10 @@ export default class Broker {
 
   private errorWrapper(func: () => void): void {
     try {
-      func();
+      return func();
     } catch (err) {
-      Log.error('Rabbit', err);
+      const error = err as types.IFullError;
+      return Log.error('Rabbit', error.message, error.stack);
     }
   }
 }

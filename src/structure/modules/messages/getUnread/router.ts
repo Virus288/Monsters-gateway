@@ -11,18 +11,18 @@ const service = new Router();
  *   get:
  *     tags:
  *       - messages
- *     description: Get user's unread messages
- *    parameters:
- *      - in: query
- *        name: page
- *        required: true
- *        schema:
- *          type: number
+ *     description: Get user messages
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: number
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Got user's unread messages.
+ *         description: Success. Got user's unread messages
  *       400:
  *         description: Bad request.
  *         content:
@@ -39,6 +39,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
+
 service.router.get('/unread', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.get(req, res);

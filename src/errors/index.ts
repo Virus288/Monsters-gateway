@@ -253,3 +253,68 @@ export class IncorrectTokenError extends FullError {
     this.status = 400;
   }
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     MissingArgError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'MissingArgError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '002'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "^Missing param: .+$"
+ */
+export class MissingMessageTargetError extends FullError {
+  constructor() {
+    super('MissingMessageTargetError');
+    this.message = "Received message from other service, but couldn't find related api or socket";
+    this.name = 'MissingMessageTargetError';
+    this.code = '012';
+    this.status = 500;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectArgLengthError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'MissingArgError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '002'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "^Element has incorrect length: .+$"
+ */
+export class IncorrectArgLengthError extends FullError {
+  constructor(target: string, min: number | undefined, max: number) {
+    super('IncorrectArgLengthError');
+    this.message =
+      min === undefined
+        ? `${target} should be less than ${max} characters`
+        : min !== max
+        ? `${target} should be more than ${min} and less than ${max} characters`
+        : `${target} should be ${min} characters`;
+    this.name = 'IncorrectArgLengthError';
+    this.code = '013';
+    this.status = 400;
+  }
+}

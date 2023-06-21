@@ -1,10 +1,10 @@
 import * as enums from '../enums';
 import { EConnectionType, ESocketType, EUserTypes } from '../enums';
+import * as errors from '../errors';
 import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
 import State from '../tools/state';
 import { generateTempId } from '../utils';
-import type { FullError } from '../errors';
 import type * as types from '../types';
 import type amqplib from 'amqplib';
 
@@ -52,7 +52,8 @@ export default class Communicator {
       };
     } else {
       const userTarget = { id: user.res as string, tempId } as types.IWebsocketRabbitTarget;
-      this.queue.socket[userTarget.id ?? tempId] = { user: userTarget, target: service };
+      this.queue.socket[userTarget.id] = { user: userTarget, target: service };
+
       body.user = {
         ...body.user,
         userId: userTarget.id,
@@ -106,7 +107,7 @@ export default class Communicator {
     const user = target.target as types.ILocalUser;
     switch (payload.target) {
       case enums.EMessageTypes.Error:
-        return this.sendError(payload.payload as FullError, user);
+        return this.sendError(payload.payload as errors.FullError, user);
       case enums.EMessageTypes.Credentials:
         return this.setTokens(payload.payload as types.IUserCredentials, user);
       case enums.EMessageTypes.Send:
@@ -160,6 +161,7 @@ export default class Communicator {
     type: EConnectionType;
     target: types.ILocalUser | types.IWebsocketRabbitTarget;
   } {
+    // #TODO This might cause problems in the future, when server is overloaded and user sends chat message and api req
     const api = Object.keys(this.queue.api).find((e) => {
       return e === target;
     });
@@ -172,6 +174,9 @@ export default class Communicator {
     const socket = Object.keys(this.queue.socket).find((e) => {
       return e === target;
     })!;
+
+    if (!socket) throw new errors.MissingMessageTargetError();
+
     const res = { target: this.queue.socket[socket]!.user, type: enums.EConnectionType.Socket };
     if (remove) delete this.queue.socket[socket];
     return res;
@@ -188,7 +193,7 @@ export default class Communicator {
     target.send(body);
   }
 
-  private sendError(err: FullError, target: types.ILocalUser): void {
+  private sendError(err: errors.FullError, target: types.ILocalUser): void {
     const { message, code, name, status } = err;
     target.status(status).send(JSON.stringify({ message, code, name }));
   }

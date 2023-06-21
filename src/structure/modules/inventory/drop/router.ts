@@ -40,6 +40,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
+
 service.router.delete('/', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.delete(req, res);

@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { ILoginDto } from './types';
 
 export default class LoginDto implements ILoginDto {
@@ -13,7 +13,7 @@ export default class LoginDto implements ILoginDto {
   }
 
   private validate(): void {
-    if (!this.password) throw new errors.MissingArgError('password');
-    if (!this.login) throw new errors.MissingArgError('login');
+    new Validation(this.login, 'login').isDefined();
+    new Validation(this.password, 'password').isDefined();
   }
 }

@@ -42,18 +42,18 @@ export default class Middleware {
         _next: express.NextFunction,
       ) => {
         errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
+        const error = err as types.IFullError;
 
         if (err.name === 'SyntaxError') {
-          Log.error('Middleware', 'Generic err', err.name);
+          Log.error('Middleware', 'Generic err', error.message, error.stack);
           const { message, code, name, status } = new InternalError();
           return res.status(status).json({ message, code, name });
         }
-        const error = err as types.IFullError;
         if (error.code !== undefined) {
           const { message, code, name, status } = error;
           return res.status(status).json({ message, code, name });
         }
-        Log.error('Middleware', 'Generic err', err.name);
+        Log.error('Middleware', 'Generic err', error.message, error.stack);
         const { message, code, name, status } = new InternalError();
         return res.status(status).json({ message, code, name });
       },

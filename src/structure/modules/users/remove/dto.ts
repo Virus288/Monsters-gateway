@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IRemoveUserDto } from './types';
 
 export default class RemoveUserDto implements IRemoveUserDto {
@@ -11,6 +11,6 @@ export default class RemoveUserDto implements IRemoveUserDto {
   }
 
   validate(): void {
-    if (!this.name) throw new errors.MissingArgError('name');
+    new Validation(this.name, 'name').isDefined();
   }
 }

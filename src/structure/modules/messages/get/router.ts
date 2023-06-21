@@ -12,14 +12,14 @@ const service = new Router();
  *     tags:
  *       - messages
  *     description: Get user messages
- *    parameters:
- *      - in: query
- *        name: page
- *        required: true
- *        schema:
- *          type: number
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: number
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success. Got user's messages
@@ -39,6 +39,7 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
+
 service.router.get('/', limitRate, (req, res: types.ILocalUser) => {
   try {
     return service.get(req, res);

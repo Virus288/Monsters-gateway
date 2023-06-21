@@ -1,7 +1,7 @@
 import get from './get/router';
 
-const exports = {
+const routes = {
   get: get.router,
 };
 
-export default exports;
+export default routes;

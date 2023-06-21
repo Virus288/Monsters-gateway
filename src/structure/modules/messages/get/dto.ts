@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IGetMessagesDto } from './types';
 
 export default class GetMessagesDto implements IGetMessagesDto {
@@ -11,6 +11,6 @@ export default class GetMessagesDto implements IGetMessagesDto {
   }
 
   validate(): void {
-    if (!this.page) throw new errors.MissingArgError('page');
+    new Validation(this.page, 'page').isDefined();
   }
 }

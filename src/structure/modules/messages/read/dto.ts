@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IReadMessageDto } from './types';
 
 export default class ReadMessagesDto implements IReadMessageDto {
@@ -13,7 +13,7 @@ export default class ReadMessagesDto implements IReadMessageDto {
   }
 
   validate(): void {
-    if (!this.chatId) throw new errors.MissingArgError('chatId');
-    if (!this.receiver) throw new errors.MissingArgError('receiver');
+    new Validation(this.chatId, 'chatId').isDefined();
+    new Validation(this.receiver, 'receiver').isDefined();
   }
 }

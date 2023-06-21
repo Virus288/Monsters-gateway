@@ -4,7 +4,7 @@ import refreshToken from './refreshToken/router';
 import register from './register/router';
 import remove from './remove/router';
 
-const exports = {
+const routes = {
   remove: remove.router,
   login: login.router,
   register: register.router,
@@ -12,4 +12,4 @@ const exports = {
   refreshToken: refreshToken.router,
 };
 
-export default exports;
+export default routes;

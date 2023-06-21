@@ -12,32 +12,21 @@ export default class Utils {
     State.redis = new Redis();
   }
 
-  async init(): Promise<void> {
-    return new Promise<void>(async (resolve): Promise<void> => {
-      State.broker.init();
-      State.socket.init();
-      State.router.init();
-      State.redis.startTestServer();
-      State.redis
-        .init()
-        .then(() => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 3000);
-        })
-        .catch((err) => {
-          throw err;
-        });
-    });
+  async connect(): Promise<void> {
+    await this.redis();
+    await State.broker.init();
+    State.socket.init();
+    State.router.init();
   }
 
   async close(): Promise<void> {
-    return new Promise<void>(async (resolve): Promise<void> => {
-      State.broker.close();
-      State.router.close();
-      State.socket.close();
-      State.redis.close();
-      resolve(undefined);
-    });
+    State.broker.close();
+    State.router.close();
+    State.socket.close();
+    await State.redis.close();
+  }
+
+  private async redis(): Promise<void> {
+    await State.redis.init();
   }
 }

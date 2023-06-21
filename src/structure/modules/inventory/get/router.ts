@@ -13,7 +13,7 @@ const service = new Router();
  *       - user
  *     description: Get user's name
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success. Get user's inventory back in request.
@@ -27,6 +27,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
+
 service.router.get('/', limitRate, (_req, res: types.ILocalUser) => {
   try {
     return service.get(res);

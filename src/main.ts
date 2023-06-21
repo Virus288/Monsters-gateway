@@ -1,27 +1,26 @@
 import Broker from './broker';
 import Router from './structure';
 import Log from './tools/logger/log';
-import errLogger from './tools/logger/logger';
 import Redis from './tools/redis';
 import State from './tools/state';
 import WebsocketServer from './tools/websocket';
+import type { IFullError } from './types';
 
 export default class App {
   init(): void {
     this.handleInit().catch((err) => {
+      const { stack, message } = err as IFullError;
       Log.log('Server', 'Err while initializing app');
-      Log.log('Server', JSON.stringify(err));
-      errLogger.error(err);
-      errLogger.error(JSON.stringify(err));
+      Log.log('Server', message, stack);
 
-      this.kill();
+      return this.kill();
     });
   }
 
-  kill(): void {
+  async kill(): Promise<void> {
     State.router.close();
     State.broker.close();
-    State.redis.close();
+    await State.redis.close();
     State.socket.close();
     Log.log('Server', 'Server closed');
   }
@@ -37,9 +36,10 @@ export default class App {
     State.socket = socket;
     State.redis = redis;
     router.init();
-    broker.init();
     socket.init();
+    await broker.init();
     await redis.init();
+    Log.log('Server', 'Server started');
   }
 }
 

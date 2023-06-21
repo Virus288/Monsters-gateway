@@ -9,6 +9,7 @@ import State from '../../../src/tools/state';
 
 describe('Register', () => {
   const registerData: types.IRegisterDto = fakeData.users[2];
+  const registerData2: types.IRegisterDto = fakeData.users[3];
   const { app } = State.router;
 
   describe('Should throw', () => {
@@ -72,7 +73,7 @@ describe('Register', () => {
           .send({ ...registerData, login: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Elm login should be more than 3 and less than 30 characters');
+        expect(body.message).toEqual('login should be more than 3 and less than 30 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -86,7 +87,7 @@ describe('Register', () => {
           });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Elm login should be more than 3 and less than 30 characters');
+        expect(body.message).toEqual('login should be more than 3 and less than 30 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -108,7 +109,7 @@ describe('Register', () => {
           .send({ ...registerData, password: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Elm password should be more than 6 and less than 200 characters');
+        expect(body.message).toEqual('password should be more than 6 and less than 200 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -122,7 +123,7 @@ describe('Register', () => {
           });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Elm password should be more than 6 and less than 200 characters');
+        expect(body.message).toEqual('password should be more than 6 and less than 200 characters');
         expect(body.code).not.toBeUndefined();
       });
 
@@ -132,7 +133,7 @@ describe('Register', () => {
           .send({ ...registerData, email: 'a' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Not valid email address');
+        expect(body.message).toEqual('email invalid');
         expect(body.code).not.toBeUndefined();
       });
     });
@@ -143,7 +144,7 @@ describe('Register', () => {
       const res = await supertest(app)
         .post('/users/register')
         .send({
-          ...registerData,
+          ...registerData2,
           login: generateRandomName(),
           email: `${generateRandomName()}@${generateRandomName()}.test`,
         });

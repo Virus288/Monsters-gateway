@@ -1,14 +1,18 @@
 import { afterAll, beforeAll } from '@jest/globals';
-import Utils from './connection';
+import Connection from './connection';
+import Utils from './utils';
 
+const connection = new Connection();
 const utils = new Utils();
 
 beforeAll(async () => {
-  await utils.init();
+  await connection.connect();
+  await utils.sleep(2000);
 });
 
 afterAll(async () => {
-  await utils.close();
+  await connection.close();
+  await utils.sleep(1000);
 });
 
-export { utils };
+export default { connection };

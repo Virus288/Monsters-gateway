@@ -18,9 +18,7 @@ describe('Profiles = get', () => {
   const fakeUser = fakeData.users[0] as IUserEntity;
   const { app } = State.router;
 
-  beforeAll(async () => {
-    accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
-  });
+  beforeAll(async () => (accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User)));
 
   describe('Should throw', () => {
     describe('No data passed', () => {
@@ -46,7 +44,7 @@ describe('Profiles = get', () => {
           .send();
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Provided user id is invalid');
+        expect(body.message).toEqual('id should be objectId');
         expect(body.code).not.toBeUndefined();
       });
     });

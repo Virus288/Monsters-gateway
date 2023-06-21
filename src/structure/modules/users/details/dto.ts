@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { IUserDetailsDto } from './types';
 
 export default class UserDetailsDto implements IUserDetailsDto {
@@ -13,11 +13,7 @@ export default class UserDetailsDto implements IUserDetailsDto {
   }
 
   validate(): void {
-    if (!this.name) {
-      if (!this.id) throw new errors.MissingArgError('id');
-    }
-    if (!this.id) {
-      if (!this.name) throw new errors.MissingArgError('name');
-    }
+    if (!this.name) new Validation(this.id, 'id').isDefined();
+    if (!this.id) new Validation(this.name, 'name').isDefined();
   }
 }

@@ -16,12 +16,16 @@ describe('Profiles - add', () => {
   const utils = new Utils();
   let accessToken;
   let accessToken2;
+  let accessToken3;
   const fakeUser = fakeData.users[0] as IUserEntity;
+  const fakeUser2 = fakeData.users[1] as IUserEntity;
+  const fakeUser3 = fakeData.users[2] as IUserEntity;
   const { app } = State.router;
 
   beforeAll(async () => {
     accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
-    accessToken2 = utils.generateAccessToken('63e56c96de823fb83daba1c3', EUserTypes.User);
+    accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
+    accessToken3 = utils.generateAccessToken(fakeUser3._id, EUserTypes.User);
   });
 
   describe('Should throw', () => {
@@ -47,15 +51,16 @@ describe('Profiles - add', () => {
           .send({ ...addProfile, race: 'abc' });
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Race has incorrect type');
+        expect(body.message).toEqual('race has incorrect type');
         expect(body.code).not.toBeUndefined();
       });
 
       it(`Profile already exists`, async () => {
-        const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(addProfile);
+        await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
+        const res = await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
         const body = res.body as IFullError;
 
-        expect(body.message).toEqual('Profile already exists');
+        expect(body.message).toEqual('Profile already initialized');
       });
     });
   });

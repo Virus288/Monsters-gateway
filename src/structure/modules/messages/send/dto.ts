@@ -1,4 +1,4 @@
-import * as errors from '../../../../errors';
+import Validation from '../../../../tools/validation';
 import type { ISendMessageDto } from './types';
 
 export default class SendMessagesDto implements ISendMessageDto {
@@ -15,7 +15,8 @@ export default class SendMessagesDto implements ISendMessageDto {
   }
 
   validate(): void {
-    if (!this.body) throw new errors.MissingArgError('body');
-    if (!this.receiver) throw new errors.MissingArgError('receiver');
+    new Validation(this.body, 'body').isDefined();
+    new Validation(this.receiver, 'receiver').isDefined();
+    new Validation(this.sender, 'sender').isDefined();
   }
 }
