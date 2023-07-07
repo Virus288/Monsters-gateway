@@ -98,7 +98,7 @@ describe('Register', () => {
         const body = res.body as IFullError;
 
         expect(body.message).toEqual(
-          'password should contain at least 1 digit, 6 letter, 1 upper case letter and 1 lower case letter',
+          'password should contain at least 8 characters with: at least 1 digit, 1 letter, 1 upper case letter and 1 lower case letter',
         );
         expect(body.code).not.toBeUndefined();
       });

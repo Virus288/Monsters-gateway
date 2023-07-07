@@ -294,7 +294,7 @@ export class MissingMessageTargetError extends FullError {
  *         name:
  *           type: string
  *           description: Error name describing the error cause.
- *           example: 'MissingArgError'
+ *           example: 'IncorrectArgLengthError'
  *         code:
  *           type: string
  *           description: Unique code associated with the error.
@@ -315,6 +315,36 @@ export class IncorrectArgLengthError extends FullError {
         : `${target} should be ${min} characters`;
     this.name = 'IncorrectArgLengthError';
     this.code = '013';
+    this.status = 400;
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectArgTypeError:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'IncorrectArgTypeError'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '002'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           pattern: "^Element has incorrect length: .+$"
+ */
+export class IncorrectArgTypeError extends FullError {
+  constructor(err: string) {
+    super('IncorrectArgTypeError');
+    this.message = err;
+    this.name = 'IncorrectArgTypeError';
+    this.code = '014';
     this.status = 400;
   }
 }

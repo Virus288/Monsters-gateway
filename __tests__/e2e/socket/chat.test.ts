@@ -83,7 +83,7 @@ describe('Socket - chat', () => {
       const userMessage = secondConnection.getLastMessage();
       await secondConnection.killSocket();
 
-      expect(Object.keys(userMessage?.payload as Record<string, string>).length).toBeGreaterThan(0);
+      expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
     });
 
     it(`Read chat`, async () => {
@@ -98,7 +98,10 @@ describe('Socket - chat', () => {
 
       await secondConnection.sendMessage({
         ...readMessage,
-        payload: { chatId: Object.keys(userMessage?.payload as Record<string, string>)[0], user: fakeUser2._id },
+        payload: {
+          chatId: Object.keys((userMessage?.payload as Record<string, string>) ?? {})[0],
+          user: fakeUser2._id,
+        },
       });
       await utils.sleep(1500);
 

@@ -118,8 +118,10 @@ describe('Socket - generic tests', () => {
         await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgLengthError('receiver', 24, 24);
+        const targetErr = new errors.IncorrectArgTypeError('receiver');
 
+        console.log('payload');
+        console.log(payload);
         expect(name).toEqual(targetErr.name);
       });
     });
@@ -148,8 +150,10 @@ describe('Socket - generic tests', () => {
         await utils.sleep(1500);
         const { payload } = utils.getLastMessage();
         const { name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgLengthError('receiver', 24, 24);
+        const targetErr = new errors.IncorrectArgTypeError('');
 
+        console.log('payload');
+        console.log(payload);
         expect(name).toEqual(targetErr.name);
       });
     });
