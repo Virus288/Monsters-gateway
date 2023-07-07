@@ -7,7 +7,6 @@ import getConfig from '../configLoader';
 import Log from '../logger/log';
 import type { ESocketType } from '../../enums';
 import type * as types from '../../types';
-import type { IFullError } from '../../types';
 
 export default class WebsocketServer {
   private readonly _router: Router;
@@ -158,7 +157,7 @@ export default class WebsocketServer {
   }
 
   private handleServerError(err: Error): void {
-    const error = err as IFullError;
+    const error = err as types.IFullError;
     Log.error('Socket', error.message, error.stack);
     this.close();
   }

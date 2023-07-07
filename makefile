@@ -9,4 +9,4 @@ test:
 	&& npm run test:e2e
 
 buildDocker:
-	 sudo docker build -t monstersGateway .
+	sudo docker build -t monstersGateway .

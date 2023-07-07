@@ -4,8 +4,8 @@
       "_id": "63e55edbe8a800060941121d",
       "login": "Sebastien",
       "email": "seb@gmail.uk",
-      "password": "Password123",
-      "password2": "Password123",
+      "password": "Password123.",
+      "password2": "Password123.",
       "verified": false,
       "type": "user"
     },
@@ -13,8 +13,8 @@
       "_id": "63e55edbe8a800060941121e",
       "login": "Ann",
       "email": "a2@asb.zzz",
-      "password": "ILoveYou223",
-      "password2": "ILoveYou223",
+      "password": "ILoveYou223!",
+      "password2": "ILoveYou223!",
       "verified": false,
       "type": "user"
     },
@@ -31,8 +31,8 @@
       "_id": "63e55edbe8a800060941124d",
       "login": "Marshal",
       "email": "marhalbaney@amazon.com",
-      "password": "qwerty111",
-      "password2": "qwerty111",
+      "password": "qwerty111xX@",
+      "password2": "qwerty111xX@",
       "verified": false,
       "type": "admin"
     },
@@ -40,8 +40,8 @@
       "_id": "63e55edbe8a800060941125d",
       "login": "Stephan",
       "email": "randomemail123@gmail.com",
-      "password": "bananaMan3",
-      "password2": "bananaMan3",
+      "password": "bananaMan3!",
+      "password2": "bananaMan3!",
       "verified": false,
       "type": "user"
     },
@@ -49,8 +49,8 @@
       "_id": "63e55edbe8a800060941126d",
       "login": "Jack",
       "email": "jk8@wp.pl",
-      "password": "GreenTee9",
-      "password2": "GreenTee9",
+      "password": "GreenTee9.",
+      "password2": "GreenTee9.",
       "verified": false,
       "type": "user"
     },
@@ -58,8 +58,8 @@
       "_id": "63e55edbe8a800060941127d",
       "login": "Mary",
       "email": "marystephens@horyzont.eu",
-      "password": "Test123",
-      "password2": "Test123",
+      "password": "Test123,",
+      "password2": "Test123,",
       "verified": false,
       "type": "user"
     }
