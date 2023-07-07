@@ -1,20 +1,28 @@
 import { createClient } from 'redis';
-import Mock from './mock';
 import Rooster from './rooster';
 import * as enums from '../../enums';
 import getConfig from '../configLoader';
 import Log from '../logger/log';
+import type Mock from './mock';
 import type { IFullError } from '../../types';
 import type { RedisClientType } from 'redis';
 import * as process from 'process';
 
 export default class Redis {
   private readonly _rooster: Rooster;
-  private readonly _mock: Mock;
 
   constructor() {
     this._rooster = new Rooster();
-    this._mock = new Mock();
+  }
+
+  private _mock: Mock | undefined;
+
+  private get mock(): Mock | undefined {
+    return this._mock;
+  }
+
+  private set mock(value: Mock | undefined) {
+    this._mock = value;
   }
 
   private _client: RedisClientType | undefined;
@@ -23,17 +31,12 @@ export default class Redis {
     return this._client;
   }
 
-  private get mock(): Mock {
-    return this._mock;
-  }
-
   private get rooster(): Rooster {
     return this._rooster;
   }
 
   async init(): Promise<void> {
     if (process.env.NODE_ENV === 'test') {
-      await this.mock.init();
       await this.initMockClient();
     } else {
       this.initClient();
@@ -46,7 +49,7 @@ export default class Redis {
 
   async close(): Promise<void> {
     await this.client!.quit();
-    if (process.env.NODE_ENV === 'test') await this.mock.close();
+    if (process.env.NODE_ENV === 'test') await this.mock!.close();
   }
 
   async addRemovedUser(user: string, id: string): Promise<void> {
@@ -68,6 +71,11 @@ export default class Redis {
   }
 
   private async initMockClient(): Promise<void> {
+    const MockServer = await import('./mock');
+
+    this.mock = new MockServer.default();
+    await this.mock.init();
+
     this._client = createClient({
       url: await this.mock.getUrl(),
     });
@@ -81,6 +89,6 @@ export default class Redis {
 
     this.client!.on('ready', () => Log.log('Redis', 'Redis connected'));
     this.client!.on('end', () => Log.log('Redis', 'Redis disconnected'));
-    this.client!.on('reconnecting', () => Log.error('Redis', 'Redis error. Reconnecting'));
+    this.client!.on('reconnecting', () => Log.log('Redis', 'Redis error. Reconnecting'));
   }
 }

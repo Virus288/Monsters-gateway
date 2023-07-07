@@ -21,6 +21,10 @@ chmod +x .husky/pre-commit
 npm run build / yarn build
 ```
 
+If you even encounter strange build behavior, tsconfig is set to create build with cache. Set option `incremental` in
+tsConfig to false
+
+
 ## 3. Useful information
 
 ### 3.1 Logs folder

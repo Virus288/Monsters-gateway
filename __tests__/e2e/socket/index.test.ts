@@ -120,8 +120,6 @@ describe('Socket - generic tests', () => {
         const { name } = payload as IFullError;
         const targetErr = new errors.IncorrectArgTypeError('receiver');
 
-        console.log('payload');
-        console.log(payload);
         expect(name).toEqual(targetErr.name);
       });
     });
@@ -152,8 +150,6 @@ describe('Socket - generic tests', () => {
         const { name } = payload as IFullError;
         const targetErr = new errors.IncorrectArgTypeError('');
 
-        console.log('payload');
-        console.log(payload);
         expect(name).toEqual(targetErr.name);
       });
     });
