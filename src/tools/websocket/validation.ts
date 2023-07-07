@@ -1,5 +1,5 @@
 import Validator from '../validation';
-import type { IGetMessageBody, IReadMessageBody, ISocketInMessage, ISocketSendMessageBody } from '../../types';
+import type { IGetMessageBody, IReadMessageBody, ISocketInMessage, ISocketSendMessageBody } from './types';
 
 export default class Validation {
   preValidate(data: ISocketInMessage): void {

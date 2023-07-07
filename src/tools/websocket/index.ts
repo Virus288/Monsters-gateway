@@ -5,8 +5,9 @@ import * as enums from '../../enums';
 import * as errors from '../../errors';
 import getConfig from '../configLoader';
 import Log from '../logger/log';
+import type * as types from './types';
 import type { ESocketType } from '../../enums';
-import type * as types from '../../types';
+import type { IFullError } from '../../types';
 
 export default class WebsocketServer {
   private readonly _router: Router;
@@ -79,7 +80,7 @@ export default class WebsocketServer {
 
     ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
     ws.on('pong', () => this.errorWrapper(() => this.pong(ws), ws));
-    ws.on('error', (error) => this.router.handleError(error as types.IFullError, ws));
+    ws.on('error', (error) => this.router.handleError(error as IFullError, ws));
     ws.on('close', () => this.userDisconnected(ws));
   }
 
@@ -152,12 +153,12 @@ export default class WebsocketServer {
     try {
       callback();
     } catch (err) {
-      this.router.handleError(err as types.IFullError, ws);
+      this.router.handleError(err as IFullError, ws);
     }
   }
 
   private handleServerError(err: Error): void {
-    const error = err as types.IFullError;
+    const error = err as IFullError;
     Log.error('Socket', error.message, error.stack);
     this.close();
   }

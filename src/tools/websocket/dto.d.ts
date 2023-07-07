@@ -1,3 +1,4 @@
+import type { IGetDetailedBody, IGetMessageBody, IReadMessageBody, ISocketSendMessageBody } from './types';
 import type { EMessageSubTargets, ESocketTargets } from '../../enums';
 
 /**

@@ -4,8 +4,9 @@ import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
 import * as errors from '../../../src/errors';
-import { IFullError, ISocketInMessage, ISocketOutMessage } from '../../../src/types';
+import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../types';
+import { ISocketInMessage, ISocketOutMessage } from '../../../src/tools/websocket/types';
 
 describe('Socket - generic tests', () => {
   const utils = new Utils();

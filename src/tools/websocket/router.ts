@@ -3,7 +3,8 @@ import * as enums from '../../enums';
 import { EConnectionType, EServices } from '../../enums';
 import * as errors from '../../errors';
 import State from '../state';
-import type * as types from '../../types';
+import type * as types from './types';
+import type { IFullError } from '../../types';
 
 export default class Router {
   private readonly _validator: Validation;
@@ -33,7 +34,7 @@ export default class Router {
     }
   }
 
-  handleError(err: types.IFullError, ws: types.ISocket): void {
+  handleError(err: IFullError, ws: types.ISocket): void {
     if (process.env.NODE_END !== 'prod') console.trace(err);
     const { message, code, name } = err;
 

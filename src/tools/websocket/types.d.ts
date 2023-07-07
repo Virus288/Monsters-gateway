@@ -1,5 +1,5 @@
-import type * as enums from '../enums';
-import type { IGetMessageDto, IReadMessageDto } from '../tools/websocket/dto';
+import type { IGetMessageDto, IReadMessageDto } from './dto';
+import type * as enums from '../../enums';
 import type { WebSocket } from 'ws';
 
 export interface ISendMessageDto {

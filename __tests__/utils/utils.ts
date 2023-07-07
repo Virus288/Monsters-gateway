@@ -3,7 +3,7 @@ import getConfig from '../../src/tools/configLoader';
 import * as types from '../../src/enums';
 import * as enums from '../../src/enums';
 import Websocket from 'ws';
-import { ISocketInMessage, ISocketOutMessage } from '../../src/types';
+import { ISocketInMessage, ISocketOutMessage } from '../../src/tools/websocket/types';
 
 export default class Utils {
   socket: Websocket | undefined = undefined;

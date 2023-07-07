@@ -4,8 +4,9 @@ import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
 import * as errors from '../../../src/errors';
-import { IFullError, ISocketInMessage } from '../../../src/types';
+import { IFullError } from '../../../src/types';
 import { IFullMessageEntity, IUserEntity } from '../../types';
+import { ISocketInMessage } from '../../../src/tools/websocket/types';
 
 describe('Socket - chat', () => {
   const utils = new Utils();
@@ -127,7 +128,7 @@ describe('Socket - chat', () => {
       await utils.sleep(1500);
       const userMessage = secondConnection.getLastMessage();
 
-      expect(Object.keys(userMessage?.payload as Record<string, string>).length).toBeGreaterThan(0);
+      expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
 
       await secondConnection.sendMessage({
         ...getWithDetails,
