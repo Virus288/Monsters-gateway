@@ -1,6 +1,6 @@
 import LoginDto from './dto';
 import * as enums from '../../../../enums';
-import { EConnectionType, EServices } from '../../../../enums';
+import { EConnectionType, EJwt, EServices } from '../../../../enums';
 import RouterFactory from '../../../../tools/abstracts/router';
 import State from '../../../../tools/state';
 import { verify } from '../../../../tools/token';
@@ -9,11 +9,13 @@ import type express from 'express';
 
 export default class UserRouter extends RouterFactory {
   get(req: express.Request, res: ILocalUser): void {
-    let access: string | null = null;
+    let access: string | undefined = undefined;
     if (req.headers.authorization) {
       const key = req.headers.authorization;
       if (!key.includes('Bearer')) return;
       access = req.headers.authorization.split('Bearer')[1]!.trim();
+    } else {
+      access = (req.cookies as { [EJwt.AccessToken]: string | undefined })[EJwt.AccessToken];
     }
 
     const { type } = verify(res, access);

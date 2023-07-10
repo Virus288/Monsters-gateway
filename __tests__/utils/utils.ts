@@ -16,13 +16,13 @@ export default class Utils {
 
   generateAccessToken = (id: string, type: types.EUserTypes): string => {
     return jwt.sign({ id, type }, getConfig().accessToken, {
-      expiresIn: enums.jwtTime.TokenMaxAge,
+      expiresIn: enums.EJwtTime.TokenMaxAge,
     });
   };
 
   generateRefreshToken = (id: string, type: types.EUserTypes): string => {
     return jwt.sign({ id, type }, getConfig().refToken, {
-      expiresIn: enums.jwtTime.RefreshTokenMaxAge,
+      expiresIn: enums.EJwtTime.RefreshTokenMaxAge,
     });
   };
 
