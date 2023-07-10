@@ -1,5 +1,5 @@
 import * as enums from '../enums';
-import { EConnectionType, ESocketType, EUserTypes } from '../enums';
+import { EConnectionType, EJwtTime, ESocketType, EUserTypes } from '../enums';
 import * as errors from '../errors';
 import { InternalError } from '../errors';
 import Log from '../tools/logger/log';
@@ -184,6 +184,7 @@ export default class Communicator {
 
   private setTokens(payload: types.IUserCredentials, target: types.ILocalUser): void {
     const { refreshToken, accessToken } = payload;
+    target.cookie(enums.EJwt.AccessToken, accessToken, { httpOnly: true, maxAge: EJwtTime.TokenMaxAge * 1000 });
     target.set('Authorization', `Bearer ${accessToken}`);
     target.set('x-refresh-token', `${refreshToken}`);
     target.status(200).send();

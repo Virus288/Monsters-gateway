@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import { EJwt } from '../enums';
 import * as errors from '../errors';
 import { InternalError } from '../errors';
 import handleErr from '../errors/utils';
@@ -68,6 +69,8 @@ export default class Middleware {
         if (key.includes('Bearer')) {
           access = req.headers.authorization.split('Bearer')[1]!.trim();
         }
+      } else {
+        access = (req.cookies as { [EJwt.AccessToken]: string | undefined })[EJwt.AccessToken];
       }
 
       try {
