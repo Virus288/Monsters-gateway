@@ -18,8 +18,8 @@ export default class UserRouter extends RouterFactory {
       access = (req.cookies as { [EJwt.AccessToken]: string | undefined })[EJwt.AccessToken];
     }
 
-    const { type } = verify(res, access);
-    res.status(200).send({ type });
+    const { type, id } = verify(res, access);
+    res.status(200).send({ type, id });
   }
 
   post(req: express.Request, res: ILocalUser): void {
