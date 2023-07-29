@@ -85,10 +85,10 @@ export default class Communicator {
 
     switch (target) {
       case enums.EServices.Users:
-        channel.sendToQueue(enums.EAmqQueues.Users, Buffer.from(JSON.stringify(body)));
+        channel.sendToQueue(enums.EAmqQueues.Users, Buffer.from(JSON.stringify(body)), { persistent: true });
         return;
       case enums.EServices.Messages:
-        channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)));
+        channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)), { persistent: true });
         return;
       default:
         throw new Error('Unknown message target');
