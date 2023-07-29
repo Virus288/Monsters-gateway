@@ -6,6 +6,7 @@ import { InternalError } from '../errors';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import State from '../tools/state';
+import { generateRandomName } from '../utils';
 import type Communicator from './controller';
 import type { FullError } from '../errors';
 import type * as types from '../types';
@@ -31,6 +32,16 @@ export default class Broker {
 
   get channel(): amqplib.Channel | null {
     return this._channel;
+  }
+
+  private _queueName: string | undefined = undefined;
+
+  private get queueName(): string | undefined {
+    return this._queueName;
+  }
+
+  private set queueName(value: string | undefined) {
+    this._queueName = value;
   }
 
   private get controller(): Communicator {
@@ -127,15 +138,25 @@ export default class Broker {
   }
 
   private async createQueue(): Promise<void> {
+    const filtered = Object.entries(enums.EAmqQueues)
+      .filter((e) => e[1] !== enums.EAmqQueues.Gateway)
+      .map((e) => e[1]);
     await Promise.all(
-      Object.values(enums.EAmqQueues).map(async (queue) => {
+      Object.values(filtered).map(async (queue) => {
         await this.channel!.assertQueue(queue, { durable: true });
       }),
     );
+    this.queueName = `${enums.EAmqQueues.Gateway}-${generateRandomName()}`;
+    await this.channel!.assertQueue(this.queueName, { durable: true });
+
+    await this.channel!.assertExchange(enums.EAmqQueues.Gateway, 'fanout', { durable: true });
+    await this.channel!.bindQueue(this.queueName, enums.EAmqQueues.Gateway, '');
 
     await this.channel!.consume(
-      enums.EAmqQueues.Gateway,
+      this.queueName,
       (message) => {
+        Log.log('Rabbit', 'Got new message');
+
         if (!message) return Log.warn('Rabbit', 'Received empty message');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
