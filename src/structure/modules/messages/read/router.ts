@@ -8,7 +8,7 @@ const service = new Router();
 /**
  * @openapi
  * /messages/read:
- *   get:
+ *   patch:
  *     tags:
  *       - messages
  *     description: Read user messages

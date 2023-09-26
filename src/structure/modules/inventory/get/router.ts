@@ -10,7 +10,7 @@ const service = new Router();
  * /inventory:
  *   get:
  *     tags:
- *       - user
+ *       - inventory
  *     description: Get user's name
  *     security:
  *       - bearerAuth: []

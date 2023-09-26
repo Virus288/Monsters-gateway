@@ -35,7 +35,6 @@ export default class WebsocketServer {
   init(): void {
     this._server = new Websocket.Server({
       port: getConfig().socketPort,
-      path: '/ws',
     });
     Log.log('Socket', `Started socket on port ${getConfig().socketPort}`);
     this.startListeners();
@@ -53,7 +52,7 @@ export default class WebsocketServer {
 
   startListeners(): void {
     this.server.on('connection', (ws: types.ISocket, req) => {
-      this.errorWrapper(() => this.onUserConnected(ws, req.headers.authorization), ws);
+      this.errorWrapper(() => this.onUserConnected(ws, req.headers.cookie), ws);
     });
     this.server.on('error', (err) => this.handleServerError(err));
     this.server.on('close', () => Log.log('Websocket', 'Server closed'));
@@ -75,8 +74,8 @@ export default class WebsocketServer {
     return exist !== undefined;
   }
 
-  private onUserConnected(ws: types.ISocket, token: string | undefined): void {
-    this.validateUser(ws, token);
+  private onUserConnected(ws: types.ISocket, cookies: string | undefined): void {
+    this.validateUser(ws, cookies);
 
     ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
     ws.on('pong', () => this.errorWrapper(() => this.pong(ws), ws));
@@ -84,14 +83,20 @@ export default class WebsocketServer {
     ws.on('close', () => this.userDisconnected(ws));
   }
 
-  private validateUser(ws: types.ISocket, token: string | undefined): void {
+  private validateUser(ws: types.ISocket, cookies: string | undefined): void {
     const errBody = JSON.stringify({
       type: enums.ESocketType.Error,
       payload: new errors.UnauthorizedError(),
     });
 
-    if (!token) return ws.close(1000, errBody);
-    const prepared = token.split(' ')[1]!.trim();
+    if (!cookies) return ws.close(1000, errBody);
+
+    const accessToken = cookies
+      .split(';')
+      .map((e) => e.split('='))
+      .find((e) => e[0] === 'accessToken');
+    if (!accessToken || accessToken.length === 0) return ws.close(1000, errBody);
+    const prepared = accessToken[1]!;
 
     try {
       const { id, type } = jwt.verify(prepared, getConfig().accessToken) as {

@@ -24,7 +24,7 @@ export default class Validation {
    */
   isDefined(): this {
     const { v, name } = this;
-    if (v === undefined) throw new errors.MissingArgError(name);
+    if (v === undefined || v === null) throw new errors.MissingArgError(name);
     return this;
   }
 

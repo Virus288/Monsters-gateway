@@ -10,7 +10,7 @@ export interface IConfigInterface {
   amqpURI: string;
   accessToken: string;
   refToken: string;
-  corsOrigin: string;
+  corsOrigin: string | string[];
   httpPort: number;
   socketPort: number;
   redisTestURI: string;
