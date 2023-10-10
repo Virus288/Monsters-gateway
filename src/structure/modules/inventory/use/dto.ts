@@ -1,7 +1,7 @@
 import Validation from '../../../../tools/validation';
 import type { IUseItemDto } from './types';
 
-export default class InventoryAddDto implements IUseItemDto {
+export default class InventoryUseDto implements IUseItemDto {
   itemId: string;
   amount: number;
 

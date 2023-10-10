@@ -5,8 +5,9 @@ import * as enums from '../../../src/enums';
 import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
 import * as errors from '../../../src/errors';
 import { IFullError } from '../../../src/types';
-import { IFullMessageEntity, IUserEntity } from '../../types';
+import { IUserEntity } from '../../types';
 import { ISocketInMessage } from '../../../src/tools/websocket/types';
+import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
 
 describe('Socket - chat', () => {
   const utils = new Utils();

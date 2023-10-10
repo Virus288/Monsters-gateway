@@ -1,20 +1,17 @@
 export enum EUserMainTargets {
   User = 'user',
+  Chat = 'chat',
   Party = 'party',
   Profile = 'profile',
   Messages = 'messages',
   Inventory = 'inventory',
 }
 
-export enum EMessageMainTargets {
-  Messages = 'messages',
-  Chat = 'chat',
-}
-
 export enum EUserTargets {
   Register = 'register',
   Login = 'login',
-  GetName = 'getName',
+  GetName = 'getUsername',
+  Remove = 'removeUser',
 }
 
 export enum EProfileTargets {
@@ -23,22 +20,25 @@ export enum EProfileTargets {
 }
 
 export enum EItemsTargets {
-  Get = 'get',
-  Use = 'use',
-  Drop = 'drop',
+  Get = 'getItem',
+  Use = 'useItem',
+  Drop = 'dropItem',
 }
 
 export enum EMessageTargets {
-  Send = 'send',
-  Get = 'get',
-  Read = 'read',
-  GetUnread = 'getUnread',
+  Send = 'sendMessage',
+  Get = 'getMessage',
+  Read = 'readMessage',
+  GetUnread = 'getUnreadMessages',
+}
+
+export enum EChatTargets {
+  Send = 'sendChatMessage',
+  Get = 'getChatMessage',
+  Read = 'readChatMessage',
+  GetUnread = 'getUnreadChatMessages',
 }
 
 export enum EPartyTargets {
-  Get = 'get',
-}
-
-export enum ESharedTargets {
-  RemoveUser = 'removeUser',
+  Get = 'getParty',
 }

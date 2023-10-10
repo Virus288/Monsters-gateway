@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import * as errors from '../../../src/errors';
 import * as types from '../../types';
-import LoginDto from '../../../src/structure/modules/users/login/dto';
+import LoginDto from '../../../src/structure/modules/user/login/dto';
 
 describe('Login', () => {
   const login: types.ILoginDto = {

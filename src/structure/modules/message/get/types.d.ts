@@ -13,3 +13,17 @@
 export interface IGetMessagesDto {
   page: number;
 }
+
+export interface IFullMessageEntity {
+  sender: string;
+  receiver: string;
+  read: boolean;
+  chatId: string;
+  message: string;
+}
+
+export interface IPreparedMessagesBody {
+  sender: string;
+  receiver: string;
+  messages: number;
+}

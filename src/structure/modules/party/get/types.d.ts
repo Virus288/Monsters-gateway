@@ -13,3 +13,9 @@
 export interface IGetPartyDto {
   id: string;
 }
+
+export interface IPartyEntity {
+  _id: string;
+  leader: string;
+  characters: string[];
+}

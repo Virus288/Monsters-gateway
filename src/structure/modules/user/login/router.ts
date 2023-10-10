@@ -26,7 +26,8 @@ const service = new Router();
  */
 service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
   try {
-    return service.get(req, res);
+    const data = service.get(req, res);
+    return res.status(200).send(data);
   } catch (err) {
     return handleErr(err as types.IFullError, res);
   }
@@ -71,9 +72,10 @@ service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/login', limitRate, (req, res: types.ILocalUser) => {
+service.router.post('/login', limitRate, async (req, res: types.ILocalUser) => {
   try {
-    return service.post(req, res);
+    await service.post(req, res);
+    return res.status(200).send();
   } catch (err) {
     return handleErr(err as types.IFullError, res);
   }

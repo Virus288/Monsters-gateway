@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import ReqHandler from './reqHandler';
 import { EJwt } from '../enums';
 import * as errors from '../errors';
 import { InternalError } from '../errors';
@@ -64,6 +65,7 @@ export default class Middleware {
   userValidation(app: express.Express): void {
     app.use(async (req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
       let access: string | undefined = undefined;
+
       if (req.headers.authorization) {
         const key = req.headers.authorization;
         if (key.includes('Bearer')) {
@@ -84,6 +86,13 @@ export default class Middleware {
       } catch (err) {
         return handleErr(new errors.UnauthorizedError(), res);
       }
+    });
+  }
+
+  initializeHandler(app: express.Express): void {
+    app.use((_req: express.Request, res: types.ILocalUser, next: express.NextFunction) => {
+      res.locals.reqHandler = new ReqHandler();
+      next();
     });
   }
 }

@@ -1,7 +1,8 @@
 import Validation from './validation';
 import * as enums from '../../enums';
-import { EConnectionType, EServices } from '../../enums';
+import { ESocketType, EUserTypes } from '../../enums';
 import * as errors from '../../errors';
+import Log from '../logger/logger';
 import State from '../state';
 import type * as types from './types';
 import type { IFullError } from '../../types';
@@ -51,59 +52,76 @@ export default class Router {
 
   private sendMessage(data: types.ISocketSendMessageBody, ws: types.ISocket): void {
     this.validator.validateSendMessage(data);
-    const { message, target } = data;
-
-    const isOnline = State.socket.isOnline(target);
-    if (isOnline) State.socket.sendToUser(target, message);
-
     const prepared: types.ISendMessageDto = {
       body: data.message,
       receiver: data.target,
       sender: ws.userId,
     };
 
-    State.broker.sendLocally(
-      enums.EMessageMainTargets.Chat,
-      enums.EMessageSubTargets.Send,
-      { target: EConnectionType.Socket, res: ws.userId },
-      prepared,
-      EServices.Messages,
-    );
+    ws.reqHandler.chat
+      .send(prepared, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .then(() => {
+        ws.send(JSON.stringify({ type: ESocketType.Confirmation } as types.ISocketOutMessage));
+
+        const { message, target } = data;
+        const isOnline = State.socket.isOnline(target);
+        if (isOnline) State.socket.sendToUser(target, message);
+      })
+      .catch((err) => {
+        Log.error('Socket send message error', err);
+        ws.send(JSON.stringify({ type: ESocketType.Error, payload: err } as types.ISocketOutMessage));
+      });
   }
 
   private readMessage(data: types.IReadMessageBody, ws: types.ISocket): void {
     this.validator.validateReadMessage(data);
 
-    State.broker.sendLocally(
-      enums.EMessageMainTargets.Chat,
-      enums.EMessageSubTargets.Read,
-      { target: EConnectionType.Socket, res: ws.userId },
-      { ...data, user: ws.userId },
-      EServices.Messages,
-    );
+    ws.reqHandler.chat
+      .read(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .then(() => {
+        ws.send(JSON.stringify({ type: ESocketType.Confirmation } as types.ISocketOutMessage));
+      })
+      .catch((err) => {
+        Log.error('Socket read message error', err);
+        ws.send(JSON.stringify({ type: ESocketType.Error, payload: err } as types.ISocketOutMessage));
+      });
   }
 
   private getMessage(data: types.IGetMessageBody, ws: types.ISocket): void {
     this.validator.validateGetMessage(data);
 
-    State.broker.sendLocally(
-      enums.EMessageMainTargets.Chat,
-      enums.EMessageSubTargets.Get,
-      { target: EConnectionType.Socket, res: ws.userId },
-      data,
-      EServices.Messages,
-    );
+    ws.reqHandler.chat
+      .get(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .then((callback) => {
+        ws.send(
+          JSON.stringify({
+            type: ESocketType.Confirmation,
+            payload: callback.payload,
+          } as types.ISocketOutMessage),
+        );
+      })
+      .catch((err) => {
+        Log.error('Socket get messages error', err);
+        ws.send(JSON.stringify({ type: ESocketType.Error, payload: err } as types.ISocketOutMessage));
+      });
   }
 
   private getUnread(data: types.IGetMessageBody, ws: types.ISocket): void {
     this.validator.validateGetMessage(data);
 
-    State.broker.sendLocally(
-      enums.EMessageMainTargets.Chat,
-      enums.EMessageSubTargets.GetUnread,
-      { target: EConnectionType.Socket, res: ws.userId },
-      data,
-      EServices.Messages,
-    );
+    ws.reqHandler.chat
+      .getUnread(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .then((callback) => {
+        ws.send(
+          JSON.stringify({
+            type: ESocketType.Confirmation,
+            payload: callback.payload,
+          } as types.ISocketOutMessage),
+        );
+      })
+      .catch((err) => {
+        Log.error('Socket get unread messages error', err);
+        ws.send(JSON.stringify({ type: ESocketType.Error, payload: err } as types.ISocketOutMessage));
+      });
   }
 }

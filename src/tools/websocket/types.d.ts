@@ -1,5 +1,6 @@
 import type { IGetMessageDto, IReadMessageDto } from './dto';
 import type * as enums from '../../enums';
+import type ReqHandler from '../../structure/reqHandler';
 import type { WebSocket } from 'ws';
 
 export interface ISendMessageDto {
@@ -17,6 +18,7 @@ export interface ISocketPayload {
 
 export interface ISocket extends WebSocket {
   userId: string;
+  reqHandler: ReqHandler;
 }
 
 export interface ISocketSubTargets {
@@ -57,4 +59,12 @@ export interface IGetDetailedBody {
 
 export interface IGetMessageBody {
   page: number;
+}
+
+export interface IFullChatMessageEntity {
+  sender: string;
+  receiver: string;
+  read: boolean;
+  chatId: string;
+  message: string;
 }

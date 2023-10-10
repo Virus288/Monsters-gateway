@@ -1,17 +1,9 @@
-import * as enums from '../../../../enums';
-import { EConnectionType, EServices } from '../../../../enums';
 import RouterFactory from '../../../../tools/abstracts/router';
-import State from '../../../../tools/state';
+import type { IInventoryEntity } from './types';
 import type { ILocalUser } from '../../../../types';
 
-export default class InventoryRouter extends RouterFactory {
-  get(res: ILocalUser): void {
-    State.broker.sendLocally(
-      enums.EUserMainTargets.Inventory,
-      enums.EItemsTargets.Get,
-      { target: EConnectionType.Api, res },
-      undefined,
-      EServices.Users,
-    );
+export default class InventoryGetDto extends RouterFactory {
+  async get(res: ILocalUser): Promise<IInventoryEntity> {
+    return (await res.locals.reqHandler.inventory.get(res.locals)).payload;
   }
 }

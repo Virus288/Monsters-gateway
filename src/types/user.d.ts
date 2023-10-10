@@ -1,8 +1,9 @@
 import type * as enums from '../enums';
-import type { Locals } from 'express';
-import type express from 'express';
+import type ReqHandler from '../structure/reqHandler';
+import type express, { Locals } from 'express';
 
 export interface IUsersTokens {
+  reqHandler: ReqHandler;
   userId: string | undefined;
   tempId: string;
   validated: boolean;
