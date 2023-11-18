@@ -28,11 +28,12 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
 
-service.router.get('/', limitRate, (_req, res: types.ILocalUser) => {
+service.router.get('/', limitRate, async (_req, res: types.ILocalUser) => {
   try {
-    return service.get(res);
+    const data = await service.get(res);
+    res.status(200).send(data);
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

@@ -1,14 +1,12 @@
 import amqplib from 'amqplib';
 import Controller from './controller';
 import * as enums from '../enums';
-import { EConnectionType, ESocketType } from '../enums';
 import { InternalError } from '../errors';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
-import State from '../tools/state';
 import { generateRandomName } from '../utils';
 import type Communicator from './controller';
-import type { FullError } from '../errors';
+import type { EMessageTypes } from '../enums';
 import type * as types from '../types';
 
 export default class Broker {
@@ -23,18 +21,16 @@ export default class Broker {
     [enums.EServices.Messages]: { timeout: null, retries: 0, dead: true },
   };
   private readonly _controller: Controller;
+  private _channel: amqplib.Channel | null = null;
+  private _queueName: string | undefined = undefined;
 
   constructor() {
     this._controller = new Controller();
   }
 
-  private _channel: amqplib.Channel | null = null;
-
   get channel(): amqplib.Channel | null {
     return this._channel;
   }
-
-  private _queueName: string | undefined = undefined;
 
   private get queueName(): string | undefined {
     return this._queueName;
@@ -52,16 +48,30 @@ export default class Broker {
     await this.initCommunication();
   }
 
-  sendLocally<T extends EConnectionType>(
+  sendLocally<T extends types.IRabbitSubTargets>(
     target: types.IRabbitTargets,
-    subTarget: types.IRabbitSubTargets,
-    res: { target: T; res: types.IConnectionType[T] },
-    payload: unknown,
+    subTarget: T,
+    resolve: (
+      value:
+        | { type: EMessageTypes.Credentials | EMessageTypes.Send; payload: unknown }
+        | PromiseLike<{
+            type: EMessageTypes.Credentials | EMessageTypes.Send;
+            payload: unknown;
+          }>,
+    ) => void,
+    reject: (reason?: unknown) => void,
+    locals: {
+      tempId: string;
+      userId: string | undefined;
+      validated: boolean;
+      type: enums.EUserTypes;
+    },
     service: enums.EServices,
+    payload?: types.IRabbitConnectionData[T],
   ): void {
     const queue = this._services[service as types.IAvailableServices];
-    if (queue.dead) return this.sendError(res, new InternalError());
-    return this.controller.sendLocally(target, subTarget, res, payload, service, this.channel!);
+    if (queue.dead) throw new InternalError();
+    return this.controller.sendLocally(target, subTarget, resolve, reject, locals, service, this.channel!, payload);
   }
 
   close(): void {
@@ -272,24 +282,6 @@ export default class Broker {
       clearTimeout(s[1].timeout!);
       delete this._services[s[0]];
     });
-  }
-
-  private sendError<T extends EConnectionType>(
-    user: {
-      target: T;
-      res: types.IConnectionType[T];
-    },
-    error: FullError,
-  ): void {
-    const { message, code, name, status } = error;
-    const { target, res } = user;
-
-    if (target === EConnectionType.Socket) {
-      State.socket.sendToUser(res as string, { message, code, name, status }, ESocketType.Error);
-    } else {
-      const localUser = res as types.ILocalUser;
-      localUser.status(status).send(JSON.stringify({ message, code, name }));
-    }
   }
 
   private errorWrapper(func: () => void): void {

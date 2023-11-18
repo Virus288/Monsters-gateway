@@ -6,6 +6,9 @@ import type { IState } from '../types';
 
 class State implements IState {
   private _broker: Broker | null = null;
+  private _socket: WebsocketServer | null = null;
+  private _redis: Redis | null = null;
+  private _router: Router | null = null;
 
   get broker(): Broker {
     return this._broker!;
@@ -15,8 +18,6 @@ class State implements IState {
     this._broker = value;
   }
 
-  private _socket: WebsocketServer | null = null;
-
   get socket(): WebsocketServer {
     return this._socket!;
   }
@@ -25,8 +26,6 @@ class State implements IState {
     this._socket = value;
   }
 
-  private _redis: Redis | null = null;
-
   get redis(): Redis {
     return this._redis!;
   }
@@ -34,8 +33,6 @@ class State implements IState {
   set redis(value: Redis) {
     this._redis = value;
   }
-
-  private _router: Router | null = null;
 
   get router(): Router {
     return this._router!;

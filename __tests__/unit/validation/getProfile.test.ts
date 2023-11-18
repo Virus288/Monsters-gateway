@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import * as errors from '../../../src/errors';
 import * as types from '../../types';
-import GetProfileDto from '../../../src/structure/modules/profiles/get/dto';
+import GetProfileDto from '../../../src/structure/modules/profile/get/dto';
 
 describe('Profile - get', () => {
   const getProfile: types.IGetProfileDto = {

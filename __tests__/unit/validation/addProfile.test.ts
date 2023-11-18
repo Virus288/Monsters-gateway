@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import * as errors from '../../../src/errors';
 import { EUserRace } from '../../../src/enums';
 import * as types from '../../types';
-import AddProfileDto from '../../../src/structure/modules/profiles/add/dto';
+import AddProfileDto from '../../../src/structure/modules/profile/add/dto';
 
 describe('Profile - add', () => {
   const addProfile: types.IAddProfileDto = {

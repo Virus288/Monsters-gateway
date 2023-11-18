@@ -3,29 +3,16 @@ import Rooster from './rooster';
 import * as enums from '../../enums';
 import getConfig from '../configLoader';
 import Log from '../logger/log';
-import type Mock from './mock';
 import type { IFullError } from '../../types';
 import type { RedisClientType } from 'redis';
-import * as process from 'process';
 
 export default class Redis {
   private readonly _rooster: Rooster;
+  private _client: RedisClientType | undefined;
 
   constructor() {
     this._rooster = new Rooster();
   }
-
-  private _mock: Mock | undefined;
-
-  private get mock(): Mock | undefined {
-    return this._mock;
-  }
-
-  private set mock(value: Mock | undefined) {
-    this._mock = value;
-  }
-
-  private _client: RedisClientType | undefined;
 
   private get client(): RedisClientType | undefined {
     return this._client;
@@ -36,12 +23,7 @@ export default class Redis {
   }
 
   async init(): Promise<void> {
-    if (process.env.NODE_ENV === 'test') {
-      await this.initMockClient();
-    } else {
-      this.initClient();
-    }
-
+    this.initClient();
     this.rooster.init(this.client!);
     this.listen();
     await this.client!.connect();
@@ -49,7 +31,6 @@ export default class Redis {
 
   async close(): Promise<void> {
     await this.client!.quit();
-    if (process.env.NODE_ENV === 'test') await this.mock!.close();
   }
 
   async addRemovedUser(user: string, id: string): Promise<void> {
@@ -67,17 +48,6 @@ export default class Redis {
   private initClient(): void {
     this._client = createClient({
       url: getConfig().redisURI,
-    });
-  }
-
-  private async initMockClient(): Promise<void> {
-    const MockServer = await import('./mock');
-
-    this.mock = new MockServer.default();
-    await this.mock.init();
-
-    this._client = createClient({
-      url: await this.mock.getUrl(),
     });
   }
 

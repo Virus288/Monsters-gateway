@@ -4,13 +4,14 @@ import AppRouter from './router';
 import * as errors from '../errors';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
-import type * as types from '../types';
 import http from 'http';
+import process from 'process';
 
 export default class Router {
   private readonly _middleware: Middleware;
   private readonly _app: express.Express;
   private readonly _router: AppRouter;
+  private _server: http.Server | undefined = undefined;
 
   constructor() {
     this._app = express();
@@ -29,8 +30,6 @@ export default class Router {
   private get middleware(): Middleware {
     return this._middleware;
   }
-
-  private _server: http.Server | undefined = undefined;
 
   private get server(): http.Server {
     return this._server!;
@@ -60,6 +59,7 @@ export default class Router {
    */
   private initMiddleware(): void {
     this.middleware.generateMiddleware(this.app);
+    this.middleware.initializeHandler(this.app);
   }
 
   /**
@@ -84,7 +84,7 @@ export default class Router {
     this.middleware.userValidation(this.app);
     this.router.initSecured();
 
-    this.app.all('*', (_req, res: types.ILocalUser) => {
+    this.app.all('*', (_req, res: express.Response) => {
       const { message, code, name, status } = new errors.NotFoundError();
       res.status(status).json({ message, code, name });
     });
@@ -94,6 +94,7 @@ export default class Router {
    * Init server
    */
   private initServer(): void {
+    if (process.env.NODE_ENV === 'test') return;
     this._server = http.createServer(this.app);
 
     this.server.listen(getConfig().httpPort, () => {
