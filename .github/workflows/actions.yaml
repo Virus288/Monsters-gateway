@@ -56,6 +56,12 @@ jobs:
           }' > config/devConfig.json
           cp config/devConfig.json config/prodConfig.json
 
+      - name: Upload config
+        uses: actions/upload-artifact@v2
+        with:
+          name: config
+          path: config/
+
   test:
     needs: [setup-config]
     runs-on: ubuntu-latest
@@ -77,6 +83,12 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
+
+      - name: Download config
+        uses: actions/download-artifact@v2
+        with:
+          name: config
+          path: config/
 
       - name: Run tests
         run: yarn test:e2e && yarn test:unit && yarn test:db
@@ -103,6 +115,12 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
 
+      - name: Download config
+        uses: actions/download-artifact@v2
+        with:
+          name: config
+          path: config/
+
       - name: Lint
         run: npm run lint
 
@@ -128,6 +146,12 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
+
+      - name: Download config
+        uses: actions/download-artifact@v2
+        with:
+          name: config
+          path: config/
 
       - name: Build
         run: npm run build
