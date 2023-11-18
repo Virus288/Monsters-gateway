@@ -35,7 +35,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
-    "express-rate-limit": "^6.7.0",
+    "express-rate-limit": "^7.1.4",
     "helmet": "^7.0.0",
     "jsonwebtoken": "9.0.0",
     "moc-socket": "^0.1.2",
