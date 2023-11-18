@@ -5,6 +5,7 @@ import * as errors from '../errors';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import http from 'http';
+import process from 'process';
 
 export default class Router {
   private readonly _middleware: Middleware;
@@ -93,6 +94,7 @@ export default class Router {
    * Init server
    */
   private initServer(): void {
+    if (process.env.NODE_ENV === 'test') return;
     this._server = http.createServer(this.app);
 
     this.server.listen(getConfig().httpPort, () => {

@@ -41,11 +41,12 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.delete('/', limitRate, (req, res: types.ILocalUser) => {
+service.router.delete('/', limitRate, async (req, res: types.ILocalUser) => {
   try {
-    return service.delete(req, res);
+    await service.delete(req, res);
+    res.status(200).send();
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

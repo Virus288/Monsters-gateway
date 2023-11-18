@@ -1,18 +1,14 @@
-import { afterAll, beforeAll } from '@jest/globals';
+import { afterAll, afterEach, beforeAll } from '@jest/globals';
 import Connection from './connection';
-import Utils from './utils';
+import State from '../../src/tools/state';
+import { FakeBroker } from './mocks';
 
 const connection = new Connection();
-const utils = new Utils();
 
-beforeAll(async () => {
-  await connection.connect();
-  await utils.sleep(2000);
-});
+beforeAll(async () => await connection.connect());
 
-afterAll(async () => {
-  await connection.close();
-  await utils.sleep(1000);
-});
+afterEach(() => ((State.broker as FakeBroker).action = undefined));
+
+afterAll(async () => await connection.close());
 
 export default { connection };

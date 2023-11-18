@@ -27,9 +27,9 @@ const service = new Router();
 service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
   try {
     const data = service.get(req, res);
-    return res.status(200).send(data);
+    res.status(200).send(data);
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 
@@ -74,10 +74,13 @@ service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
  */
 service.router.post('/login', limitRate, async (req, res: types.ILocalUser) => {
   try {
-    await service.post(req, res);
-    return res.status(200).send();
+    const { accessToken, refreshToken } = await service.post(req, res);
+
+    res.set('Authorization', `Bearer ${accessToken}`);
+    res.set('x-refresh-token', `${refreshToken}`);
+    res.status(200).send();
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

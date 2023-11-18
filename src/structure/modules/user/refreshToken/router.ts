@@ -32,9 +32,11 @@ const service = new Router();
  */
 service.router.get('/refresh', limitRate, (req, res: types.ILocalUser) => {
   try {
-    return service.get(req, res);
+    const { access, type } = service.get(req, res);
+    res.set('Authorization', `Bearer ${access}`);
+    res.status(200).send({ type });
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

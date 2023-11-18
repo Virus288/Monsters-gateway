@@ -1,23 +1,35 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import fakeData from '../../fakeData.json';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from '@jest/globals';
+import State from '../../../src/tools/state';
+import SocketServer from '../../utils/mocks/websocket';
 import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
-import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
-import * as errors from '../../../src/errors';
-import { IFullError } from '../../../src/types';
+import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
+import fakeData from '../../fakeData.json';
 import { IUserEntity } from '../../types';
-import { ISocketInMessage } from '../../../src/tools/websocket/types';
+import { ISocketInMessage, ISocketOutMessage } from '../../../src/tools/websocket/types';
+import { FakeBroker } from '../../utils/mocks';
 import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
+import { UnauthorizedError } from '../../../src/errors';
+import { IFullError } from '../../../src/types';
+import type { IClient } from 'moc-socket';
+import MocSocket from 'moc-socket';
 
 describe('Socket - chat', () => {
+  const fakeBroker = State.broker as FakeBroker;
   const utils = new Utils();
+  let server: MocSocket;
+  let client: IClient;
   const fakeUser = fakeData.users[0] as IUserEntity;
   const fakeUser2 = fakeData.users[1] as IUserEntity;
-  const accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
-  const accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
+  const clientOptions = {
+    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)}` },
+  };
+  const client2Options = {
+    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User)}` },
+  };
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
-    subTarget: EMessageSubTargets.Send,
+    subTarget: enums.EMessageSubTargets.Send,
     target: enums.ESocketTargets.Chat,
   };
   const baseMessage: ISocketInMessage = {
@@ -41,107 +53,182 @@ describe('Socket - chat', () => {
     subTarget: EMessageSubTargets.Get,
   };
 
-  beforeAll(async () => await utils.createSocketConnection(accessToken));
-  afterAll(async () => await utils.killSocket());
+  beforeAll(async () => {
+    server = new MocSocket((State.socket as SocketServer).server);
+    client = server.createClient();
+    await client.connect(clientOptions);
+  });
+
+  afterAll(() => {
+    client.disconnect();
+  });
 
   describe('Should throw', () => {
     describe('Not logged in', () => {
-      const utils2 = new Utils();
+      let client2: IClient;
+
+      beforeAll(() => {
+        client2 = server.createClient();
+      });
 
       it(`User not logged in`, async () => {
-        await utils2.createSocketConnection();
-        const { payload } = utils2.getLastMessage();
+        await client2.connect();
+        const target = new UnauthorizedError();
 
-        const { code, name } = payload as IFullError;
-        const targetErr = new errors.UnauthorizedError();
-        await utils2.killSocket();
+        await utils.sleep(200);
+        const [message] = client2.getLastMessages() as ISocketOutMessage[];
+        const { name } = message?.payload as IFullError;
+        client2.disconnect();
 
-        expect(code).toEqual(targetErr.code);
-        expect(name).toEqual(targetErr.name);
+        expect(name).toEqual(target.name);
       });
     });
   });
 
   describe('Should pass', () => {
+    let client2: IClient;
+
+    beforeAll(async () => (client2 = server.createClient()));
+
+    afterEach(async () => client2.disconnect());
+
     it(`No messages`, async () => {
-      const secondConnection = new Utils();
-      await secondConnection.createSocketConnection(accessToken2);
-      await secondConnection.killSocket();
-
-      await utils.sendMessage(message);
-      const data = secondConnection.getLastMessage();
-
+      await client2.connect();
+      const data = await client2.sendAsyncMessage(message, { timeout: 100 });
       expect(data).toEqual(undefined);
+      client2.disconnect();
     });
 
     it(`Get message from db`, async () => {
-      await utils.sendMessage(message);
-
-      const secondConnection = new Utils();
-      await secondConnection.createSocketConnection(accessToken2);
-
-      await secondConnection.sendMessage(getMessage);
-      await utils.sleep(1500);
-      const userMessage = secondConnection.getLastMessage();
-      await secondConnection.killSocket();
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {
+            a: [
+              {
+                sender: fakeUser._id,
+                receiver: fakeUser2._id,
+                messages: 1,
+              },
+            ],
+          },
+          target: EMessageTypes.Send,
+        },
+      };
+      await client2.connect(client2Options);
+      const userMessage = (await client2.sendAsyncMessage(getMessage)) as ISocketOutMessage;
 
       expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
+      client2.disconnect();
     });
 
     it(`Read chat`, async () => {
-      await utils.sendMessage(message);
-
-      const secondConnection = new Utils();
-      await secondConnection.createSocketConnection(accessToken2);
-
-      await secondConnection.sendMessage(getMessage);
-      await utils.sleep(1500);
-      const userMessage = secondConnection.getLastMessage();
-
-      await secondConnection.sendMessage({
-        ...readMessage,
-        payload: {
-          chatId: Object.keys((userMessage?.payload as Record<string, string>) ?? {})[0],
-          user: fakeUser2._id,
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {
+            a: [
+              {
+                sender: fakeUser._id,
+                receiver: fakeUser2._id,
+                messages: 1,
+              },
+            ],
+          },
+          target: EMessageTypes.Send,
         },
-      });
-      await utils.sleep(1500);
+      };
 
-      const userMessage2 = secondConnection.getLastMessage();
+      await client2.connect(client2Options);
+      const userMessage = (await client2.sendAsyncMessage(getMessage, { timeout: 100 })) as ISocketOutMessage;
 
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {
+            id1: [
+              {
+                sender: fakeUser._id,
+                receiver: fakeUser2._id,
+                messages: 1,
+              },
+            ],
+          },
+          target: EMessageTypes.Send,
+        },
+      };
+
+      const userMessage2 = (await client2.sendAsyncMessage(
+        {
+          ...readMessage,
+          payload: {
+            chatId: Object.keys((userMessage?.payload as Record<string, string>) ?? {})[0],
+            user: fakeUser2._id,
+          },
+        },
+        { timeout: 100 },
+      )) as ISocketOutMessage;
       expect(userMessage2?.type).toEqual(ESocketType.Confirmation);
 
-      await secondConnection.sendMessage(getUnread);
-      await utils.sleep(1500);
-      const userMessage3 = secondConnection.getLastMessage();
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {},
+          target: EMessageTypes.Send,
+        },
+      };
 
+      const userMessage3 = (await client2.sendAsyncMessage(getUnread, { timeout: 100 })) as ISocketOutMessage;
       expect(Object.keys(userMessage3?.payload as Record<string, string>).length).toEqual(0);
-      await secondConnection.killSocket();
+      client2.disconnect();
     });
 
     it(`Get with details`, async () => {
-      await utils.sendMessage(message);
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {
+            id1: [
+              {
+                sender: fakeUser._id,
+                receiver: fakeUser2._id,
+                messages: 1,
+              },
+            ],
+          },
+          target: EMessageTypes.Send,
+        },
+      };
 
-      const secondConnection = new Utils();
-      await secondConnection.createSocketConnection(accessToken2);
+      await client2.connect(client2Options);
 
-      await secondConnection.sendMessage(getMessage);
-      await utils.sleep(1500);
-      const userMessage = secondConnection.getLastMessage();
-
+      const userMessage = (await client2.sendAsyncMessage(getMessage, { timeout: 100 })) as ISocketOutMessage;
       expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
 
-      await secondConnection.sendMessage({
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: [
+            {
+              sender: fakeUser._id,
+              receiver: fakeUser2._id,
+              read: true,
+              chatId: 'id1',
+              message: 'banana',
+            },
+          ],
+          target: EMessageTypes.Send,
+        },
+      };
+
+      const userMessage2 = (await client2.sendAsyncMessage({
         ...getWithDetails,
         payload: { ...getWithDetails.payload, target: Object.keys(userMessage.payload as Record<string, string>)[0] },
-      });
-      await utils.sleep(1500);
-      const userMessage2 = secondConnection.getLastMessage();
-      await utils.sleep(1500);
+      })) as ISocketOutMessage;
       const payload = userMessage2?.payload as IFullMessageEntity[];
 
       expect(payload.length).toBeGreaterThan(0);
-      await secondConnection.killSocket();
+      client2.disconnect();
     });
   });
 });

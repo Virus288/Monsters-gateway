@@ -45,11 +45,11 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.patch('/read', limitRate, (req, res: types.ILocalUser) => {
+service.router.patch('/read', limitRate, async (req, res: types.ILocalUser) => {
   try {
-    return service.patch(req, res);
+    await service.patch(req, res);
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

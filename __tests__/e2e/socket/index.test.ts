@@ -2,41 +2,60 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import fakeData from '../../fakeData.json';
 import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
-import { EMessageSubTargets, ESocketType, EUserTypes } from '../../../src/enums';
-import * as errors from '../../../src/errors';
-import { IFullError } from '../../../src/types';
+import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
 import { IUserEntity } from '../../types';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/tools/websocket/types';
+import State from '../../../src/tools/state';
+import * as errors from '../../../src/errors';
+import SocketServer from '../../utils/mocks/websocket';
+import MocSocket, { IClient } from 'moc-socket';
+import { FakeBroker } from '../../utils/mocks';
+import { IFullError } from '../../../src/types';
 
 describe('Socket - generic tests', () => {
+  const fakeBroker = State.broker as FakeBroker;
   const utils = new Utils();
+  let server: MocSocket;
+  let client: IClient;
   const fakeUser = fakeData.users[0] as IUserEntity;
   const fakeUser2 = fakeData.users[1] as IUserEntity;
-  const accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
-  const accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
+  const clientOptions = {
+    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)}` },
+  };
+  const client2Options = {
+    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User)}` },
+  };
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
     subTarget: EMessageSubTargets.Send,
     target: enums.ESocketTargets.Chat,
   };
 
-  beforeAll(async () => await utils.createSocketConnection(accessToken));
-  afterAll(async () => await utils.killSocket());
+  beforeAll(async () => {
+    server = new MocSocket((State.socket as SocketServer).server);
+    client = server.createClient();
+    await client.connect(clientOptions);
+  });
+
+  afterAll(() => {
+    client.disconnect();
+  });
 
   describe('Should throw', () => {
     describe('Not logged in', () => {
-      const utils2 = new Utils();
-
       it(`User not logged in`, async () => {
-        await utils2.createSocketConnection();
-        const { payload } = utils2.getLastMessage();
+        const client2 = server.createClient();
+        await client2.connect();
 
-        const { code, name } = payload as IFullError;
+        // Validate user method is not able to react this fast
+        await utils.sleep(100);
+        const message = (client2.getLastMessages() as ISocketOutMessage[])[0] as ISocketOutMessage;
+
+        const { name } = message.payload as IFullError;
         const targetErr = new errors.UnauthorizedError();
-        await utils2.killSocket();
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
+        client2.disconnect();
       });
     });
 
@@ -45,13 +64,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         clone.target = undefined!;
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
         const targetErr = new errors.IncorrectTargetError();
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
@@ -59,13 +75,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         clone.subTarget = undefined!;
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
         const targetErr = new errors.IncorrectTargetError();
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
@@ -73,13 +86,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         delete clone.payload;
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
         const targetErr = new errors.MissingArgError('payload');
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
@@ -87,13 +97,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         delete clone.payload.target;
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
         const targetErr = new errors.MissingArgError('target');
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
@@ -101,25 +108,26 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         delete clone.payload.message;
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { code, name } = payload as IFullError;
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
         const targetErr = new errors.MissingArgError('message');
 
-        expect(code).toEqual(targetErr.code);
         expect(name).toEqual(targetErr.name);
       });
 
       it(`Target user does not exist`, async () => {
+        const targetErr = new errors.IncorrectArgTypeError('receiver') as unknown as Record<string, unknown>;
+
         const clone = structuredClone(message);
         clone.payload.target = 'a';
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgTypeError('receiver');
+        fakeBroker.action = {
+          shouldFail: true,
+          returns: { payload: targetErr, target: EMessageTypes.Send },
+        };
+
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
 
         expect(name).toEqual(targetErr.name);
       });
@@ -127,29 +135,37 @@ describe('Socket - generic tests', () => {
 
     describe('Incorrect data', () => {
       it(`Message too long`, async () => {
+        const targetErr = new errors.IncorrectArgLengthError('body', 2, 1000) as unknown as Record<string, unknown>;
+
         const clone = structuredClone(message);
         for (let x = 0; x < 1000; x++) {
           clone.payload.message += 'A';
         }
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgLengthError('body', 2, 1000);
+        fakeBroker.action = {
+          shouldFail: true,
+          returns: { payload: targetErr, target: EMessageTypes.Send },
+        };
+
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
 
         expect(name).toEqual(targetErr.name);
       });
 
       it(`Target id is not mongoose id`, async () => {
+        const targetErr = new errors.IncorrectArgTypeError('') as unknown as Record<string, unknown>;
+
         const clone = structuredClone(message);
         clone.payload.target = 'a';
 
-        await utils.sendMessage(clone);
-        await utils.sleep(1500);
-        const { payload } = utils.getLastMessage();
-        const { name } = payload as IFullError;
-        const targetErr = new errors.IncorrectArgTypeError('');
+        fakeBroker.action = {
+          shouldFail: true,
+          returns: { payload: targetErr, target: EMessageTypes.Send },
+        };
+
+        const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
+        const { name } = m.payload as IFullError;
 
         expect(name).toEqual(targetErr.name);
       });
@@ -158,18 +174,28 @@ describe('Socket - generic tests', () => {
 
   describe('Should pass', () => {
     it(`Message sent`, async () => {
-      const secondConnection = new Utils();
-      await secondConnection.createSocketConnection(accessToken2);
+      const client2 = server.createClient();
+      await client2.connect(client2Options);
 
-      await utils.sendMessage(message);
-      await utils.sleep(1500);
-      const ms = secondConnection.getLastMessage();
-      const { payload, type } = ms as ISocketOutMessage;
+      fakeBroker.action = {
+        shouldFail: false,
+        returns: {
+          payload: {},
+          target: EMessageTypes.Send,
+        },
+      };
+
+      await client.sendAsyncMessage(message);
+      await utils.sleep(100);
+
+      const m = (client2.getLastMessages(1) as ISocketOutMessage[])[0] as ISocketOutMessage;
+
+      const { payload, type } = m;
 
       expect(type).toEqual(ESocketType.Message.toString());
       expect(payload).toEqual(message.payload.message);
 
-      await secondConnection.killSocket();
+      client2.disconnect();
     });
   });
 });

@@ -20,7 +20,7 @@ export default class UserRouter extends RouterFactory {
     return { type, id };
   }
 
-  async post(req: express.Request, res: ILocalUser): Promise<void> {
+  async post(req: express.Request, res: ILocalUser): Promise<{ accessToken: string; refreshToken: string }> {
     const data = new LoginDto(req.body as LoginDto);
     const callback = await res.locals.reqHandler.user.login(data, res.locals);
 
@@ -31,8 +31,6 @@ export default class UserRouter extends RouterFactory {
       maxAge: EJwtTime.TokenMaxAge * 1000,
       sameSite: 'none',
     });
-    res.set('Authorization', `Bearer ${accessToken}`);
-    res.set('x-refresh-token', `${refreshToken}`);
-    res.status(200).send();
+    return { refreshToken, accessToken };
   }
 }

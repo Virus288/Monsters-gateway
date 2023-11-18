@@ -1,6 +1,6 @@
 import type { IGetMessageDto, IReadMessageDto } from './dto';
-import type * as enums from '../../enums';
-import type ReqHandler from '../../structure/reqHandler';
+import type * as enums from '../../../enums';
+import type ReqHandler from '../../../structure/reqHandler';
 import type { WebSocket } from 'ws';
 
 export interface ISendMessageDto {

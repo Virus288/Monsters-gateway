@@ -4,4 +4,4 @@ export { ILoginDto } from '../../src/structure/modules/user/login/dto';
 export { IRegisterDto } from '../../src/structure/modules/user/register/dto';
 
 export * from './users';
-export * from './chat';
+export * from './broker';

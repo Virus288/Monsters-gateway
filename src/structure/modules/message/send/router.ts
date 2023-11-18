@@ -45,11 +45,12 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.put('/send', limitRate, (req, res: types.ILocalUser) => {
+service.router.put('/send', limitRate, async (req, res: types.ILocalUser) => {
   try {
-    return service.put(req, res);
+    await service.put(req, res);
+    res.status(200).send();
   } catch (err) {
-    return handleErr(err as types.IFullError, res);
+    handleErr(err as types.IFullError, res);
   }
 });
 

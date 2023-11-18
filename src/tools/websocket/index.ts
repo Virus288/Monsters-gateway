@@ -3,6 +3,7 @@ import Websocket from 'ws';
 import Router from './router';
 import * as enums from '../../enums';
 import * as errors from '../../errors';
+import ReqHandler from '../../structure/reqHandler';
 import getConfig from '../configLoader';
 import Log from '../logger/log';
 import type * as types from './types';
@@ -10,26 +11,32 @@ import type { ESocketType } from '../../enums';
 import type { IFullError } from '../../types';
 
 export default class WebsocketServer {
+  protected _server: Websocket.WebSocketServer | null = null;
   private readonly _router: Router;
+  private _users: types.ISocketUser[] = [];
 
   constructor() {
     this._router = new Router();
   }
 
-  private _users: types.ISocketUser[] = [];
-
-  private get users(): types.ISocketUser[] {
+  protected get users(): types.ISocketUser[] {
     return this._users;
+  }
+
+  protected set users(value: types.ISocketUser[]) {
+    this._users = value;
+  }
+
+  protected get server(): Websocket.WebSocketServer {
+    return this._server!;
+  }
+
+  protected set server(value: Websocket.WebSocketServer) {
+    this._server = value;
   }
 
   private get router(): Router {
     return this._router;
-  }
-
-  private _server: Websocket.WebSocketServer | null = null;
-
-  private get server(): Websocket.WebSocketServer {
-    return this._server!;
   }
 
   init(): void {
@@ -52,7 +59,7 @@ export default class WebsocketServer {
 
   startListeners(): void {
     this.server.on('connection', (ws: types.ISocket, req) => {
-      this.errorWrapper(() => this.onUserConnected(ws, req.headers.cookie), ws);
+      this.errorWrapper(() => this.onUserConnected(ws, req.headers.cookie, req.headers.authorization), ws);
     });
     this.server.on('error', (err) => this.handleServerError(err));
     this.server.on('close', () => Log.log('Websocket', 'Server closed'));
@@ -74,8 +81,16 @@ export default class WebsocketServer {
     return exist !== undefined;
   }
 
-  private onUserConnected(ws: types.ISocket, cookies: string | undefined): void {
-    this.validateUser(ws, cookies);
+  protected userDisconnected(ws: types.ISocket): void {
+    if (!ws.userId) return;
+    this._users = this.users.filter((u) => {
+      return u.userId !== ws.userId;
+    });
+  }
+
+  protected onUserConnected(ws: types.ISocket, cookies: string | undefined, header: string | undefined): void {
+    this.validateUser(ws, { cookies, header });
+    this.initializeUser(ws);
 
     ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
     ws.on('pong', () => this.errorWrapper(() => this.pong(ws), ws));
@@ -83,23 +98,39 @@ export default class WebsocketServer {
     ws.on('close', () => this.userDisconnected(ws));
   }
 
-  private validateUser(ws: types.ISocket, cookies: string | undefined): void {
-    const errBody = JSON.stringify({
+  protected errorWrapper(callback: () => void, ws: types.ISocket): void {
+    try {
+      callback();
+    } catch (err) {
+      this.router.handleError(err as IFullError, ws);
+    }
+  }
+
+  private validateUser(ws: types.ISocket, auth: { cookies: string | undefined; header: string | undefined }): void {
+    const unauthorizedErrorMessage = JSON.stringify({
       type: enums.ESocketType.Error,
       payload: new errors.UnauthorizedError(),
     });
+    let access: string | undefined = undefined;
 
-    if (!cookies) return ws.close(1000, errBody);
+    if (auth.header) {
+      const { header } = auth;
+      if (header.includes('Bearer')) {
+        access = header.split('Bearer')[1]!.trim();
+      }
+    } else if (auth.cookies) {
+      const preparedCookie = auth.cookies
+        .split(';')
+        .map((e) => e.split('='))
+        .find((e) => e[0] === 'accessToken');
+      if (!preparedCookie || preparedCookie.length === 0) return ws.close(1000, unauthorizedErrorMessage);
+      access = preparedCookie[1];
+    }
 
-    const accessToken = cookies
-      .split(';')
-      .map((e) => e.split('='))
-      .find((e) => e[0] === 'accessToken');
-    if (!accessToken || accessToken.length === 0) return ws.close(1000, errBody);
-    const prepared = accessToken[1]!;
+    if (!access) return ws.close(1000, unauthorizedErrorMessage);
 
     try {
-      const { id, type } = jwt.verify(prepared, getConfig().accessToken) as {
+      const { id, type } = jwt.verify(access, getConfig().accessToken) as {
         id: string;
         type: enums.EUserTypes;
       };
@@ -122,15 +153,12 @@ export default class WebsocketServer {
       this._users.push({ clients: [ws], userId: id, type });
       return undefined;
     } catch (err) {
-      return ws.close(1000, errBody);
+      return ws.close(1000, unauthorizedErrorMessage);
     }
   }
 
-  private userDisconnected(ws: types.ISocket): void {
-    if (!ws.userId) return;
-    this._users = this.users.filter((u) => {
-      return u.userId !== ws.userId;
-    });
+  private initializeUser(ws: types.ISocket): void {
+    ws.reqHandler = new ReqHandler();
   }
 
   private handleUserMessage(mess: string, ws: types.ISocket): void {
@@ -152,14 +180,6 @@ export default class WebsocketServer {
 
   private pong(ws: types.ISocket): void {
     ws.pong();
-  }
-
-  private errorWrapper(callback: () => void, ws: types.ISocket): void {
-    try {
-      callback();
-    } catch (err) {
-      this.router.handleError(err as IFullError, ws);
-    }
   }
 
   private handleServerError(err: Error): void {

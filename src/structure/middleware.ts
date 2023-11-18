@@ -43,7 +43,10 @@ export default class Middleware {
         res: types.ILocalUser,
         _next: express.NextFunction,
       ) => {
-        errLogger.error('Caught new generic error').error(`Caused by ${req.ip}`).error(JSON.stringify(err));
+        errLogger
+          .error('Caught new generic error')
+          .error(`Caused by ${req.ip ?? 'unknown ip'}`)
+          .error(JSON.stringify(err));
         const error = err as types.IFullError;
 
         if (err.name === 'SyntaxError') {
