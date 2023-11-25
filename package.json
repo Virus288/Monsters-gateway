@@ -37,7 +37,7 @@
     "express": "^4.18.1",
     "express-rate-limit": "^7.1.4",
     "helmet": "^7.0.0",
-    "jsonwebtoken": "9.0.0",
+    "jsonwebtoken": "9.0.2",
     "moc-socket": "^0.1.2",
     "node": "21.1.0",
     "redis": "4.6.6",
