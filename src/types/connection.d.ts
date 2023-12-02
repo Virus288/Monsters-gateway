@@ -101,9 +101,9 @@ export type ICommunicationQueue = Record<
   {
     resolve: (
       value:
-        | { type: EMessageTypes.Credentials | EMessageTypes.Send; payload: unknown }
+        | { type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send; payload: unknown }
         | PromiseLike<{
-            type: EMessageTypes.Credentials | EMessageTypes.Send;
+            type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
             payload: unknown;
           }>,
     ) => void;
