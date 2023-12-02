@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "NodeNext",
+    "module": "CommonJS",
     "types": [
       "node",
       "jest"
@@ -28,7 +28,7 @@
     "incremental": true,
     "inlineSources": true,
     "isolatedModules": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node",
     "noEmit": false,
     "noEmitOnError": false,
     "noFallthroughCasesInSwitch": true,
