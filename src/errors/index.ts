@@ -299,8 +299,8 @@ export class IncorrectArgLengthError extends FullError {
       min === undefined
         ? `${target} should be less than ${max} characters`
         : min !== max
-        ? `${target} should be more than ${min} and less than ${max} characters`
-        : `${target} should be ${min} characters`;
+          ? `${target} should be more than ${min} and less than ${max} characters`
+          : `${target} should be ${min} characters`;
     this.name = 'IncorrectArgLengthError';
     this.status = 400;
   }
