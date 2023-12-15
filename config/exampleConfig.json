@@ -6,5 +6,11 @@
   "httpPort": 80,
   "socketPort": 81,
   "accessToken": "accessToken",
-  "refToken": "refreshToken"
+  "refToken": "refreshToken",
+  "mysql": {
+    "user": "mysqlUser",
+    "password": "mysqlPassword",
+    "host": "host",
+    "db": "db"
+  }
 }

@@ -15,4 +15,10 @@ export interface IConfigInterface {
   socketPort: number;
   redisTestURI: string;
   redisURI: string;
+  mysql: {
+    user: string;
+    password: string;
+    host: string;
+    db: string;
+  };
 }
