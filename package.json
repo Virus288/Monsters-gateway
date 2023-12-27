@@ -40,7 +40,7 @@
     "jsonwebtoken": "9.0.2",
     "moc-socket": "^0.1.2",
     "node": "21.2.0",
-    "redis": "4.6.11",
+    "redis": "4.6.12",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.8.2",
