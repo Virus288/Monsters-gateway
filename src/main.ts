@@ -35,7 +35,7 @@ export default class App {
     State.broker = broker;
     State.socket = socket;
     State.redis = redis;
-    router.init();
+    await router.init();
     socket.init();
     await broker.init();
     await redis.init();

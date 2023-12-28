@@ -14,7 +14,7 @@ export default class Utils {
 
   async connect(): Promise<void> {
     State.socket.init();
-    State.router.init();
+    await State.router.init();
   }
 
   async close(): Promise<void> {

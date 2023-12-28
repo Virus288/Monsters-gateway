@@ -12,5 +12,9 @@
     "password": "mysqlPassword",
     "host": "host",
     "db": "db"
+  },
+  "session": {
+    "secret": "sessionSecret",
+    "secured": false
   }
 }

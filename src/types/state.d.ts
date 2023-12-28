@@ -21,4 +21,8 @@ export interface IConfigInterface {
     host: string;
     db: string;
   };
+  session: {
+    secret: string;
+    secured: boolean;
+  };
 }

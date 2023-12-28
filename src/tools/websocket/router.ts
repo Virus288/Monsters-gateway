@@ -2,7 +2,7 @@ import Validation from './validation';
 import * as enums from '../../enums';
 import { ESocketType, EUserTypes } from '../../enums';
 import * as errors from '../../errors';
-import Log from '../logger/logger';
+import Log from '../logger/log';
 import State from '../state';
 import type * as types from './types';
 import type { IFullError } from '../../types';

@@ -1,5 +1,6 @@
 import Router from './index';
 import handleErr from '../../../../errors/utils';
+import Logger from '../../../../tools/logger/log';
 import limitRate from '../../../utils';
 import type * as types from '../../../../types';
 
@@ -7,27 +8,25 @@ const service = new Router();
 
 /**
  * @openapi
- * /users/login:
+ * /interaction/:grant:
  *   get:
  *     tags:
- *       - user
- *     description: Validate if user's token is valid
- *     security:
- *       - bearerAuth: []
+ *       - interaction
+ *     description: Init oidc interaction
  *     responses:
  *       200:
- *         description: Success. The user is logged in.
+ *         description: Success. Moved user to login site
  *       401:
- *         description: User not logged in
+ *         description: Incorrect oidc params.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
+service.router.get('/:grant', limitRate, async (req, res, next) => {
   try {
-    const data = service.get(req, res);
-    res.status(200).send(data);
+    Logger.error('Test', 'Grant get');
+    await service.get(req, res, next);
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }
@@ -72,13 +71,15 @@ service.router.get('/login', limitRate, (req, res: types.ILocalUser) => {
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/login', limitRate, async (req, res: types.ILocalUser) => {
+service.router.post('/:grant/login', limitRate, async (req, res, next) => {
+  Logger.error('Test', 'Grant post');
   try {
-    const { accessToken, refreshToken } = await service.post(req, res);
-
-    res.set('Authorization', `Bearer ${accessToken}`);
-    res.set('x-refresh-token', `${refreshToken}`);
-    res.status(200).send();
+    await service.post(req, res, next);
+    // const { accessToken, refreshToken } = await service.post(req, res, next);
+    //
+    // res.set('Authorization', `Bearer ${accessToken}`);
+    // res.set('x-refresh-token', `${refreshToken}`);
+    // res.status(200).send();
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

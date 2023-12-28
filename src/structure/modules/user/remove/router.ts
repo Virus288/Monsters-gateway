@@ -33,7 +33,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.delete('/', limitRate, async (req, res: types.ILocalUser) => {
+service.router.delete('/', limitRate, async (req, res) => {
   try {
     await service.delete(req, res);
     res.status(200).send();

@@ -211,7 +211,7 @@ describe('Register', () => {
           login: generateRandomName(),
           email: `${generateRandomName()}@${generateRandomName()}.test`,
         });
-      const body = res.body as types.ILoginSuccessResponse;
+      const body = res.body;
 
       expect(body).toEqual('');
     });

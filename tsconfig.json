@@ -56,7 +56,7 @@
     "useDefineForClassFields": false
   },
   "include": [
-    "**/*"
+    "src"
   ]
 }
 

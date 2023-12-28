@@ -9,7 +9,6 @@ export enum EUserMainTargets {
 
 export enum EUserTargets {
   Register = 'register',
-  Login = 'login',
   GetName = 'getUsername',
   Remove = 'removeUser',
 }

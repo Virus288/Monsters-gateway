@@ -1,4 +1,3 @@
-import type * as types from './index';
 import type * as enums from '../enums';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
 import type InventoryAddDto from '../structure/modules/inventory/use/dto';
@@ -85,16 +84,6 @@ export interface IRabbitMessage {
 }
 
 export type IAvailableServices = Exclude<enums.EServices, enums.EServices.Gateway>;
-
-export interface IConnectionType {
-  [enums.EConnectionType.Socket]: string;
-  [enums.EConnectionType.Api]: types.ILocalUser;
-}
-
-export interface IWebsocketRabbitTarget {
-  id: string;
-  tempId: string;
-}
 
 export type ICommunicationQueue = Record<
   string,

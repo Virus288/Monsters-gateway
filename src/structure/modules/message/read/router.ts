@@ -45,7 +45,7 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.patch('/read', limitRate, async (req, res: types.ILocalUser) => {
+service.router.patch('/read', limitRate, async (req, res) => {
   try {
     await service.patch(req, res);
   } catch (err) {

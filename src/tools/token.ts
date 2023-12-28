@@ -3,9 +3,9 @@ import getConfig from './configLoader';
 import { EJwtTime } from '../enums';
 import * as errors from '../errors';
 import type * as enums from '../enums';
-import type * as types from '../types';
+import type express from 'express';
 
-export const verify = (res: types.ILocalUser, token: string | undefined): { id: string; type: enums.EUserTypes } => {
+export const verify = (res: express.Response, token: string | undefined): { id: string; type: enums.EUserTypes } => {
   if (!token) throw new errors.UnauthorizedError();
   const payload = jwt.verify(token, getConfig().accessToken) as {
     id: string;
@@ -19,7 +19,7 @@ export const verify = (res: types.ILocalUser, token: string | undefined): { id: 
   return payload;
 };
 
-export const verifyRefresh = (res: types.ILocalUser, token: string | null): { id: string; type: enums.EUserTypes } => {
+export const verifyRefresh = (res: express.Response, token: string | null): { id: string; type: enums.EUserTypes } => {
   if (!token) throw new errors.UnauthorizedError();
   const payload = jwt.verify(token, getConfig().refToken) as {
     id: string;

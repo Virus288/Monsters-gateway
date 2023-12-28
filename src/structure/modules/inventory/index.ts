@@ -1,7 +1,15 @@
 import drop from './drop/router';
 import get from './get/router';
 import use from './use/router';
+import type { RequestHandler, Router } from 'express';
 
-const routes = { drop: drop.router, get: get.router, use: use.router };
+const initInventoryRoutes = (router: Router, userValidation: RequestHandler): void => {
+  const prefix = '/inventory';
 
-export default routes;
+  router
+    .use(prefix, userValidation, drop.router)
+    .use(prefix, userValidation, use.router)
+    .use(prefix, userValidation, get.router);
+};
+
+export default initInventoryRoutes;

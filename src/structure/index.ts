@@ -1,11 +1,11 @@
 import express from 'express';
 import Middleware from './middleware';
 import AppRouter from './router';
-import * as errors from '../errors';
+import Oidc from '../oidc';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
+import type Provider from 'oidc-provider';
 import http from 'http';
-import process from 'process';
 
 export default class Router {
   private readonly _middleware: Middleware;
@@ -35,12 +35,15 @@ export default class Router {
     return this._server!;
   }
 
-  init(): void {
+  async init(): Promise<void> {
+    const provider = await new Oidc().init();
     this.initDocumentation();
-    this.initMiddleware();
-    this.initRouter();
+    this.initMiddleware(provider);
+    this.initRouter(provider);
     this.initServer();
+    this.initSecuredRouter();
     this.initErrHandler();
+    this.initOidc(provider);
   }
 
   /**
@@ -57,7 +60,8 @@ export default class Router {
   /**
    * Init middleware
    */
-  private initMiddleware(): void {
+  private initMiddleware(provider: Provider): void {
+    this.middleware.generateOidc(this.app, provider);
     this.middleware.generateMiddleware(this.app);
     this.middleware.initializeHandler(this.app);
   }
@@ -79,15 +83,29 @@ export default class Router {
   /**
    * Init basic routes. Add "debug" route while in development mode
    */
-  private initRouter(): void {
-    this.router.initRoutes();
-    this.middleware.userValidation(this.app);
-    this.router.initSecured();
+  private initRouter(provider: Provider): void {
+    this.router.initRoutes(provider);
+  }
 
-    this.app.all('*', (_req, res: express.Response) => {
-      const { message, code, name, status } = new errors.NotFoundError();
-      res.status(status).json({ message, code, name });
-    });
+  /**
+   * Init secured routes.
+   */
+  private initSecuredRouter(): void {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    this.router.initSecuredRoutes(this.middleware.userValidation);
+
+    // // #TODO I am unable to disable oidc's wildcard handler. I wish to disable it and handle all 404 with this
+    // this.app.all('*', (_req, res: express.Response) => {
+    //   const { message, code, name, status } = new errors.NotFoundError();
+    //   res.status(status).json({ message, code, name });
+    // });
+  }
+
+  /**
+   * Init basic routes. Add "debug" route while in development mode
+   */
+  private initOidc(provider: Provider): void {
+    this.middleware.generateOidcMiddleware(this.app, provider);
   }
 
   /**
