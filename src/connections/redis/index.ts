@@ -1,8 +1,8 @@
 import { createClient } from 'redis';
 import Rooster from './rooster';
 import * as enums from '../../enums';
-import getConfig from '../configLoader';
-import Log from '../logger/log';
+import getConfig from '../../tools/configLoader';
+import Log from '../../tools/logger/log';
 import type { IFullError } from '../../types';
 import type { RedisClientType } from 'redis';
 

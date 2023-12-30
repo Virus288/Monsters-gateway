@@ -1,8 +1,8 @@
 import Provider from 'oidc-provider';
 import oidcClaims from './claims';
 import { getKeys } from './utils';
+import State from '../state';
 import Log from '../tools/logger/log';
-import State from '../tools/state';
 import type { JSONWebKey } from 'jose';
 import type { Configuration } from 'oidc-provider';
 

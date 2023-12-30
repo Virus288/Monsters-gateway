@@ -352,3 +352,12 @@ export class IncorrectCredentialsError extends FullError {
     this.status = 400;
   }
 }
+
+export class ProviderNotInitialized extends FullError {
+  constructor() {
+    super('ProviderNotInitialized');
+    this.message = 'Oidc provider not initialized';
+    this.name = 'ProviderNotInitialized';
+    this.status = 400;
+  }
+}

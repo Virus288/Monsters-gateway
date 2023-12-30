@@ -1,6 +1,5 @@
 import Router from './index';
 import handleErr from '../../../../errors/utils';
-import Logger from '../../../../tools/logger/log';
 import limitRate from '../../../utils';
 import type * as types from '../../../../types';
 
@@ -25,7 +24,6 @@ const service = new Router();
  */
 service.router.get('/:grant', limitRate, async (req, res, next) => {
   try {
-    Logger.error('Test', 'Grant get');
     await service.get(req, res, next);
   } catch (err) {
     handleErr(err as types.IFullError, res);
@@ -72,11 +70,9 @@ service.router.get('/:grant', limitRate, async (req, res, next) => {
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
 service.router.post('/:grant/login', limitRate, async (req, res, next) => {
-  Logger.error('Test', 'Grant post');
   try {
     await service.post(req, res, next);
     // const { accessToken, refreshToken } = await service.post(req, res, next);
-    //
     // res.set('Authorization', `Bearer ${accessToken}`);
     // res.set('x-refresh-token', `${refreshToken}`);
     // res.status(200).send();

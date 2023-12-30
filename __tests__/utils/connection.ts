@@ -1,4 +1,4 @@
-import State from '../../src/tools/state';
+import State from '../../src/state';
 import FakeBroker from './mocks/broker';
 import FakeRedis from './mocks/redis';
 import Router from '../../src/structure';

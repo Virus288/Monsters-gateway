@@ -3,7 +3,7 @@ import { IFullError } from '../../../src/types';
 import * as types from '../../types';
 import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
-import State from '../../../src/tools/state';
+import State from '../../../src/state';
 import { UsernameAlreadyInUseError } from '../../../src/errors';
 import { FakeBroker } from '../../utils/mocks';
 import { EMessageTypes } from '../../../src/enums';

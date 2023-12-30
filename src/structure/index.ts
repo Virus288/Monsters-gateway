@@ -93,12 +93,6 @@ export default class Router {
   private initSecuredRouter(): void {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     this.router.initSecuredRoutes(this.middleware.userValidation);
-
-    // // #TODO I am unable to disable oidc's wildcard handler. I wish to disable it and handle all 404 with this
-    // this.app.all('*', (_req, res: express.Response) => {
-    //   const { message, code, name, status } = new errors.NotFoundError();
-    //   res.status(status).json({ message, code, name });
-    // });
   }
 
   /**

@@ -23,7 +23,7 @@ export interface JSONWebKey {
 
 export interface ITokenPayload {
   jti: string;
-  sub: number; // userId?
+  sub: string;
   iat: number;
   exp: number;
   scope: string;

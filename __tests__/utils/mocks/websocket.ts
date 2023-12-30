@@ -1,7 +1,7 @@
-import WebsocketServer from '../../../src/tools/websocket';
+import WebsocketServer from '../../../src/connections/websocket';
 import Websocket from 'ws';
 import * as errors from '../../../src/errors';
-import type * as types from '../../../src/tools/websocket/types';
+import type * as types from '../../../src/connections/websocket/types';
 
 export default class SocketServer extends WebsocketServer {
   override get server(): Websocket.WebSocketServer {

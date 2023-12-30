@@ -1,5 +1,5 @@
-import type { IGetDetailedBody, IGetMessageBody, IReadMessageBody, ISocketSendMessageBody } from './types';
-import type { EMessageSubTargets, ESocketTargets } from '../../enums';
+import type { IGetDetailedBody, IGetMessageBody, IReadMessageBody, ISocketSendMessageBody } from './index';
+import type { EMessageSubTargets, ESocketTargets } from '../../../enums';
 
 /**
  * @openapi

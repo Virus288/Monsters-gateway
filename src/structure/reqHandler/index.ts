@@ -5,7 +5,7 @@ import Party from './party';
 import Profile from './profile';
 import User from './user';
 import { EServices } from '../../enums';
-import State from '../../tools/state';
+import State from '../../state';
 import type * as enums from '../../enums';
 import type { IRabbitConnectionData, IRabbitSubTargets, IRabbitTargets } from '../../types';
 

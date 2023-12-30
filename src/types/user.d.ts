@@ -1,6 +1,7 @@
 import type * as enums from '../enums';
 import type ReqHandler from '../structure/reqHandler';
 import type { Locals } from 'express';
+import type session from 'express-session';
 
 export interface IUsersTokens extends Locals {
   reqHandler: ReqHandler;
@@ -14,7 +15,9 @@ export interface IUsersTokens extends Locals {
 }
 
 export interface IUserCredentials {
-  accessToken: string;
-  refreshToken: string;
+  id: string;
+}
+
+export interface IUserSession extends session.Session, Partial<session.SessionData> {
   userId: string;
 }

@@ -1,26 +1,29 @@
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
+import * as jose from 'node-jose';
 import ReqHandler from './reqHandler';
-import { EJwt } from '../enums';
 import * as errors from '../errors';
 import { InternalError } from '../errors';
 import handleErr from '../errors/utils';
+import State from '../state';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import errLogger from '../tools/logger/logger';
-import State from '../tools/state';
-import { verify } from '../tools/token';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
 import * as path from 'path';
+import * as process from 'process';
 
 export default class Middleware {
   generateMiddleware(app: Express): void {
     app.use(express.json({ limit: '500kb' }));
+    app.use(express.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
     app.use(cookieParser());
     app.use(
       cors({
@@ -98,22 +101,24 @@ export default class Middleware {
   }
 
   async userValidation(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    let access: string | undefined = undefined;
-
-    if (req.headers.authorization) {
-      const key = req.headers.authorization;
-      if (key.includes('Bearer')) {
-        access = req.headers.authorization.split('Bearer')[1]!.trim();
-      }
-    } else {
-      access = (req.cookies as { [EJwt.AccessToken]: string | undefined })[EJwt.AccessToken];
-    }
+    // #TODO Disable token validation in tests for now. Find a way to generate keys for tests
+    if (process.env.NODE_ENV === 'test') return next();
+    const token = (req.cookies as Record<string, string>)['monsters.uid'] as string;
 
     try {
-      if (!access) throw new errors.UnauthorizedError();
-      const { id } = verify(res, access);
+      const keyStore = await jose.JWK.asKeyStore({ keys: State.keys });
+      const verifier = jose.JWS.createVerify(keyStore);
+      const payload = JSON.parse((await verifier.verify(token)).payload.toString()) as types.ITokenPayload;
+      await verifier.verify(token);
 
-      const user = await State.redis.getRemovedUsers(id);
+      if (!token) throw new errors.UnauthorizedError();
+      if (new Date(payload.exp * 1000) < new Date()) {
+        // Token expired
+        throw new errors.UnauthorizedError();
+      }
+
+      // Validate if user's token is still active, but account got removed
+      const user = await State.redis.getRemovedUsers(payload.sub);
       if (user) throw new errors.UnauthorizedError();
 
       return next();

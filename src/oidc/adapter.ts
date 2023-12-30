@@ -1,122 +1,80 @@
-import Log from '../tools/logger/logger';
 import type { Adapter as OidcAdapter, AdapterPayload } from 'oidc-provider';
 
 export default class Adapter implements OidcAdapter {
   private readonly _name: string;
-  private _interactions: Record<string, AdapterPayload> = {};
-  private _authorizationCodes: Record<string, AdapterPayload> = {};
+  private _data: Record<string, Record<string, AdapterPayload>> = {};
 
   constructor(name: string) {
     this._name = name;
   }
 
-  private get interactions(): Record<string, AdapterPayload> {
-    return this._interactions;
-  }
-
-  private get authorizationCodes(): Record<string, AdapterPayload> {
-    return this._authorizationCodes;
+  get data(): Record<string, Record<string, AdapterPayload>> {
+    return this._data;
   }
 
   private get name(): string {
     return this._name;
   }
 
-  async upsert(id: string, payload: AdapterPayload, expiresIn: number): Promise<void> {
-    Log.log('Upsert', id, JSON.stringify(payload), expiresIn, this.name);
-
-    switch (this.name) {
-      case 'AuthorizationCode':
-        this.authorizationCodes[id] = payload;
-        break;
-      case 'Interaction':
-        this.interactions[id] = payload;
-        break;
-      default:
-        break;
+  async upsert(id: string, payload: AdapterPayload): Promise<void> {
+    if (!this.data[this.name]) {
+      this.data[this.name] = {};
     }
-
+    this.data[this.name]![id] = payload;
     return new Promise((resolve) => resolve(undefined));
   }
 
   async find(id: string): Promise<AdapterPayload | undefined> {
-    Log.log('Find', id, this.name);
-    switch (this.name) {
-      case 'AuthorizationCode':
-        return new Promise((resolve) => resolve(this.authorizationCodes[id]));
-      case 'Interaction':
-        return new Promise((resolve) => resolve(this.interactions[id]));
-      default:
-        return undefined;
+    if (!this.data[this.name]) {
+      this.data[this.name] = {};
     }
-  }
 
-  async findByUid(uid: string): Promise<AdapterPayload | undefined> {
-    Log.log('Find by uid', uid, this.name);
-
-    switch (this.name) {
-      case 'AuthorizationCode':
-        return new Promise((resolve) => {
-          resolve(Object.values(this.authorizationCodes).find((e) => e.uid === uid));
-        });
-      case 'Interaction':
-        return new Promise((resolve) => {
-          resolve(Object.values(this.interactions).find((e) => e.uid === uid));
-        });
-      default:
-        return undefined;
-    }
+    const found = this.data[this.name]![id];
+    if (!found) return undefined;
+    return new Promise((resolve) => resolve(found));
   }
 
   async findByUserCode(userCode: string): Promise<AdapterPayload | undefined> {
-    Log.log('Find by user code', userCode, this.name);
-
-    switch (this.name) {
-      case 'AuthorizationCode':
-        return new Promise((resolve) => resolve(this.authorizationCodes[userCode]));
-      case 'Interaction':
-        return new Promise((resolve) => resolve(this.interactions[userCode]));
-      default:
-        return undefined;
+    if (!this.data[this.name]) {
+      this.data[this.name] = {};
     }
+
+    const found = Object.entries(this.data[this.name]!).find(([, v]) => v.userCode === userCode);
+    if (!found) return undefined;
+    return new Promise((resolve) => resolve(found[1]));
+  }
+
+  async findByUid(uid: string): Promise<AdapterPayload | undefined> {
+    if (!this.data[this.name]) {
+      this.data[this.name] = {};
+    }
+
+    const found = Object.entries(this.data[this.name]!).find(([, v]) => v.uid === uid);
+    if (!found) return undefined;
+    return new Promise((resolve) => resolve(found[1]));
   }
 
   async destroy(id: string): Promise<void> {
-    Log.log('Destroy', id, this.name);
-
-    switch (this.name) {
-      case 'AuthorizationCode':
-        delete this.authorizationCodes[id];
-        break;
-      case 'Interaction':
-        delete this.interactions[id];
-        break;
-      default:
-        break;
+    if (this.data[this.name]) {
+      delete this.data[this.name]![id];
     }
-
     return new Promise((resolve) => resolve(undefined));
   }
 
   async revokeByGrantId(grantId: string): Promise<undefined> {
-    Log.log('Revoke by grant', grantId, this.name);
+    if (this.data[this.name]) {
+      const found = Object.entries(this.data[this.name]!).find(([, v]) => v.grantId === grantId);
+      if (found) {
+        delete this.data[this.name]![found[0]];
+      }
+    }
     return new Promise((resolve) => resolve(undefined));
   }
 
   async consume(id: string): Promise<void> {
-    Log.log('Consume', id, this.name);
-
-    switch (this.name) {
-      case 'AuthorizationCode':
-        delete this.authorizationCodes[id];
-        break;
-      case 'Interaction':
-        delete this.interactions[id];
-        break;
-      default:
-        break;
+    if (this.data[this.name] && this.data[this.name]![id]) {
+      this.data[this.name]![id]!.consumed = true;
     }
-
     return new Promise((resolve) => resolve(undefined));
   }
 }

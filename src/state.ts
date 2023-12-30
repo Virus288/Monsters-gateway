@@ -1,8 +1,9 @@
-import type Redis from './redis';
-import type WebsocketServer from './websocket';
-import type Broker from '../broker';
-import type Router from '../structure';
-import type { IState } from '../types';
+import Log from './tools/logger/log';
+import type Broker from './connections/broker';
+import type Redis from './connections/redis';
+import type WebsocketServer from './connections/websocket';
+import type Router from './structure';
+import type { IState } from './types';
 import type { JSONWebKey } from 'jose';
 
 class State implements IState {
@@ -13,7 +14,7 @@ class State implements IState {
   private _keys: JSONWebKey[] = [];
 
   get broker(): Broker {
-    return this._broker!;
+    return this._broker as Broker;
   }
 
   set broker(value: Broker) {
@@ -21,7 +22,7 @@ class State implements IState {
   }
 
   get socket(): WebsocketServer {
-    return this._socket!;
+    return this._socket as WebsocketServer;
   }
 
   set socket(value: WebsocketServer) {
@@ -29,7 +30,7 @@ class State implements IState {
   }
 
   get redis(): Redis {
-    return this._redis!;
+    return this._redis as Redis;
   }
 
   set redis(value: Redis) {
@@ -37,7 +38,7 @@ class State implements IState {
   }
 
   get router(): Router {
-    return this._router!;
+    return this._router as Router;
   }
 
   set router(value: Router) {
@@ -50,6 +51,14 @@ class State implements IState {
 
   set keys(value: JSONWebKey[]) {
     this._keys = value;
+  }
+
+  async kill(): Promise<void> {
+    await this.redis.close();
+    this.router.close();
+    this.broker.close();
+    this.socket.close();
+    Log.log('Server', 'Server closed');
   }
 }
 

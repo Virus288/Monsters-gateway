@@ -1,13 +1,13 @@
 import amqplib from 'amqplib';
 import Controller from './controller';
-import * as enums from '../enums';
-import { InternalError } from '../errors';
-import getConfig from '../tools/configLoader';
-import Log from '../tools/logger/log';
-import { generateRandomName } from '../utils';
+import * as enums from '../../enums';
+import { InternalError } from '../../errors';
+import getConfig from '../../tools/configLoader';
+import Log from '../../tools/logger/log';
+import { generateRandomName } from '../../utils';
 import type Communicator from './controller';
-import type { EMessageTypes } from '../enums';
-import type * as types from '../types';
+import type { EMessageTypes } from '../../enums';
+import type * as types from '../../types';
 
 export default class Broker {
   private _retryTimeout: NodeJS.Timeout | null = null;

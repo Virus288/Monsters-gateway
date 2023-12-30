@@ -1,34 +1,8 @@
 import Adapter from './adapter';
-import findAccount from './fakeAccount';
+import findAccount from './user';
 import type { Response } from 'express';
 import type { JSONWebKey } from 'jose';
 import type { Configuration } from 'oidc-provider';
-
-/**
- * decide when refresh token should be consumed
- *
- * @param {Object} ctx request object
- * @returns {boolean} true i token should be rotated
- */
-const rotateRefreshToken = (ctx: Record<string, unknown>): boolean => {
-  const { RefreshToken: refreshToken, Client: client } = (
-    ctx.oidc as {
-      entities: {
-        Client: { tokenEndpointAuthMethod: string };
-        RefreshToken: {
-          isSenderConstrained: () => boolean;
-          ttlPercentagePassed: () => number;
-        };
-      };
-    }
-  ).entities;
-
-  if (client.tokenEndpointAuthMethod === 'none' && !refreshToken.isSenderConstrained()) {
-    return true;
-  }
-
-  return refreshToken.ttlPercentagePassed() >= 75;
-};
 
 const claims = (keys: JSONWebKey[]): Configuration => {
   return {
@@ -109,8 +83,6 @@ const claims = (keys: JSONWebKey[]): Configuration => {
     expiresWithSession: (): boolean => {
       return false;
     },
-
-    rotateRefreshToken,
 
     jwks: {
       keys,

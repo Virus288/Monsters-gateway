@@ -1,10 +1,9 @@
-import * as enums from '../enums';
-import { type EMessageTypes } from '../enums';
-import { InternalError } from '../errors';
-import Log from '../tools/logger/log';
-import { generateTempId } from '../utils';
-import type * as errors from '../errors';
-import type * as types from '../types';
+import * as enums from '../../enums';
+import { InternalError } from '../../errors';
+import Log from '../../tools/logger/log';
+import { generateTempId } from '../../utils';
+import type * as errors from '../../errors';
+import type * as types from '../../types';
 import type amqplib from 'amqplib';
 
 export default class Communicator {
@@ -19,9 +18,9 @@ export default class Communicator {
     subTarget: T,
     resolve: (
       value:
-        | { type: EMessageTypes.Credentials | EMessageTypes.Send; payload: unknown }
+        | { type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send; payload: unknown }
         | PromiseLike<{
-            type: EMessageTypes.Credentials | EMessageTypes.Send;
+            type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
             payload: unknown;
           }>,
     ) => void,
@@ -116,9 +115,9 @@ export default class Communicator {
     | {
         resolve: (
           value:
-            | { type: EMessageTypes.Credentials | EMessageTypes.Send; payload: unknown }
+            | { type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send; payload: unknown }
             | PromiseLike<{
-                type: EMessageTypes.Credentials | EMessageTypes.Send;
+                type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
                 payload: unknown;
               }>,
         ) => void;
@@ -133,12 +132,12 @@ export default class Communicator {
 
   private send(
     body: string,
-    type: EMessageTypes.Credentials | EMessageTypes.Send,
+    type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send,
     send: (
       value:
-        | { type: EMessageTypes.Credentials | EMessageTypes.Send; payload: unknown }
+        | { type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send; payload: unknown }
         | PromiseLike<{
-            type: EMessageTypes.Credentials | EMessageTypes.Send;
+            type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
             payload: unknown;
           }>,
     ) => void,

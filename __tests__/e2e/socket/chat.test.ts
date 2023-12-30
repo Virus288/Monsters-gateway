@@ -1,12 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from '@jest/globals';
-import State from '../../../src/tools/state';
+import State from '../../../src/state';
 import SocketServer from '../../utils/mocks/websocket';
 import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import { IUserEntity } from '../../types';
-import { ISocketInMessage, ISocketOutMessage } from '../../../src/tools/websocket/types';
+import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import { FakeBroker } from '../../utils/mocks';
 import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
 import { UnauthorizedError } from '../../../src/errors';

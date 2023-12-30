@@ -2,7 +2,8 @@ import * as enums from '../../enums';
 import ReqHandler from '../../tools/abstracts/reqHandler';
 import type { IUserEntity } from '../../../__tests__/types';
 import type { EMessageTypes } from '../../enums';
-import type { IUsersTokens } from '../../types';
+import type { IUsersTokens, IUserCredentials } from '../../types';
+import type LoginDto from '../modules/oidc/interaction/dto';
 import type UserDetailsDto from '../modules/user/details/dto';
 import type RegisterDto from '../modules/user/register/dto';
 import type RemoveUserDto from '../modules/user/remove/dto';
@@ -32,6 +33,19 @@ export default class User extends ReqHandler {
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
       payload: IUserEntity;
+    };
+  }
+
+  async login(
+    data: LoginDto,
+    locals: IUsersTokens,
+  ): Promise<{
+    type: EMessageTypes.Credentials | EMessageTypes.Send;
+    payload: IUserCredentials;
+  }> {
+    return (await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Login, locals, data)) as {
+      type: EMessageTypes.Credentials | EMessageTypes.Send;
+      payload: IUserCredentials;
     };
   }
 }
