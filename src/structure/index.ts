@@ -81,7 +81,7 @@ export default class Router {
   }
 
   /**
-   * Init basic routes. Add "debug" route while in development mode
+   * Init basic routes.
    */
   private initRouter(provider: Provider): void {
     this.router.initRoutes(provider);
@@ -96,7 +96,7 @@ export default class Router {
   }
 
   /**
-   * Init basic routes. Add "debug" route while in development mode
+   * Init basic routes.
    */
   private initOidc(provider: Provider): void {
     this.middleware.generateOidcMiddleware(this.app, provider);

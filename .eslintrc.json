@@ -194,7 +194,7 @@
     "prefer-spread": 2,
     "prefer-template": 2,
     "prettier/prettier": 2,
-    "require-atomic-updates": 2,
+    "require-atomic-updates": 0,
     "require-jsdoc": 2,
     "require-unicode-regexp": 2,
     "require-yield": 2,

@@ -1,5 +1,6 @@
 import Log from './tools/logger/log';
 import type Broker from './connections/broker';
+import type Mysql from './connections/mysql';
 import type Redis from './connections/redis';
 import type WebsocketServer from './connections/websocket';
 import type Router from './structure';
@@ -11,6 +12,7 @@ class State implements IState {
   private _socket: WebsocketServer | null = null;
   private _redis: Redis | null = null;
   private _router: Router | null = null;
+  private _mysql: Mysql | null = null;
   private _keys: JSONWebKey[] = [];
 
   get broker(): Broker {
@@ -19,6 +21,14 @@ class State implements IState {
 
   set broker(value: Broker) {
     this._broker = value;
+  }
+
+  get mysql(): Mysql {
+    return this._mysql as Mysql;
+  }
+
+  set mysql(value: Mysql) {
+    this._mysql = value;
   }
 
   get socket(): WebsocketServer {

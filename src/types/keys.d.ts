@@ -1,25 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export interface JSONWebKey {
-  kid?: string;
-  x5c?: string[];
-  alg?: string;
-  crv?: string;
-  d?: string;
-  dp?: string;
-  dq?: string;
-  e?: string;
-  ext?: boolean;
-  k?: string;
-  key_ops?: string[];
-  kty?: string;
-  n?: string;
-  p?: string;
-  q?: string;
-  qi?: string;
-  use?: string;
-  x?: string;
-  y?: string;
-}
+import type { JSONWebKey } from 'jose';
 
 export interface ITokenPayload {
   jti: string;
@@ -29,4 +8,10 @@ export interface ITokenPayload {
   scope: string;
   iss: string;
   aud: string;
+}
+
+export interface ILoginKeys {
+  id: number;
+  expiration: Date;
+  key: JSONWebKey;
 }

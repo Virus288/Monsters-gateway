@@ -44,12 +44,16 @@ export default class UserRouter extends RouterFactory {
           break;
       }
     } catch (err) {
-      Logger.error('Oidc Err', err);
-      next(err);
+      Logger.error('Oidc get Err', err);
+      res.type('html');
+      res.render('login', {
+        url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,
+        error: (err as Error).message,
+      });
     }
   }
 
-  async post(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+  async post(req: express.Request, res: express.Response): Promise<void> {
     try {
       const { provider } = this;
       if (!provider) {
@@ -78,8 +82,12 @@ export default class UserRouter extends RouterFactory {
 
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false });
     } catch (err) {
-      Logger.error('Oidc Err', err);
-      next(err);
+      Logger.error('Oidc post Err', err);
+      res.type('html');
+      res.render('login', {
+        url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,
+        error: (err as Error).message,
+      });
     }
   }
 }

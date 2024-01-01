@@ -1,9 +1,7 @@
 import Provider from 'oidc-provider';
 import oidcClaims from './claims';
-import { getKeys } from './utils';
 import State from '../state';
 import Log from '../tools/logger/log';
-import type { JSONWebKey } from 'jose';
 import type { Configuration } from 'oidc-provider';
 
 export default class Oidc {
@@ -13,8 +11,8 @@ export default class Oidc {
   }
 
   private async initClaims(): Promise<Configuration> {
-    State.keys = (await getKeys(10)) as JSONWebKey[];
-    // Adapter is not yet finished. Disabling it
+    State.keys = (await State.mysql.getKeys()).map((e) => e.key);
+    // #TODO Adapter is not yet finished. Disabling it. It should connect to redis and manage user data there
     // claims.adapter = Adapter;
     return oidcClaims(State.keys);
   }

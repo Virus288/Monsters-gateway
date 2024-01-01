@@ -1,4 +1,5 @@
 import Broker from './connections/broker';
+import Mysql from './connections/mysql';
 import Redis from './connections/redis';
 import WebsocketServer from './connections/websocket';
 import State from './state';
@@ -24,13 +25,17 @@ class App {
     const broker = new Broker();
     const socket = new WebsocketServer();
     const redis = new Redis();
+    const mysql = new Mysql();
 
     State.router = router;
     State.broker = broker;
     State.socket = socket;
+    State.mysql = mysql;
     State.redis = redis;
+
     await router.init();
     socket.init();
+    mysql.init();
     await broker.init();
     await redis.init();
     Log.log('Server', 'Server started');

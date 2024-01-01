@@ -69,13 +69,9 @@ service.router.get('/:grant', limitRate, async (req, res, next) => {
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/:grant/login', limitRate, async (req, res, next) => {
+service.router.post('/:grant/login', limitRate, async (req, res) => {
   try {
-    await service.post(req, res, next);
-    // const { accessToken, refreshToken } = await service.post(req, res, next);
-    // res.set('Authorization', `Bearer ${accessToken}`);
-    // res.set('x-refresh-token', `${refreshToken}`);
-    // res.status(200).send();
+    await service.post(req, res);
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }
