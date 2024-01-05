@@ -1,4 +1,4 @@
-import Validator from '../validation';
+import Validator from '../../tools/validation';
 import type { IGetMessageBody, IReadMessageBody, ISocketInMessage, ISocketSendMessageBody } from './types';
 
 export default class Validation {

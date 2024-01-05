@@ -6,7 +6,7 @@ import { EMessageTypes, EUserRace, EUserTypes } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
 import { IUserEntity } from '../../types';
-import State from '../../../src/tools/state';
+import State from '../../../src/state';
 import { MissingArgError } from '../../../src/errors';
 import { FakeBroker } from '../../utils/mocks';
 
@@ -71,7 +71,7 @@ describe('Profiles - add', () => {
         await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
         const res = await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
         const body = res.body as IFullError;
-        
+
         expect(body.message).toEqual('Profile already initialized');
       });
     });

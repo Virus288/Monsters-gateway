@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import State from '../../../src/tools/state';
+import State from '../../../src/state';
 import fakeData from '../../fakeData.json';
 import { IUserEntity } from '../../types';
 

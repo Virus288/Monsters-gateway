@@ -38,7 +38,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.get('/details', limitRate, async (req, res: types.ILocalUser) => {
+service.router.get('/details', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
     res.status(200).send(data);

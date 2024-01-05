@@ -40,7 +40,7 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.get('/unread', limitRate, async (req, res: types.ILocalUser) => {
+service.router.get('/unread', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
     res.status(200).send(data);

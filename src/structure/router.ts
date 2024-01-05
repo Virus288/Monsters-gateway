@@ -1,11 +1,13 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import item from './modules/inventory';
-import party from './modules/party';
-import profile from './modules/profile';
-import user from './modules/user';
+import initInventoryRoutes from './modules/inventory';
+import oidc, { initOidcRoutes } from './modules/oidc';
+import initPartyRoutes from './modules/party';
+import initProfileRoutes from './modules/profile';
+import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
 import { version } from '../../package.json';
-import type { Router } from 'express';
+import type { RequestHandler, Router } from 'express';
+import type Provider from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
 
 export default class AppRouter {
@@ -19,21 +21,17 @@ export default class AppRouter {
     return this._router;
   }
 
-  initRoutes(): void {
-    const users = '/users';
-    this.router.use(users, user.login).use(users, user.register);
+  initRoutes(provider: Provider): void {
+    oidc.init(provider);
+    initUserRoutes(this.router);
+    initOidcRoutes(this.router);
   }
 
-  initSecured(): void {
-    const users = '/users';
-    const parties = '/party';
-    const profiles = '/profile';
-    const inventories = '/inventory';
-
-    this.router.use(profiles, profile.add).use(profiles, profile.get);
-    this.router.use(users, user.refreshToken).use(users, user.getDetails).use(users, user.remove);
-    this.router.use(inventories, item.drop).use(inventories, item.use).use(inventories, item.get);
-    this.router.use(parties, party.get);
+  initSecuredRoutes(userValidation: RequestHandler): void {
+    initProfileRoutes(this.router, userValidation);
+    initSecuredUserRoutes(this.router, userValidation);
+    initPartyRoutes(this.router, userValidation);
+    initInventoryRoutes(this.router, userValidation);
   }
 
   generateDocumentation(): void {

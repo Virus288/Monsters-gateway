@@ -9,7 +9,7 @@ export default class Log {
   static error(target: string, ...messages: unknown[]): void {
     console.info(chalk.red(target));
     messages.forEach((m) => {
-      console.info(chalk.red(m));
+      typeof m === 'string' ? console.info(chalk.red(m)) : console.info(chalk.red(JSON.stringify(m)));
       Log.saveLog(m, enums.ELogTypes.Error);
     });
   }
@@ -17,7 +17,7 @@ export default class Log {
   static warn(target: string, ...messages: unknown[]): void {
     console.info(chalk.yellow(target));
     messages.forEach((m) => {
-      console.info(chalk.yellow(m));
+      typeof m === 'string' ? console.info(chalk.yellow(m)) : console.info(chalk.yellow(JSON.stringify(m)));
       Log.saveLog(m, enums.ELogTypes.Warn);
     });
   }
@@ -25,7 +25,7 @@ export default class Log {
   static log(target: string, ...messages: unknown[]): void {
     console.info(chalk.blue(target));
     messages.forEach((m) => {
-      console.info(chalk.blue(m));
+      typeof m === 'string' ? console.info(chalk.blue(m)) : console.info(chalk.blue(JSON.stringify(m)));
       Log.saveLog(m, enums.ELogTypes.Log);
     });
   }
@@ -33,7 +33,7 @@ export default class Log {
   static trace(target: string, ...messages: unknown[]): void {
     console.trace(chalk.yellowBright(target));
     messages.forEach((m) => {
-      console.info(chalk.yellowBright(m));
+      typeof m === 'string' ? console.info(chalk.yellowBright(m)) : console.info(chalk.yellowBright(JSON.stringify(m)));
       Log.saveLog(m, enums.ELogTypes.Log);
     });
   }

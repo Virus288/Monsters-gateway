@@ -33,7 +33,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/register', limitRate, async (req, res: types.ILocalUser) => {
+service.router.post('/register', limitRate, async (req, res) => {
   try {
     await service.post(req, res);
     res.status(200).send();

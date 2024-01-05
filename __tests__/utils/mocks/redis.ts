@@ -1,4 +1,4 @@
-import Redis from '../../../src/tools/redis';
+import Redis from '../../../src/connections/redis';
 
 export default class FakeRedis extends Redis {
   private _removedUsers: { user: string; id: string }[] = [];

@@ -28,7 +28,7 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
 
-service.router.get('/', limitRate, async (_req, res: types.ILocalUser) => {
+service.router.get('/', limitRate, async (_req, res) => {
   try {
     const data = await service.get(res);
     res.status(200).send(data);

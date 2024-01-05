@@ -1,12 +1,12 @@
 import * as enums from '../../enums';
 import ReqHandler from '../../tools/abstracts/reqHandler';
-import type { EMessageTypes } from '../../enums';
 import type {
   IFullChatMessageEntity,
   IGetMessageBody,
   IReadMessageBody,
   ISendMessageDto,
-} from '../../tools/websocket/types';
+} from '../../connections/websocket/types';
+import type { EMessageTypes } from '../../enums';
 import type { IPreparedMessagesBody } from '../modules/message/get/types';
 import type { IGetUnreadMessagesDto, IUnreadMessage } from '../modules/message/getUnread/types';
 

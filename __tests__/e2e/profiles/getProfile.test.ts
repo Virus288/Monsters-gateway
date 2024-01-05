@@ -7,7 +7,7 @@ import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
 import { IUserEntity } from '../../types';
 import { EMessageTypes, EUserTypes } from '../../../src/enums';
-import State from '../../../src/tools/state';
+import State from '../../../src/state';
 import { FakeBroker } from '../../utils/mocks';
 import * as errors from '../../../src/errors';
 

@@ -1,7 +1,8 @@
 import Log from '../tools/logger/log';
 import type * as types from '../types';
+import type express from 'express';
 
-const handleErr = (err: types.IFullError, res: types.ILocalUser): void => {
+const handleErr = (err: types.IFullError, res: express.Response): void => {
   if (process.env.NODE_END !== 'prod') Log.error('Error', err.message, err.stack);
   const { message, code, name, status } = err;
   !status

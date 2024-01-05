@@ -13,7 +13,7 @@ export default class Party extends ReqHandler {
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: IPartyEntity;
   }> {
-    return (await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EPartyTargets.Get, locals, data)) as {
+    return (await this.sendReq(this.service, enums.EUserMainTargets.Party, enums.EPartyTargets.Get, locals, data)) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
       payload: IPartyEntity;
     };

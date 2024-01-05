@@ -1,4 +1,4 @@
-import Broker from '../../../src/broker';
+import Broker from '../../../src/connections/broker';
 import type * as types from '../../../src/types/connection';
 import * as enums from '../../../src/enums';
 import { EMessageTypes } from '../../../src/enums';

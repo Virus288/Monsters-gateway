@@ -12,7 +12,7 @@ export default class LoginDto implements ILoginDto {
     this.validate();
   }
 
-  private validate(): void {
+  validate(): void {
     new Validation(this.login, 'login').isDefined();
     new Validation(this.password, 'password').isDefined();
   }
