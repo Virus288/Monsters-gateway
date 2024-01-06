@@ -30,40 +30,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-  setup-config:
-    needs: install
-    runs-on: ubuntu-latest
-
-    container:
-      image: node:18-alpine
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup config files
-        run: |
-          mkdir -p config
-          echo '{
-            "amqpURI": "rabbitUrl",
-            "redisURI": "redisUrl",
-            "redisTestURI": "redisTestUrl",
-            "corsOrigin": "*",
-            "httpPort": 80,
-            "socketPort": 81,
-            "accessToken": "accessToken",
-            "refToken": "refreshToken"
-          }' > config/devConfig.json
-          cp config/devConfig.json config/prodConfig.json
-
-      - name: Upload config
-        uses: actions/upload-artifact@v2
-        with:
-          name: config
-          path: config/
-
   test:
-    needs: [setup-config]
     runs-on: ubuntu-latest
 
     container:
@@ -83,18 +50,11 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
-
-      - name: Download config
-        uses: actions/download-artifact@v2
-        with:
-          name: config
-          path: config/
 
       - name: Run tests
         run: yarn test:e2e && yarn test:unit && yarn test:db
 
   lint:
-    needs: [setup-config]
     runs-on: ubuntu-latest
 
     container:
@@ -114,18 +74,12 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
-
-      - name: Download config
-        uses: actions/download-artifact@v2
-        with:
-          name: config
-          path: config/
 
       - name: Lint
         run: npm run lint
 
   build:
-    needs: [setup-config, test, lint]
+    needs: [test, lint]
 
     runs-on: ubuntu-latest
 
@@ -146,12 +100,6 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
-
-      - name: Download config
-        uses: actions/download-artifact@v2
-        with:
-          name: config
-          path: config/
 
       - name: Build
         run: npm run build
