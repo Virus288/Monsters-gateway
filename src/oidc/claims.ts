@@ -93,16 +93,10 @@ const claims = (keys: JSONWebKey[]): Configuration => {
     },
 
     ttl: {
-      AccessToken: 600,
+      AccessToken: 24 * 60 * 60,
       AuthorizationCode: 60,
-      ClientCredentials: 600,
       Interaction: 120,
-      RefreshToken: (_ctx, token): number => {
-        if ((token as unknown as Record<string, unknown>)?.remember === true) {
-          return 57600;
-        }
-        return 57600;
-      },
+      RefreshToken: 7 * 24 * 60 * 60,
     },
   };
 };

@@ -38,13 +38,12 @@ export default class UserRouter extends RouterFactory {
         case 'login':
           res.type('html');
           res.render('login', { url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login` });
-          break;
+          return;
         default:
           next();
-          break;
       }
     } catch (err) {
-      Logger.error('Oidc get Err', err);
+      Logger.error('Oidc get Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
         url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,
@@ -82,7 +81,7 @@ export default class UserRouter extends RouterFactory {
 
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false });
     } catch (err) {
-      Logger.error('Oidc post Err', err);
+      Logger.error('Oidc post Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
         url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,

@@ -1,18 +1,13 @@
 import State from '../state';
-import Logger from '../tools/logger/logger';
+import Logger from '../tools/logger/log';
 import type { Adapter as OidcAdapter, AdapterPayload } from 'oidc-provider';
 
 export default class Adapter implements OidcAdapter {
   private readonly _name: string;
   private readonly _prefix: string = 'oidc:';
-  private readonly _toConsume: string[] = ['RefreshToken'];
 
   constructor(name: string) {
     this._name = name;
-  }
-
-  private get toConsume(): string[] {
-    return this._toConsume;
   }
 
   private get prefix(): string {
@@ -23,67 +18,41 @@ export default class Adapter implements OidcAdapter {
     return this._name;
   }
 
-  // #TODO Finish upserting and destoy. Make sure that all elements properly save to redis
   async upsert(id: string, payload: AdapterPayload, expiresIn?: number): Promise<void> {
-    Logger.log(id, { payload, expiresIn });
-    return new Promise((resolve) => resolve());
+    await State.redis.addOidc(this.key(id), id, payload);
+    if (expiresIn && expiresIn > 0) await State.redis.setExpirationDate(this.key(id), expiresIn);
   }
 
   async find(id: string): Promise<AdapterPayload | undefined> {
-    const data = this.toConsume.includes(this.name)
-      ? await State.redis.getOidcHash(this.key(id))
-      : await State.redis.getOidcString(this.key(id));
+    const data = await State.redis.getOidcHash(this.key(id), id);
 
     if (!data || Object.keys(data).length === 0) {
       return undefined;
     }
-
-    if (typeof data === 'string') {
-      return JSON.parse(data) as AdapterPayload;
-    }
-
-    const { payload, ...other } = data;
-    return {
-      ...other,
-      ...JSON.parse(payload as string),
-    } as AdapterPayload;
+    return JSON.parse(data) as AdapterPayload;
   }
 
   async destroy(id: string): Promise<void> {
-    Logger.log(id);
+    await State.redis.removeOidcElement(this.key(id));
+  }
+
+  async findByUserCode(_userCode: string): Promise<AdapterPayload | undefined> {
+    Logger.log('Find by user code', 'Not implemented');
     return new Promise((resolve) => resolve(undefined));
   }
 
-  async findByUserCode(userCode: string): Promise<AdapterPayload | undefined> {
-    const id = await State.redis.getOidcString(this.userCode(userCode));
-    return this.find(id as string);
+  async findByUid(_uid: string): Promise<AdapterPayload | undefined> {
+    Logger.log('Find by uid', 'Not implemented');
+    return new Promise((resolve) => resolve(undefined));
   }
 
-  async findByUid(uid: string): Promise<AdapterPayload | undefined> {
-    const id = await State.redis.getOidcString(this.uidKey(uid));
-    return this.find(id as string);
-  }
-
-  async revokeByGrantId(grantId: string): Promise<undefined> {
-    const tokens = await State.redis.getOidcList(this.grant(grantId));
-    await Promise.all(tokens.map(async (t) => State.redis.removeOidcElement(t)));
-    await State.redis.removeOidcElement(this.grant(grantId));
+  async revokeByGrantId(_grantId: string): Promise<void> {
+    Logger.log('Revoke by grant id', 'Not implemented');
+    return new Promise((resolve) => resolve());
   }
 
   async consume(id: string): Promise<void> {
     await State.redis.addOidc(this.key(id), '', Math.floor(Date.now() / 1000));
-  }
-
-  private grant(id: string): string {
-    return `${this.prefix}grant:${id}`;
-  }
-
-  private userCode(user: string): string {
-    return `${this.prefix}userCode:${user}`;
-  }
-
-  private uidKey(uid: string): string {
-    return `${this.prefix}uid:${uid}`;
   }
 
   private key(id: string): string {

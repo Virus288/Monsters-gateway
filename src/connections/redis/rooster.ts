@@ -24,8 +24,8 @@ export default class Rooster {
     return this.client.lRange(target, start, end);
   }
 
-  async setExpirationDate(target: enums.ERedisTargets | string, value: string, time: number): Promise<void> {
-    await this.client.expire(`${target}:${value}`, time);
+  async setExpirationDate(target: enums.ERedisTargets | string, time: number): Promise<void> {
+    await this.client.expire(target, time);
   }
 
   async getFromHash(data: { target: enums.ERedisTargets | string; value: string }): Promise<string | undefined> {

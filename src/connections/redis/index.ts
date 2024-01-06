@@ -4,7 +4,6 @@ import * as enums from '../../enums';
 import getConfig from '../../tools/configLoader';
 import Log from '../../tools/logger/log';
 import type { IFullError } from '../../types';
-import type { AdapterPayload } from 'oidc-provider';
 import type { RedisClientType } from 'redis';
 
 export default class Redis {
@@ -36,11 +35,15 @@ export default class Redis {
 
   async addRemovedUser(user: string, id: string): Promise<void> {
     await this.rooster.addToHash(enums.ERedisTargets.RemovedUsers, id, user);
-    await this.rooster.setExpirationDate(enums.ERedisTargets.RemovedUsers, id, 604800);
+    await this.rooster.setExpirationDate(id, 604800);
+  }
+
+  async setExpirationDate(target: enums.ERedisTargets | string, ttl: number): Promise<void> {
+    await this.rooster.setExpirationDate(target, ttl);
   }
 
   async getRemovedUsers(target: string): Promise<string | undefined> {
-    return this.rooster.getFromHash(enums.ERedisTargets.RemovedUsers, target);
+    return this.rooster.getFromHash({ target: enums.ERedisTargets.RemovedUsers, value: target });
   }
 
   async removeRemovedUser(target: string): Promise<void> {
@@ -55,22 +58,8 @@ export default class Redis {
     await this.rooster.addToHash(target, id, JSON.stringify(value));
   }
 
-  async getOidcHash(target: string): Promise<string | Record<string, string> | null> {
-    return this.rooster.getAllFromHash(target);
-  }
-
-  async getOidcList(target: string): Promise<string[]> {
-    return this.rooster.getFromList(target, 0, -1);
-  }
-
-  async getOidcString(target: string): Promise<string | null> {
-    return this.rooster.get(target);
-  }
-
-  async getOidcByUserCode(target: string, id: string): Promise<AdapterPayload | undefined> {
-    const found = Object.entries(this.data[this.name]!).find(([, v]) => v.userCode === userCode);
-    if (!found) return undefined;
-    return new Promise((resolve) => resolve(found[1]));
+  async getOidcHash(target: string, id: string): Promise<string | undefined> {
+    return this.rooster.getFromHash({ target, value: id });
   }
 
   private initClient(): void {
