@@ -43,18 +43,8 @@ jobs:
 
       - name: Setup config files
         run: |
-          mkdir -p config
-          echo '{
-            "amqpURI": "rabbitUrl",
-            "redisURI": "redisUrl",
-            "redisTestURI": "redisTestUrl",
-            "corsOrigin": "*",
-            "httpPort": 80,
-            "socketPort": 81,
-            "accessToken": "accessToken",
-            "refToken": "refreshToken"
-          }' > config/devConfig.json
-          cp config/devConfig.json config/prodConfig.json
+          cp config/exampleConfig.json config/devConfig.json
+          cp config/exampleConfig.json config/prodConfig.json
 
       - name: Upload config
         uses: actions/upload-artifact@v2
