@@ -1,3 +1,4 @@
+import type * as enums from '../../enums';
 import type { RedisClientType } from 'redis';
 
 export default class Rooster {
@@ -11,21 +12,45 @@ export default class Rooster {
     this._client = client;
   }
 
-  async addToHash(target: string, key: string, value: string): Promise<void> {
+  async addToHash(target: enums.ERedisTargets | string, key: string, value: string): Promise<void> {
     await this.client.hSet(target, key, value);
-    await this.client.expire(`${target}:${value}`, 604800);
   }
 
-  async getFromHash(target: string, value: string): Promise<string | undefined> {
+  async addToList(target: string, value: string): Promise<void> {
+    await this.client.rPush(target, value);
+  }
+
+  async getFromList(target: string, start: number, end: number): Promise<string[]> {
+    return this.client.lRange(target, start, end);
+  }
+
+  async setExpirationDate(target: enums.ERedisTargets | string, time: number): Promise<void> {
+    await this.client.expire(target, time);
+  }
+
+  async getFromHash(data: { target: enums.ERedisTargets | string; value: string }): Promise<string | undefined> {
+    const { target, value } = data;
     const exist = await this.checkElm(target);
     if (!exist) return undefined;
     return this.client.hGet(target, value);
   }
 
-  async removeFromHash(target: string, value: string): Promise<void> {
+  async getAllFromHash(target: string): Promise<Record<string, string>> {
+    return this.client.hGetAll(target);
+  }
+
+  async get(target: string): Promise<string | null> {
+    return this.client.get(target);
+  }
+
+  async removeFromHash(target: enums.ERedisTargets | string, value: string): Promise<void> {
     const exist = await this.checkElm(target);
     if (!exist) return;
     await this.client.hDel(target, value);
+  }
+
+  async removeElement(target: string): Promise<void> {
+    await this.client.del(target);
   }
 
   private async checkElm(target: string): Promise<boolean> {

@@ -66,4 +66,4 @@ save data anywhere ( except rabbitMQ )
 
 ### 3,3 Docs
 
-#### This project is using swagger docs. You can access them by route http://localhost:<port>/docs
+#### This project is using swagger docs. You can access them by route http://localhost:{port}/docs

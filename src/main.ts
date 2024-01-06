@@ -33,11 +33,11 @@ class App {
     State.mysql = mysql;
     State.redis = redis;
 
-    await router.init();
-    socket.init();
     mysql.init();
     await broker.init();
     await redis.init();
+    await router.init();
+    socket.init();
     Log.log('Server', 'Server started');
   }
 }

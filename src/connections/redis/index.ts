@@ -35,14 +35,31 @@ export default class Redis {
 
   async addRemovedUser(user: string, id: string): Promise<void> {
     await this.rooster.addToHash(enums.ERedisTargets.RemovedUsers, id, user);
+    await this.rooster.setExpirationDate(id, 604800);
+  }
+
+  async setExpirationDate(target: enums.ERedisTargets | string, ttl: number): Promise<void> {
+    await this.rooster.setExpirationDate(target, ttl);
   }
 
   async getRemovedUsers(target: string): Promise<string | undefined> {
-    return this.rooster.getFromHash(enums.ERedisTargets.RemovedUsers, target);
+    return this.rooster.getFromHash({ target: enums.ERedisTargets.RemovedUsers, value: target });
   }
 
   async removeRemovedUser(target: string): Promise<void> {
     return this.rooster.removeFromHash(enums.ERedisTargets.RemovedUsers, target);
+  }
+
+  async removeOidcElement(target: string): Promise<void> {
+    return this.rooster.removeElement(target);
+  }
+
+  async addOidc(target: string, id: string, value: unknown): Promise<void> {
+    await this.rooster.addToHash(target, id, JSON.stringify(value));
+  }
+
+  async getOidcHash(target: string, id: string): Promise<string | undefined> {
+    return this.rooster.getFromHash({ target, value: id });
   }
 
   private initClient(): void {
