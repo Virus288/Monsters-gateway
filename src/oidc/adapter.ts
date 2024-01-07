@@ -47,7 +47,7 @@ export default class Adapter implements OidcAdapter {
   }
 
   async revokeByGrantId(_grantId: string): Promise<void> {
-    Logger.log('Revoke by grant id', 'Not implemented');
+    Logger.log('Revoke by grant id', 'Not implemented'); // #TODO but revoking tokens does work. Instead of revoking grants, they are being destroyed
     return new Promise((resolve) => resolve());
   }
 

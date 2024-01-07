@@ -13,6 +13,15 @@ export class InternalError extends FullError {
   }
 }
 
+export class IncorrectDataType extends FullError {
+  constructor() {
+    super('IncorrectDataType');
+    this.message = 'Received request is not json type';
+    this.name = 'IncorrectDataType';
+    this.status = 400;
+  }
+}
+
 /**
  * @openapi
  * components:

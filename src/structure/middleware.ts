@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import * as jose from 'node-jose';
 import ReqHandler from './reqHandler';
 import * as errors from '../errors';
-import { InternalError } from '../errors';
+import { IncorrectDataType, InternalError } from '../errors';
 import handleErr from '../errors/utils';
 import State from '../state';
 import getConfig from '../tools/configLoader';
@@ -20,6 +20,49 @@ import * as path from 'path';
 import * as process from 'process';
 
 export default class Middleware {
+  static async userValidation(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+    if (Middleware.shouldSkipUserValidation(req)) {
+      return next();
+    }
+
+    const token = (req.cookies as Record<string, string>)['monsters.uid'] as string;
+
+    try {
+      const keyStore = await jose.JWK.asKeyStore({ keys: State.keys });
+      const verifier = jose.JWS.createVerify(keyStore);
+      const payload = JSON.parse((await verifier.verify(token)).payload.toString()) as types.ITokenPayload;
+      await verifier.verify(token);
+
+      if (!token) throw new errors.UnauthorizedError();
+      if (new Date(payload.exp * 1000) < new Date()) {
+        // Token expired
+        throw new errors.UnauthorizedError();
+      }
+
+      // Validate if user's token is still active, but account got removed
+      const user = await State.redis.getRemovedUsers(payload.sub);
+      if (user) throw new errors.UnauthorizedError();
+
+      return next();
+    } catch (err) {
+      return handleErr(new errors.UnauthorizedError(), res);
+    }
+  }
+
+  private static shouldSkipUserValidation(req: express.Request): boolean {
+    // #TODO Disable token validation in tests for now. Find a way to generate keys for tests
+    if (process.env.NODE_ENV === 'test') return true;
+
+    // Disable token validation for oidc routes
+    const oidcRoutes = ['.well-known', 'me', 'auth', 'token', 'session', 'certs'];
+    const splitRoute = req.path.split('/');
+    if (splitRoute.length > 1 && oidcRoutes.includes(splitRoute[1] as string)) {
+      return true;
+    }
+
+    return false;
+  }
+
   generateMiddleware(app: Express): void {
     app.use(express.json({ limit: '500kb' }));
     app.use(express.urlencoded({ extended: true }));
@@ -84,7 +127,12 @@ export default class Middleware {
           .error(JSON.stringify(err));
         const error = err as types.IFullError;
 
-        if (err.name === 'SyntaxError') {
+        if (error.message.includes('is not valid JSON')) {
+          Log.error('Middleware', 'Received req is not of json type', error.message, error.stack);
+          const { message, name, status } = new IncorrectDataType();
+          return res.status(status).json({ message, name });
+        }
+        if (error.name === 'SyntaxError') {
           Log.error('Middleware', 'Generic err', error.message, error.stack);
           const { message, code, name, status } = new InternalError();
           return res.status(status).json({ message, code, name });
@@ -98,33 +146,6 @@ export default class Middleware {
         return res.status(status).json({ message, code, name });
       },
     );
-  }
-
-  async userValidation(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    // #TODO Disable token validation in tests for now. Find a way to generate keys for tests
-    if (process.env.NODE_ENV === 'test') return next();
-    const token = (req.cookies as Record<string, string>)['monsters.uid'] as string;
-
-    try {
-      const keyStore = await jose.JWK.asKeyStore({ keys: State.keys });
-      const verifier = jose.JWS.createVerify(keyStore);
-      const payload = JSON.parse((await verifier.verify(token)).payload.toString()) as types.ITokenPayload;
-      await verifier.verify(token);
-
-      if (!token) throw new errors.UnauthorizedError();
-      if (new Date(payload.exp * 1000) < new Date()) {
-        // Token expired
-        throw new errors.UnauthorizedError();
-      }
-
-      // Validate if user's token is still active, but account got removed
-      const user = await State.redis.getRemovedUsers(payload.sub);
-      if (user) throw new errors.UnauthorizedError();
-
-      return next();
-    } catch (err) {
-      return handleErr(new errors.UnauthorizedError(), res);
-    }
   }
 
   initializeHandler(app: express.Express): void {

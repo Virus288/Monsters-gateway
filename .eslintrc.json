@@ -324,6 +324,12 @@
     "@typescript-eslint/semi": [
       "error"
     ],
-    "@typescript-eslint/typedef": 2
+    "@typescript-eslint/typedef": 2,
+    "@typescript-eslint/unbound-method": [
+      2,
+      {
+        "ignoreStatic": true
+      }
+    ]
   }
 }

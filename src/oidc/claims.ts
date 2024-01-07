@@ -1,6 +1,5 @@
 import Adapter from './adapter';
 import findAccount from './user';
-import type { Response } from 'express';
 import type { JSONWebKey } from 'jose';
 import type { Configuration } from 'oidc-provider';
 
@@ -17,7 +16,7 @@ const claims = (keys: JSONWebKey[]): Configuration => {
         client_id: 'client',
         client_secret: 'secret',
         grant_types: ['authorization_code', 'refresh_token'],
-        redirect_uris: ['http://localhost:5003/login'],
+        redirect_uris: ['http://localhost:3005/login'],
         scope: 'openid',
       },
     ],
@@ -28,8 +27,6 @@ const claims = (keys: JSONWebKey[]): Configuration => {
       },
       keys: ['key'],
     },
-
-    extraParams: ['test'],
 
     findAccount,
 
@@ -51,25 +48,8 @@ const claims = (keys: JSONWebKey[]): Configuration => {
           return !(client.introspectionEndpointAuthMethod === 'none' && token.clientId !== ctx.oidc.client.clientId);
         },
       },
-      rpInitiatedLogout: {
-        logoutSource: (ctx, form): Promise<undefined> => {
-          return new Promise((resolve: (value: Promise<undefined>) => void, reject) => {
-            (ctx.res as Response).render(
-              'logout',
-              {
-                form,
-                host: ctx.host,
-              },
-              (err, res) => {
-                if (err) {
-                  reject(err);
-                }
-                ctx.body = res;
-                resolve(res as unknown as Promise<undefined>);
-              },
-            );
-          });
-        },
+      revocation: {
+        enabled: true,
       },
     },
     formats: {
@@ -92,11 +72,13 @@ const claims = (keys: JSONWebKey[]): Configuration => {
       jwks: '/certs',
     },
 
+    tokenEndpointAuthMethods: ['client_secret_basic', 'client_secret_jwt', 'client_secret_post'],
+
     ttl: {
-      AccessToken: 24 * 60 * 60,
+      AccessToken: 7 * 24 * 60 * 60,
       AuthorizationCode: 60,
       Interaction: 120,
-      RefreshToken: 7 * 24 * 60 * 60,
+      RefreshToken: 14 * 24 * 60 * 60,
     },
   };
 };

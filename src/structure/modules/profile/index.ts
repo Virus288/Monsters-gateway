@@ -1,10 +1,10 @@
 import add from './add/router';
 import get from './get/router';
-import type { RequestHandler, Router } from 'express';
+import type { Router } from 'express';
 
-const initProfileRoutes = (router: Router, userValidation: RequestHandler): void => {
+const initProfileRoutes = (router: Router): void => {
   const prefix = '/profile';
 
-  router.use(prefix, userValidation, get.router).use(prefix, userValidation, add.router);
+  router.use(prefix, get.router).use(prefix, add.router);
 };
 export default initProfileRoutes;

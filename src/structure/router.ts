@@ -1,12 +1,13 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import Middleware from './middleware';
 import initInventoryRoutes from './modules/inventory';
 import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
 import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
 import { version } from '../../package.json';
-import type { RequestHandler, Router } from 'express';
+import type { Router } from 'express';
 import type Provider from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
 
@@ -27,11 +28,13 @@ export default class AppRouter {
     initOidcRoutes(this.router);
   }
 
-  initSecuredRoutes(userValidation: RequestHandler): void {
-    initProfileRoutes(this.router, userValidation);
-    initSecuredUserRoutes(this.router, userValidation);
-    initPartyRoutes(this.router, userValidation);
-    initInventoryRoutes(this.router, userValidation);
+  initSecuredRoutes(): void {
+    this.router.use(Middleware.userValidation);
+
+    initProfileRoutes(this.router);
+    initSecuredUserRoutes(this.router);
+    initPartyRoutes(this.router);
+    initInventoryRoutes(this.router);
   }
 
   generateDocumentation(): void {

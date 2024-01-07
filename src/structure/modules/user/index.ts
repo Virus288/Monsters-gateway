@@ -1,12 +1,12 @@
 import getDetails from './details/router';
 import register from './register/router';
 import remove from './remove/router';
-import type { RequestHandler, Router } from 'express';
+import type { Router } from 'express';
 
-export const initSecuredUserRoutes = (router: Router, userValidation: RequestHandler): void => {
+export const initSecuredUserRoutes = (router: Router): void => {
   const prefix = '/users';
 
-  router.use(prefix, userValidation, remove.router).use(prefix, userValidation, getDetails.router);
+  router.use(prefix, remove.router).use(prefix, getDetails.router);
 };
 
 export const initUserRoutes = (router: Router): void => {

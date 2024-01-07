@@ -92,7 +92,7 @@ export default class Router {
    */
   private initSecuredRouter(): void {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    this.router.initSecuredRoutes(this.middleware.userValidation);
+    this.router.initSecuredRoutes();
   }
 
   /**
