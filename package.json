@@ -48,7 +48,7 @@
     "mysql2": "^3.6.5",
     "node": "21.2.0",
     "node-jose": "^2.2.0",
-    "oidc-provider": "^6",
+    "oidc-provider": "^8",
     "redis": "4.6.12",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
