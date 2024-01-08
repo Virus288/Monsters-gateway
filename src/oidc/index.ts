@@ -12,9 +12,8 @@ export default class Oidc {
 
   private async initClaims(): Promise<Configuration> {
     State.keys = (await State.mysql.getKeys()).map((e) => e.key);
-    // #TODO Adapter is not yet finished. Disabling it. It should connect to redis and manage user data there
-    // claims.adapter = Adapter;
-    return oidcClaims(State.keys);
+    const clients = await State.mysql.getOidcClients();
+    return oidcClaims(State.keys, clients);
   }
 
   private initProvider(claims: Configuration): Provider {

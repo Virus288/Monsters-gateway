@@ -1,9 +1,9 @@
 import Adapter from './adapter';
 import findAccount from './user';
 import type { JSONWebKey } from 'jose';
-import type { Configuration } from 'oidc-provider';
+import type { ClientMetadata, Configuration } from 'oidc-provider';
 
-const claims = (keys: JSONWebKey[]): Configuration => {
+const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration => {
   return {
     adapter: Adapter,
 
@@ -11,15 +11,7 @@ const claims = (keys: JSONWebKey[]): Configuration => {
       openid: ['login'],
     },
 
-    clients: [
-      {
-        client_id: 'client',
-        client_secret: 'secret',
-        grant_types: ['authorization_code', 'refresh_token'],
-        redirect_uris: ['http://localhost:3005/login'],
-        scope: 'openid',
-      },
-    ],
+    clients,
 
     cookies: {
       long: {
