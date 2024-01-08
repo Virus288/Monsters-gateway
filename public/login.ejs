@@ -2,36 +2,131 @@
 <html lang="en">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>Login</title>
+    <title>Monsters - Login</title>
     <meta content="width=device-width, initial-scale=1" name="viewport">
 
+    <style>
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-wrap: wrap;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: rgb(255, 255, 255);
+            color: #1e1e1e;
+            transition: 0.75s all ease-in-out;
+        }
+
+        .redText {
+            text-align: center;
+            font-size: 1.5rem;
+            color: red;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1.2rem;
+            width: fit-content;
+            min-width: 350px;
+            max-width: 500px;
+            border-bottom: 1px solid grey;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+
+            input {
+                margin: 1rem;
+            }
+        }
+
+        label {
+            font-size: 1.6em;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        input {
+            border: none;
+            outline: none;
+            width: 90%;
+            max-width: 200px;
+            font-size: 1.1em;
+            background: none;
+            color: #1e1e1e;
+            border-bottom: 1px solid #1e1e1e;
+            transition: 0.75s all ease-in-out;
+        }
+
+        input:focus {
+            width: 90%;
+            max-width: 220px;
+            border-bottom: 1px solid rgb(249, 103, 59);
+            transition: 0.75s all ease-in-out;
+        }
+
+        input::placeholder {
+            color: #1e1e1e;
+            transition: 0.75s all ease-in-out;
+        }
+
+        button {
+            background: linear-gradient(
+                    140deg,
+                    rgb(249, 103, 59) 0.5%,
+                    rgb(255, 255, 255) 0.5%
+            );
+            background-size: 100% 100%;
+            color: #1e1e1e;
+            padding: 3px;
+            margin: 10px 0;
+            border: 2px solid rgb(249, 103, 59);
+            border-radius: 5%;
+            box-shadow: 1px 1px 1px #000000;
+            font-size: 1.5em;
+            height: 45px;
+            width: 80%;
+            min-width: 150px;
+            max-width: fit-content;
+            transition: 0.75s all ease-in-out;
+            font-weight: 300;
+            letter-spacing: 0.9px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            box-shadow: none;
+            transition: 0.75s all ease-in-out;
+            background-size: 30000% 100%;
+        }
+    </style>
 </head>
 <body>
-<div>
+<div class='container'>
     <% if (typeof error !== 'undefined') { %>
-        <p><%= error; %></p>
-    <% } else{ %>
+        <header class='redText'><%= error; %></header>
     <% } %>
     <form action="<%= url; %>" method="post">
         <label for="login">
             Login
-            <input id="login" name="login" placeholder="Name" type="text">
         </label>
+
+        <input id="login" name="login" placeholder="Name" type="text">
 
         <label for="password">
             Password
-            <input id="password" name="password" placeholder="Password" type="password">
         </label>
 
-        <button type="submit">Sand</button>
+        <input id="password" name="password" placeholder="Password" type="password">
+
+        <button type="submit">Log in</button>
     </form>
 </div>
-<div style="display: block;">
-    <div class="footer_navi" style="z-index:10;">
-                <span class="ui-btn-text" style="z-index:10;">
-                    <h2>Test</h2>
-                </span>
-    </div>
-</div>
+
 </body>
 </html>
