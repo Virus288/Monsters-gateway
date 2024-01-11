@@ -35,7 +35,6 @@ swc/
 dist/
 /dist
 dist
-package-lock.json
 
 /img/**/*
 img/*
