@@ -3,7 +3,7 @@ import FakeBroker from './mocks/broker';
 import FakeRedis from './mocks/redis';
 import Router from '../../src/structure';
 import SocketServer from './mocks/websocket';
-import FakeMysql from './mocks/FakeMysql';
+import FakeMysql from './mocks/fakeMysql';
 
 export default class Utils {
   constructor() {

@@ -1,7 +1,6 @@
 import UserDetailsDto from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
-import type { IUserEntity } from '../../../../../__tests__/types';
-import type { IUsersTokens } from '../../../../types';
+import type { IUserEntity, IUsersTokens } from '../../../../types';
 import type express from 'express';
 
 export default class UserRouter extends RouterFactory {

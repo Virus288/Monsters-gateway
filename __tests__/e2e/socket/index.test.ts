@@ -3,7 +3,6 @@ import fakeData from '../../fakeData.json';
 import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
-import { IUserEntity } from '../../types';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import State from '../../../src/state';
 import * as errors from '../../../src/errors';
@@ -11,6 +10,7 @@ import SocketServer from '../../utils/mocks/websocket';
 import MocSocket, { IClient } from 'moc-socket';
 import { FakeBroker } from '../../utils/mocks';
 import { IFullError } from '../../../src/types';
+import { IUserEntity } from '../../../src/types';
 
 describe('Socket - generic tests', () => {
   const fakeBroker = State.broker as FakeBroker;

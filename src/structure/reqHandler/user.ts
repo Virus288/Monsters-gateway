@@ -1,8 +1,7 @@
 import * as enums from '../../enums';
 import ReqHandler from '../../tools/abstracts/reqHandler';
-import type { IUserEntity } from '../../../__tests__/types';
 import type { EMessageTypes } from '../../enums';
-import type { IUsersTokens, IUserCredentials } from '../../types';
+import type { IUserCredentials, IUsersTokens, IUserEntity } from '../../types';
 import type LoginDto from '../modules/oidc/interaction/dto';
 import type UserDetailsDto from '../modules/user/details/dto';
 import type RegisterDto from '../modules/user/register/dto';
