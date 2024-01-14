@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
-import helmet from 'helmet';
 import * as jose from 'node-jose';
 import ReqHandler from './reqHandler';
 import * as errors from '../errors';
@@ -74,7 +73,18 @@ export default class Middleware {
         credentials: true,
       }),
     );
-    app.use(helmet());
+    // #TODO I am struggling with setting helmet properly. Chrome says "Refused to send form data because it violates the following Content Security Policy directive: "form-action 'self'"." and I already spend too long on this...
+    // app.use(
+    //   helmet({
+    //     contentSecurityPolicy: {
+    //       useDefaults: true,
+    //       directives: {
+    //         defaultSrc: ["'self'", `${getConfig().corsOrigin as string}`, `${getConfig().myAddress}`],
+    //         'form-action': ["'self'", `${getConfig().corsOrigin as string}`, `${getConfig().myAddress}`],
+    //       },
+    //     },
+    //   }),
+    // );
 
     app.use((_req: express.Request, res, next: express.NextFunction) => {
       res.header('Content-Type', 'application/json;charset=UTF-8');

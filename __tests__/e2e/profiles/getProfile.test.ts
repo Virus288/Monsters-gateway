@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
+import { IUserEntity } from '../../../src/types';
 import supertest from 'supertest';
 import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
 import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
-import { IUserEntity } from '../../types';
 import { EMessageTypes, EUserTypes } from '../../../src/enums';
 import State from '../../../src/state';
 import { FakeBroker } from '../../utils/mocks';

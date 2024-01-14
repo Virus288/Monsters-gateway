@@ -85,6 +85,7 @@ export default class Communicator {
     Log.log('Server', 'Got new message');
     Log.log('Server', JSON.stringify(payload));
     const target = this.findTarget(payload.user!.userId ?? payload.user!.tempId, true)!;
+    if (!target) return undefined;
 
     switch (payload.target) {
       case enums.EMessageTypes.Error:

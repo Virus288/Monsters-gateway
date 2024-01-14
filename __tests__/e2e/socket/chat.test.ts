@@ -5,12 +5,12 @@ import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
-import { IUserEntity } from '../../types';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import { FakeBroker } from '../../utils/mocks';
 import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
 import { UnauthorizedError } from '../../../src/errors';
 import { IFullError } from '../../../src/types';
+import { IUserEntity } from '../../../src/types';
 import type { IClient } from 'moc-socket';
 import MocSocket from 'moc-socket';
 

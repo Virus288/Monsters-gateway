@@ -121,6 +121,7 @@ export default class Broker {
     if (this.channel) return;
     if (this._channelTries++ > parseInt(Number(enums.ERabbit.RetryLimit).toString())) {
       Log.error('Rabbit', 'Error creating rabbit connection channel, stopped retrying');
+      throw new Error('Rabbit died');
     }
 
     this._connection!.createChannel()

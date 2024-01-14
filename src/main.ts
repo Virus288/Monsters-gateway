@@ -11,8 +11,9 @@ class App {
   init(): void {
     this.handleInit().catch((err) => {
       const { stack, message } = err as IFullError;
-      Log.log('Server', 'Err while initializing app');
-      Log.log('Server', message, stack);
+      Log.error('Server', 'Err while initializing app');
+      Log.error('Server', message, stack);
+      Log.error('Server', err);
 
       return State.kill().catch((error) =>
         Log.error('Server', "Couldn't kill server", (error as Error).message, (error as Error).stack),

@@ -3,6 +3,7 @@
   "redisURI": "redisUrl",
   "redisTestURI": "redisTestUrl",
   "corsOrigin": "*",
+  "myAddress": "urlOfThisService",
   "httpPort": 80,
   "socketPort": 81,
   "accessToken": "accessToken",

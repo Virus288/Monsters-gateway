@@ -37,7 +37,7 @@ export default class UserRouter extends RouterFactory {
       switch (prompt.name) {
         case 'login':
           res.type('html');
-          res.render('login', { url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login` });
+          res.render('login', { url: `${getConfig().myAddress}/interaction/${req.params.grant}/login` });
           return;
         default:
           next();
@@ -46,7 +46,7 @@ export default class UserRouter extends RouterFactory {
       Logger.error('Oidc get Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
-        url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,
+        url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
         error: (err as Error).message,
       });
     }
@@ -84,7 +84,7 @@ export default class UserRouter extends RouterFactory {
       Logger.error('Oidc post Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
-        url: `${getConfig().corsOrigin as string}/interaction/${req.params.grant}/login`,
+        url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
         error: (err as Error).message,
       });
     }

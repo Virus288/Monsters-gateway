@@ -22,6 +22,7 @@ build/
 # Optional npm cache directory
 .npm
 yarn.lock
+package-lock.json
 
 # Optional eslint cache
 .eslintcache
@@ -35,7 +36,6 @@ swc/
 dist/
 /dist
 dist
-package-lock.json
 
 /img/**/*
 img/*
