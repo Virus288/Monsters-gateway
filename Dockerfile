@@ -14,15 +14,3 @@ RUN chmod +x /usr/src/app/start.sh
 CMD ["/usr/src/app/start.sh"]
 EXPOSE 5003
 EXPOSE 5004
-
-
-[
-  {
-    id: 2,
-    client_id: 'oidcClient',
-    client_secret: 'pYKPp63RK90HoRqc8igHzjFQsfPU9rWT1x3ahBu3WzraauQoAm',
-    grant_types: [ 'authorization_code', 'refresh_token' ],
-    redirect_uris: [ 'http://localhost:3005/login' ],
-    scope: 'openid'
-  }
-]
