@@ -116,7 +116,11 @@
             Login
         </label>
 
-        <input id="login" name="login" placeholder="Name" type="text">
+        <% if (typeof userName !== 'undefined') { %>
+            <input id="login" name="login" placeholder="Name" type="text" value='<%= userName; %>'>
+        <% } else { %>
+            <input id="login" name="login" placeholder="Name" type="text">
+        <% } %>
 
         <label for="password">
             Password

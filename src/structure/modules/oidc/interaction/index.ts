@@ -86,6 +86,7 @@ export default class UserRouter extends RouterFactory {
       res.render('login', {
         url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
         error: (err as Error).message,
+        userName: (req.body as LoginDto)?.login,
       });
     }
   }

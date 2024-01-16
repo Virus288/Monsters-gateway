@@ -19,6 +19,10 @@ export default class Adapter implements OidcAdapter {
   }
 
   async upsert(id: string, payload: AdapterPayload, expiresIn?: number): Promise<void> {
+    if (this.name === 'Session' && payload.authorizations) {
+      await this.addGrandId(id, payload.authorizations.oidcClient!.grantId as string);
+    }
+
     await State.redis.addOidc(this.key(id), id, payload);
     if (expiresIn && expiresIn > 0) await State.redis.setExpirationDate(this.key(id), expiresIn);
   }
@@ -46,9 +50,9 @@ export default class Adapter implements OidcAdapter {
     return new Promise((resolve) => resolve(undefined));
   }
 
-  async revokeByGrantId(_grantId: string): Promise<void> {
-    Logger.log('Revoke by grant id', 'Not implemented'); // #TODO but revoking tokens does work. Instead of revoking grants, they are being destroyed
-    return new Promise((resolve) => resolve());
+  async revokeByGrantId(grantId: string): Promise<void> {
+    const id = await State.redis.getIdFromGrandId(this.grantId(grantId), grantId);
+    await State.redis.removeOidcElement(`${this.prefix}${this.name}:${id}`);
   }
 
   async consume(id: string): Promise<void> {
@@ -57,5 +61,15 @@ export default class Adapter implements OidcAdapter {
 
   private key(id: string): string {
     return `${this.prefix}${this.name}:${id}`;
+  }
+
+  private grantId(grant: string): string {
+    return `${this.prefix}GrantId:${grant}`;
+  }
+
+  private async addGrandId(id: string, grantId: string): Promise<void> {
+    const key = this.grantId(grantId);
+    await State.redis.addGrantId(key, grantId, id);
+    await State.redis.setExpirationDate(key, 60);
   }
 }

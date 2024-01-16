@@ -58,6 +58,14 @@ export default class Redis {
     await this.rooster.addToHash(target, id, JSON.stringify(value));
   }
 
+  async addGrantId(target: string, id: string, value: string): Promise<void> {
+    await this.rooster.addToHash(target, id, value);
+  }
+
+  async getIdFromGrandId(target: string, id: string): Promise<string | undefined> {
+    return this.rooster.getFromHash({ target, value: id });
+  }
+
   async getOidcHash(target: string, id: string): Promise<string | undefined> {
     return this.rooster.getFromHash({ target, value: id });
   }
