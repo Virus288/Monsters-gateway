@@ -2,6 +2,7 @@ import Provider from 'oidc-provider';
 import oidcClaims from './claims';
 import { getKeys as generateKeys } from './utils';
 import State from '../state';
+import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import type { ILoginKeys } from '../types';
 import type { Configuration } from 'oidc-provider';
@@ -13,12 +14,6 @@ export default class Oidc {
   }
 
   private initProvider(claims: Configuration): Provider {
-    const events = [
-      'access_token.saved',
-      'authorization_code.saved',
-      'client_credentials.saved',
-      'refresh_token.saved',
-    ];
     const errors = [
       'authorization.error',
       'grant.error',
@@ -29,26 +24,16 @@ export default class Oidc {
       'userinfo.error',
       'check_session.error',
       'backchannel.error',
+      'server_error',
     ];
-    const provider = new Provider('http://localhost', claims);
+    const provider = new Provider(getConfig().myAddress.replace(/:\d+/u, ''), claims);
     provider.proxy = true;
-
-    for (const e of events) {
-      provider.on(e, () => {
-        Log.log('Token event', JSON.stringify(e));
-      });
-    }
 
     for (const e of errors) {
       provider.on(e, (...err: Record<string, unknown>[]) => {
-        Log.log(e, JSON.stringify(err[0]));
+        Log.error(e, JSON.stringify(err[0]));
       });
     }
-
-    provider.on('server_error', (...err) => {
-      console.trace(err);
-    });
-
     return provider;
   }
 

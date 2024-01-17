@@ -16,6 +16,7 @@ const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration =>
     cookies: {
       long: {
         maxAge: 60 * 1000,
+        signed: true,
       },
       keys: ['key'],
     },
@@ -34,11 +35,6 @@ const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration =>
       },
       introspection: {
         enabled: true,
-        allowedPolicy: (ctx, client, token): boolean => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          return !(client.introspectionEndpointAuthMethod === 'none' && token.clientId !== ctx.oidc.client.clientId);
-        },
       },
       revocation: {
         enabled: true,
@@ -80,9 +76,7 @@ const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration =>
     issueRefreshToken: (_ctx, client /* , code*/): boolean => {
       return client.grantTypeAllowed('refresh_token');
     },
-    expiresWithSession: (): boolean => {
-      return false;
-    },
+    expiresWithSession: (): boolean => false,
 
     jwks: {
       keys,
