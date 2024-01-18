@@ -3,7 +3,7 @@ import Websocket from 'ws';
 import Router from './router';
 import * as enums from '../../enums';
 import * as errors from '../../errors';
-import ReqHandler from '../../structure/modules/handler';
+import ReqHandler from '../../structure/reqHandler';
 import getConfig from '../../tools/configLoader';
 import Log from '../../tools/logger/log';
 import type * as types from './types';

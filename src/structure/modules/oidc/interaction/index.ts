@@ -4,7 +4,7 @@ import RouterFactory from '../../../../tools/abstracts/router';
 import getConfig from '../../../../tools/configLoader';
 import Logger from '../../../../tools/logger/log';
 import type * as types from '../../../../types';
-import type ReqHandler from '../../../modules/handler';
+import type ReqHandler from '../../../reqHandler';
 import type express from 'express';
 import type { Session, SessionData } from 'express-session';
 import type Provider from 'oidc-provider';

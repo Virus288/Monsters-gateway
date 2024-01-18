@@ -1,13 +1,13 @@
-import Chat from './chat/handler';
-import Inventory from './inventory/handler';
-import Message from './message/handler';
-import Party from './party/handler';
-import Profile from './profile/handler';
-import User from './user/handler';
-import { EServices } from '../../enums';
-import State from '../../state';
-import type * as enums from '../../enums';
-import type * as types from '../../types';
+import Chat from './modules/chat/handler';
+import Inventory from './modules/inventory/handler';
+import Message from './modules/message/handler';
+import Party from './modules/party/handler';
+import Profile from './modules/profile/handler';
+import User from './modules/user/handler';
+import { EServices } from '../enums';
+import State from '../state';
+import type * as enums from '../enums';
+import type * as types from '../types';
 
 /**
  * Handler to manage communication between services and user

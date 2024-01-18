@@ -1,6 +1,6 @@
 import * as enums from '../enums';
-import ReqHandler from '../structure/modules/handler';
 import UserDetailsDto from '../structure/modules/user/details/dto';
+import ReqHandler from '../structure/reqHandler';
 import type * as oidc from 'oidc-provider';
 
 class UserAccount implements oidc.Account {

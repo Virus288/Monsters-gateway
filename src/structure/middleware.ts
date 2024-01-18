@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import * as jose from 'node-jose';
-import ReqHandler from './modules/handler';
+import ReqHandler from './reqHandler';
 import * as errors from '../errors';
 import { IncorrectDataType, InternalError } from '../errors';
 import handleErr from '../errors/utils';
