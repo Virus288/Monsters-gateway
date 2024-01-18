@@ -1,9 +1,9 @@
 import Adapter from './adapter';
 import findAccount from './user';
 import type { JSONWebKey } from 'jose';
-import type { CanBePromise, ClientMetadata, Configuration, KoaContextWithOIDC } from 'oidc-provider';
+import type * as oidc from 'oidc-provider';
 
-const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration => {
+const claims = (keys: JSONWebKey[], clients: oidc.ClientMetadata[]): oidc.Configuration => {
   return {
     adapter: Adapter,
 
@@ -42,7 +42,7 @@ const claims = (keys: JSONWebKey[], clients: ClientMetadata[]): Configuration =>
       rpInitiatedLogout: {
         enabled: true,
         // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-        logoutSource: (ctx: KoaContextWithOIDC, form: string): CanBePromise<void | undefined> => {
+        logoutSource: (ctx: oidc.KoaContextWithOIDC, form: string): oidc.CanBePromise<void | undefined> => {
           ctx.rend;
           ctx.body = `<!DOCTYPE html>
             <head>

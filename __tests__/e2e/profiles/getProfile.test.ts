@@ -6,7 +6,7 @@ import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
 import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
-import { EMessageTypes, EUserTypes } from '../../../src/enums';
+import * as enums from '../../../src/enums';
 import State from '../../../src/state';
 import { FakeBroker } from '../../utils/mocks';
 import * as errors from '../../../src/errors';
@@ -21,7 +21,7 @@ describe('Profiles = get', () => {
   const fakeUser = fakeData.users[0] as IUserEntity;
   const { app } = State.router;
 
-  beforeAll(async () => (accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User)));
+  beforeAll(async () => (accessToken = utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)));
 
   describe('Should throw', () => {
     describe('No data passed', () => {
@@ -29,7 +29,7 @@ describe('Profiles = get', () => {
         const target = new errors.MissingArgError('id') as unknown as Record<string, unknown>;
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: target, target: EMessageTypes.Send },
+          returns: { payload: target, target: enums.EMessageTypes.Send },
         };
 
         const res = await supertest(app)
@@ -48,7 +48,7 @@ describe('Profiles = get', () => {
         const target = new errors.IncorrectArgTypeError('id should be objectId') as unknown as Record<string, unknown>;
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: target, target: EMessageTypes.Send },
+          returns: { payload: target, target: enums.EMessageTypes.Send },
         };
 
         const res = await supertest(app)
@@ -67,7 +67,7 @@ describe('Profiles = get', () => {
     it(`Got profile`, async () => {
       fakeBroker.action = {
         shouldFail: false,
-        returns: { payload: { _id: getProfile.id }, target: EMessageTypes.Send },
+        returns: { payload: { _id: getProfile.id }, target: enums.EMessageTypes.Send },
       };
 
       const res = await supertest(app)

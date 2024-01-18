@@ -3,7 +3,7 @@ import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/types';
 import supertest from 'supertest';
 import Utils from '../../utils/utils';
-import { EMessageTypes, EUserRace, EUserTypes } from '../../../src/enums';
+import * as enums from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
 import State from '../../../src/state';
@@ -13,7 +13,7 @@ import { FakeBroker } from '../../utils/mocks';
 describe('Profiles - add', () => {
   const fakeBroker = State.broker as FakeBroker;
   const addProfile: types.IAddProfileDto = {
-    race: EUserRace.Elf,
+    race: enums.EUserRace.Elf,
   };
   const utils = new Utils();
   let accessToken: string;
@@ -25,9 +25,9 @@ describe('Profiles - add', () => {
   const { app } = State.router;
 
   beforeAll(async () => {
-    accessToken = utils.generateAccessToken(fakeUser._id, EUserTypes.User);
-    accessToken2 = utils.generateAccessToken(fakeUser2._id, EUserTypes.User);
-    accessToken3 = utils.generateAccessToken(fakeUser3._id, EUserTypes.User);
+    accessToken = utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User);
+    accessToken2 = utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User);
+    accessToken3 = utils.generateAccessToken(fakeUser3._id, enums.EUserTypes.User);
   });
 
   describe('Should throw', () => {
@@ -49,7 +49,7 @@ describe('Profiles - add', () => {
         const target = new Error('race has incorrect type') as unknown as Record<string, unknown>;
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: target, target: EMessageTypes.Send },
+          returns: { payload: target, target: enums.EMessageTypes.Send },
         };
 
         const res = await supertest(app)
@@ -65,7 +65,7 @@ describe('Profiles - add', () => {
         const target = new Error('Profile already initialized') as unknown as Record<string, unknown>;
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: target, target: EMessageTypes.Send },
+          returns: { payload: target, target: enums.EMessageTypes.Send },
         };
 
         await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);

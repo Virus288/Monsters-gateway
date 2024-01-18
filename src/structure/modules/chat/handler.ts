@@ -1,18 +1,13 @@
-import * as enums from '../../enums';
-import ReqHandler from '../../tools/abstracts/reqHandler';
-import type {
-  IFullChatMessageEntity,
-  IGetMessageBody,
-  IReadMessageBody,
-  ISendMessageDto,
-} from '../../connections/websocket/types';
-import type { EMessageTypes } from '../../enums';
-import type { IPreparedMessagesBody } from '../modules/message/get/types';
-import type { IGetUnreadMessagesDto, IUnreadMessage } from '../modules/message/getUnread/types';
+import * as enums from '../../../enums';
+import ReqHandler from '../../../tools/abstracts/reqHandler';
+import type { IPreparedMessagesBody } from './types';
+import type * as types from '../../../connections/websocket/types';
+import type { EMessageTypes } from '../../../enums';
+import type { IGetUnreadMessagesDto, IUnreadMessage } from '../message/getUnread/types';
 
 export default class Chat extends ReqHandler {
   async send(
-    data: ISendMessageDto,
+    data: types.ISendMessageDto,
     locals: {
       tempId: string;
       userId: string | undefined;
@@ -24,7 +19,7 @@ export default class Chat extends ReqHandler {
   }
 
   async read(
-    data: IReadMessageBody,
+    data: types.IReadMessageBody,
     locals: {
       tempId: string;
       userId: string | undefined;
@@ -36,7 +31,7 @@ export default class Chat extends ReqHandler {
   }
 
   async get(
-    data: IGetMessageBody,
+    data: types.IGetMessageBody,
     locals: {
       tempId: string;
       userId: string | undefined;
@@ -45,7 +40,7 @@ export default class Chat extends ReqHandler {
     },
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: Record<string, IPreparedMessagesBody> | IFullChatMessageEntity[];
+    payload: Record<string, IPreparedMessagesBody> | types.IFullChatMessageEntity[];
   }> {
     return (await this.sendReq(
       this.service,
@@ -55,7 +50,7 @@ export default class Chat extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: Record<string, IPreparedMessagesBody> | IFullChatMessageEntity[];
+      payload: Record<string, IPreparedMessagesBody> | types.IFullChatMessageEntity[];
     };
   }
 

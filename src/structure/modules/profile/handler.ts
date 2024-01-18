@@ -1,10 +1,10 @@
-import * as enums from '../../enums';
-import ReqHandler from '../../tools/abstracts/reqHandler';
-import type { EMessageTypes } from '../../enums';
-import type { IUsersTokens } from '../../types';
-import type AddProfileDto from '../modules/profile/add/dto';
-import type { IProfileEntity } from '../modules/profile/entity';
-import type GetProfileDto from '../modules/profile/get/dto';
+import * as enums from '../../../enums';
+import ReqHandler from '../../../tools/abstracts/reqHandler';
+import type { IProfileEntity } from './entity';
+import type { EMessageTypes } from '../../../enums';
+import type { IUsersTokens } from '../../../types';
+import type AddProfileDto from '../../modules/profile/add/dto';
+import type GetProfileDto from '../../modules/profile/get/dto';
 
 export default class Profile extends ReqHandler {
   async get(

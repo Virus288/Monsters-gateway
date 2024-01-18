@@ -1,6 +1,6 @@
 import InventoryDropDto from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
-import type { IFullMessageEntity, IPreparedMessagesBody } from './types';
+import type * as types from './types';
 import type { IUsersTokens } from '../../../../types';
 import type express from 'express';
 
@@ -8,7 +8,7 @@ export default class MessagesRouter extends RouterFactory {
   async get(
     req: express.Request,
     res: express.Response,
-  ): Promise<Record<string, IPreparedMessagesBody> | IFullMessageEntity[]> {
+  ): Promise<Record<string, types.IPreparedMessagesBody> | types.IFullMessageEntity[]> {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
