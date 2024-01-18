@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import fakeData from '../../fakeData.json';
 import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
-import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import State from '../../../src/state';
 import * as errors from '../../../src/errors';
@@ -27,7 +26,7 @@ describe('Socket - generic tests', () => {
   };
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
-    subTarget: EMessageSubTargets.Send,
+    subTarget: enums.EMessageSubTargets.Send,
     target: enums.ESocketTargets.Chat,
   };
 
@@ -123,7 +122,7 @@ describe('Socket - generic tests', () => {
 
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: targetErr, target: EMessageTypes.Send },
+          returns: { payload: targetErr, target: enums.EMessageTypes.Send },
         };
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
@@ -144,7 +143,7 @@ describe('Socket - generic tests', () => {
 
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: targetErr, target: EMessageTypes.Send },
+          returns: { payload: targetErr, target: enums.EMessageTypes.Send },
         };
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
@@ -161,7 +160,7 @@ describe('Socket - generic tests', () => {
 
         fakeBroker.action = {
           shouldFail: true,
-          returns: { payload: targetErr, target: EMessageTypes.Send },
+          returns: { payload: targetErr, target: enums.EMessageTypes.Send },
         };
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
@@ -181,7 +180,7 @@ describe('Socket - generic tests', () => {
         shouldFail: false,
         returns: {
           payload: {},
-          target: EMessageTypes.Send,
+          target: enums.EMessageTypes.Send,
         },
       };
 
@@ -192,7 +191,7 @@ describe('Socket - generic tests', () => {
 
       const { payload, type } = m;
 
-      expect(type).toEqual(ESocketType.Message.toString());
+      expect(type).toEqual(enums.ESocketType.Message.toString());
       expect(payload).toEqual(message.payload.message);
 
       client2.disconnect();

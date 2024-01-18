@@ -1,13 +1,13 @@
-import * as enums from '../../enums';
-import ReqHandler from '../../tools/abstracts/reqHandler';
-import type { EMessageTypes } from '../../enums';
-import type { IUsersTokens } from '../../types';
-import type GetMessagesDto from '../modules/message/get/dto';
-import type { IFullMessageEntity, IPreparedMessagesBody } from '../modules/message/get/types';
-import type GetUnreadMessagesDto from '../modules/message/getUnread/dto';
-import type { IUnreadMessage } from '../modules/message/getUnread/types';
-import type ReadMessagesDto from '../modules/message/read/dto';
-import type SendMessagesDto from '../modules/message/send/dto';
+import * as enums from '../../../enums';
+import ReqHandler from '../../../tools/abstracts/reqHandler';
+import type * as getTypes from './get/types';
+import type { IUnreadMessage } from './getUnread/types';
+import type { EMessageTypes } from '../../../enums';
+import type { IUsersTokens } from '../../../types';
+import type GetMessagesDto from '../../modules/message/get/dto';
+import type GetUnreadMessagesDto from '../../modules/message/getUnread/dto';
+import type ReadMessagesDto from '../../modules/message/read/dto';
+import type SendMessagesDto from '../../modules/message/send/dto';
 
 export default class Message extends ReqHandler {
   async send(data: SendMessagesDto, locals: IUsersTokens): Promise<void> {
@@ -42,7 +42,7 @@ export default class Message extends ReqHandler {
     locals: IUsersTokens,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: Record<string, IPreparedMessagesBody> | IFullMessageEntity[];
+    payload: Record<string, getTypes.IPreparedMessagesBody> | getTypes.IFullMessageEntity[];
   }> {
     return (await this.sendReq(
       this.service,
@@ -52,7 +52,7 @@ export default class Message extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: Record<string, IPreparedMessagesBody> | IFullMessageEntity[];
+      payload: Record<string, getTypes.IPreparedMessagesBody> | getTypes.IFullMessageEntity[];
     };
   }
 }

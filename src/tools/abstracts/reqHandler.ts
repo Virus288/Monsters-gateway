@@ -1,10 +1,10 @@
 import type * as enums from '../../enums';
-import type { IRabbitConnectionData, IRabbitSubTargets, IRabbitTargets } from '../../types';
+import type * as types from '../../types';
 
 export default abstract class ReqHandler {
-  private readonly _sendReq: <T extends IRabbitSubTargets>(
+  private readonly _sendReq: <T extends types.IRabbitSubTargets>(
     service: enums.EServices,
-    mainTarget: IRabbitTargets,
+    mainTarget: types.IRabbitTargets,
     subTarget: T,
     locals: {
       tempId: string;
@@ -12,7 +12,7 @@ export default abstract class ReqHandler {
       validated: boolean;
       type: enums.EUserTypes;
     },
-    data?: IRabbitConnectionData[T],
+    data?: types.IRabbitConnectionData[T],
   ) => Promise<{
     type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
     payload: unknown;
@@ -21,9 +21,9 @@ export default abstract class ReqHandler {
 
   constructor(
     service: enums.EServices,
-    sendReq: <T extends IRabbitSubTargets>(
+    sendReq: <T extends types.IRabbitSubTargets>(
       service: enums.EServices,
-      mainTarget: IRabbitTargets,
+      mainTarget: types.IRabbitTargets,
       subTarget: T,
       locals: {
         tempId: string;
@@ -31,7 +31,7 @@ export default abstract class ReqHandler {
         validated: boolean;
         type: enums.EUserTypes;
       },
-      data?: IRabbitConnectionData[T],
+      data?: types.IRabbitConnectionData[T],
     ) => Promise<{
       type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
       payload: unknown;
@@ -41,9 +41,9 @@ export default abstract class ReqHandler {
     this._service = service;
   }
 
-  protected get sendReq(): <T extends IRabbitSubTargets>(
+  protected get sendReq(): <T extends types.IRabbitSubTargets>(
     service: enums.EServices,
-    mainTarget: IRabbitTargets,
+    mainTarget: types.IRabbitTargets,
     subTarget: T,
     locals: {
       tempId: string;
@@ -51,7 +51,7 @@ export default abstract class ReqHandler {
       validated: boolean;
       type: enums.EUserTypes;
     },
-    data?: IRabbitConnectionData[T],
+    data?: types.IRabbitConnectionData[T],
   ) => Promise<{
     type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
     payload: unknown;

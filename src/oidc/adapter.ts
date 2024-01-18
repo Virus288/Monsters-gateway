@@ -1,8 +1,8 @@
 import State from '../state';
 import Logger from '../tools/logger/log';
-import type { Adapter as OidcAdapter, AdapterPayload } from 'oidc-provider';
+import type * as oidc from 'oidc-provider';
 
-export default class Adapter implements OidcAdapter {
+export default class Adapter implements oidc.Adapter {
   private readonly _name: string;
   private readonly _prefix: string = 'oidc:';
 
@@ -18,7 +18,7 @@ export default class Adapter implements OidcAdapter {
     return this._name;
   }
 
-  async upsert(id: string, payload: AdapterPayload, expiresIn?: number): Promise<void> {
+  async upsert(id: string, payload: oidc.AdapterPayload, expiresIn?: number): Promise<void> {
     if (this.name === 'Session' && payload.authorizations) {
       await this.addGrandId(id, payload.authorizations.oidcClient!.grantId as string);
     }
@@ -27,25 +27,25 @@ export default class Adapter implements OidcAdapter {
     if (expiresIn && expiresIn > 0) await State.redis.setExpirationDate(this.key(id), expiresIn);
   }
 
-  async find(id: string): Promise<AdapterPayload | undefined> {
+  async find(id: string): Promise<oidc.AdapterPayload | undefined> {
     const data = await State.redis.getOidcHash(this.key(id), id);
 
     if (!data || Object.keys(data).length === 0) {
       return undefined;
     }
-    return JSON.parse(data) as AdapterPayload;
+    return JSON.parse(data) as oidc.AdapterPayload;
   }
 
   async destroy(id: string): Promise<void> {
     await State.redis.removeOidcElement(this.key(id));
   }
 
-  async findByUserCode(_userCode: string): Promise<AdapterPayload | undefined> {
+  async findByUserCode(_userCode: string): Promise<oidc.AdapterPayload | undefined> {
     Logger.log('Find by user code', 'Not implemented');
     return new Promise((resolve) => resolve(undefined));
   }
 
-  async findByUid(_uid: string): Promise<AdapterPayload | undefined> {
+  async findByUid(_uid: string): Promise<oidc.AdapterPayload | undefined> {
     Logger.log('Find by uid', 'Not implemented');
     return new Promise((resolve) => resolve(undefined));
   }

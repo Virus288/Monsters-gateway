@@ -3,8 +3,8 @@ import { ProviderNotInitialized } from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
 import getConfig from '../../../../tools/configLoader';
 import Logger from '../../../../tools/logger/log';
-import type { IUserSession, IUsersTokens } from '../../../../types';
-import type ReqHandler from '../../../reqHandler';
+import type * as types from '../../../../types';
+import type ReqHandler from '../../../modules/handler';
 import type express from 'express';
 import type { Session, SessionData } from 'express-session';
 import type Provider from 'oidc-provider';
@@ -61,9 +61,9 @@ export default class UserRouter extends RouterFactory {
       }
 
       const data = new LoginDto(req.body as LoginDto);
-      const account = await (res.locals.reqHandler as ReqHandler).user.login(data, res.locals as IUsersTokens);
+      const account = await (res.locals.reqHandler as ReqHandler).user.login(data, res.locals as types.IUsersTokens);
 
-      (req.session as IUserSession).userId = account.payload.id;
+      (req.session as types.IUserSession).userId = account.payload.id;
       const details = await provider.interactionDetails(req, res);
 
       const result = {

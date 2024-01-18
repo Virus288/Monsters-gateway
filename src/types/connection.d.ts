@@ -1,3 +1,4 @@
+import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
 import type InventoryAddDto from '../structure/modules/inventory/use/dto';
@@ -13,7 +14,6 @@ import type UserDetailsDto from '../structure/modules/user/details/dto';
 import type LoginDto from '../structure/modules/user/login/dto';
 import type RegisterDto from '../structure/modules/user/register/dto';
 import type RemoveUserDto from '../structure/modules/user/remove/dto';
-import type { IGetMessageBody, IReadMessageBody, ISendMessageDto } from '../tools/websocket/types';
 
 export type IRabbitSubTargets =
   | enums.EProfileTargets
@@ -53,10 +53,10 @@ export interface IMessageConnectionData {
 }
 
 export interface IChatConnectionData {
-  [enums.EChatTargets.Get]: IGetMessageBody;
+  [enums.EChatTargets.Get]: types.IGetMessageBody;
   [enums.EChatTargets.GetUnread]: IGetUnreadMessagesDto;
-  [enums.EChatTargets.Read]: IReadMessageBody;
-  [enums.EChatTargets.Send]: ISendMessageDto;
+  [enums.EChatTargets.Read]: types.IReadMessageBody;
+  [enums.EChatTargets.Send]: types.ISendMessageDto;
 }
 
 export interface IRabbitConnectionData

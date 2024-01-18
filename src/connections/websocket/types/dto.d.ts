@@ -1,5 +1,5 @@
-import type { IGetDetailedBody, IGetMessageBody, IReadMessageBody, ISocketSendMessageBody } from './index';
-import type { EMessageSubTargets, ESocketTargets } from '../../../enums';
+import type * as types from './index';
+import type * as enums from '../../../enums';
 
 /**
  * @openapi
@@ -25,9 +25,9 @@ import type { EMessageSubTargets, ESocketTargets } from '../../../enums';
  *               description: Conversation id
  */
 export interface IReadMessageDto {
-  target: ESocketTargets.Chat;
-  subTarget: EMessageSubTargets.Read;
-  payload: IReadMessageBody;
+  target: enums.ESocketTargets.Chat;
+  subTarget: enums.EMessageSubTargets.Read;
+  payload: types.IReadMessageBody;
 }
 
 /**
@@ -55,9 +55,9 @@ export interface IReadMessageDto {
  */
 
 export interface IGetDetailedDto {
-  target: ESocketTargets.Chat;
-  subTarget: EMessageSubTargets.Get;
-  payload: IGetDetailedBody;
+  target: enums.ESocketTargets.Chat;
+  subTarget: enums.EMessageSubTargets.Get;
+  payload: types.IGetDetailedBody;
 }
 
 /**
@@ -85,9 +85,9 @@ export interface IGetDetailedDto {
  */
 
 export interface ISocketSendMessageDto {
-  target: ESocketTargets.Chat;
-  subTarget: EMessageSubTargets.Get;
-  payload: ISocketSendMessageBody;
+  target: enums.ESocketTargets.Chat;
+  subTarget: enums.EMessageSubTargets.Get;
+  payload: types.ISocketSendMessageBody;
 }
 
 /**
@@ -112,7 +112,7 @@ export interface ISocketSendMessageDto {
  */
 
 export interface IGetMessageDto {
-  target: ESocketTargets.Chat;
-  subTarget: EMessageSubTargets.Get;
-  payload: IGetMessageBody;
+  target: enums.ESocketTargets.Chat;
+  subTarget: enums.EMessageSubTargets.Get;
+  payload: types.IGetMessageBody;
 }

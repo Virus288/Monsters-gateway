@@ -1,5 +1,5 @@
 import type * as enums from '../enums';
-import type ReqHandler from '../structure/reqHandler';
+import type ReqHandler from '../structure/modules/handler';
 import type { Locals } from 'express';
 import type session from 'express-session';
 

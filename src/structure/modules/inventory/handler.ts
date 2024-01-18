@@ -1,10 +1,10 @@
-import * as enums from '../../enums';
-import ReqHandler from '../../tools/abstracts/reqHandler';
-import type { EMessageTypes } from '../../enums';
-import type { IUsersTokens } from '../../types';
-import type InventoryDropDto from '../modules/inventory/drop/dto';
-import type { IInventoryEntity } from '../modules/inventory/get/types';
-import type InventoryUseDto from '../modules/inventory/use/dto';
+import * as enums from '../../../enums';
+import ReqHandler from '../../../tools/abstracts/reqHandler';
+import type { IInventoryEntity } from './get/types';
+import type { EMessageTypes } from '../../../enums';
+import type { IUsersTokens } from '../../../types';
+import type InventoryDropDto from '../../modules/inventory/drop/dto';
+import type InventoryUseDto from '../../modules/inventory/use/dto';
 
 export default class Inventory extends ReqHandler {
   async use(data: InventoryUseDto, locals: IUsersTokens): Promise<void> {
