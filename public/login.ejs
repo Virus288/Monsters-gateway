@@ -104,10 +104,22 @@
             transition: 0.75s all ease-in-out;
             background-size: 30000% 100%;
         }
+
+        .mainHeader {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: lighter;
+            letter-spacing: 0.9px;
+            padding: 1rem;
+            color: #000000;
+        }
     </style>
 </head>
 <body>
 <div class='container'>
+    <header class='mainHeader'>
+        Monsters game
+    </header>
     <% if (typeof error !== 'undefined') { %>
         <header class='redText'><%= error; %></header>
     <% } %>
