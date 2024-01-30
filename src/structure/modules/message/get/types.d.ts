@@ -12,6 +12,7 @@
  */
 export interface IGetMessagesDto {
   page: number;
+  target: string | undefined;
 }
 
 export interface IFullMessageEntity {

@@ -47,7 +47,7 @@ export default class Communicator {
       subTarget,
     };
 
-    this.queue[tempId] = { resolve, reject, target: service };
+    this.queue[locals.userId ?? tempId] = { resolve, reject, target: service };
 
     switch (service) {
       case enums.EServices.Users:
@@ -65,7 +65,7 @@ export default class Communicator {
     const body: types.IRabbitMessage = {
       user: undefined,
       payload: undefined,
-      subTarget: enums.EMessageTargets.Send,
+      subTarget: enums.EMessagesTargets.Send,
       target: enums.EMessageTypes.Heartbeat,
     };
 
@@ -84,7 +84,7 @@ export default class Communicator {
   sendExternally(payload: types.IRabbitMessage): void {
     Log.log('Server', 'Got new message');
     Log.log('Server', JSON.stringify(payload));
-    const target = this.findTarget(payload.user!.userId ?? payload.user!.tempId, true)!;
+    const target = this.findTarget(payload.user!.userId ?? payload.user!.tempId)!;
     if (!target) return undefined;
 
     switch (payload.target) {
@@ -109,10 +109,7 @@ export default class Communicator {
     });
   }
 
-  private findTarget(
-    target: string,
-    remove = false,
-  ):
+  private findTarget(target: string):
     | {
         resolve: (
           value:
@@ -127,7 +124,7 @@ export default class Communicator {
       }
     | undefined {
     const data = this.queue[target];
-    if (remove) delete this.queue[target];
+    delete this.queue[target];
     return data;
   }
 

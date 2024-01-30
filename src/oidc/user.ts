@@ -1,6 +1,7 @@
 import * as enums from '../enums';
 import UserDetailsDto from '../structure/modules/user/details/dto';
 import ReqHandler from '../structure/reqHandler';
+import type { IUserEntity } from '../types';
 import type * as oidc from 'oidc-provider';
 
 class UserAccount implements oidc.Account {
@@ -24,18 +25,19 @@ class UserAccount implements oidc.Account {
   async claims(_use: string, _scope: string): Promise<oidc.AccountClaims> {
     // #TODO This should return client based on scope. I don't use any other scopes currently
     // #TODO Currently broker require user locals to be present and there is no way to send req "as system"
-    const account = await this.reqHandler.user.getDetails(new UserDetailsDto({ id: this.accountId }), {
+    const callback = await this.reqHandler.user.getDetails([new UserDetailsDto({ id: this.accountId })], {
       userId: undefined,
       validated: false,
       type: enums.EUserTypes.User,
       reqHandler: this.reqHandler,
       tempId: '',
     });
+    const account = callback.payload[0] as IUserEntity;
 
     return new Promise((resolve) => {
       resolve({
-        ...account.payload,
-        sub: account.payload._id,
+        ...account,
+        sub: account._id,
       });
     });
   }

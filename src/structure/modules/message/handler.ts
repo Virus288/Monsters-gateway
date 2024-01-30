@@ -11,11 +11,11 @@ import type SendMessagesDto from '../../modules/message/send/dto';
 
 export default class Message extends ReqHandler {
   async send(data: SendMessagesDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Messages, enums.EMessageTargets.Send, locals, data);
+    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Send, locals, data);
   }
 
   async read(data: ReadMessagesDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Messages, enums.EMessageTargets.Read, locals, data);
+    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Read, locals, data);
   }
 
   async getUnread(
@@ -27,8 +27,8 @@ export default class Message extends ReqHandler {
   }> {
     return (await this.sendReq(
       this.service,
-      enums.EUserMainTargets.Messages,
-      enums.EMessageTargets.GetUnread,
+      enums.EUserMainTargets.Message,
+      enums.EMessagesTargets.GetUnread,
       locals,
       data,
     )) as {
@@ -46,8 +46,8 @@ export default class Message extends ReqHandler {
   }> {
     return (await this.sendReq(
       this.service,
-      enums.EUserMainTargets.Messages,
-      enums.EMessageTargets.Get,
+      enums.EUserMainTargets.Message,
+      enums.EMessagesTargets.Get,
       locals,
       data,
     )) as {

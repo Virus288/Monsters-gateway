@@ -42,13 +42,7 @@ export default class Chat extends ReqHandler {
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: Record<string, IPreparedMessagesBody> | types.IFullChatMessageEntity[];
   }> {
-    return (await this.sendReq(
-      this.service,
-      enums.EUserMainTargets.Messages,
-      enums.EChatTargets.Get,
-      locals,
-      data,
-    )) as {
+    return (await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EChatTargets.Get, locals, data)) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
       payload: Record<string, IPreparedMessagesBody> | types.IFullChatMessageEntity[];
     };
@@ -68,7 +62,7 @@ export default class Chat extends ReqHandler {
   }> {
     return (await this.sendReq(
       this.service,
-      enums.EUserMainTargets.Messages,
+      enums.EUserMainTargets.Message,
       enums.EChatTargets.GetUnread,
       locals,
       data,

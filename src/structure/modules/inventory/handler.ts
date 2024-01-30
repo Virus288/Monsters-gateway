@@ -21,8 +21,8 @@ export default class Inventory extends ReqHandler {
   }> {
     return (await this.sendReq(
       this.service,
-      enums.EUserMainTargets.Messages,
-      enums.EMessageTargets.GetUnread,
+      enums.EUserMainTargets.Message,
+      enums.EMessagesTargets.GetUnread,
       locals,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;

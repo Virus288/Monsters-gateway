@@ -17,11 +17,11 @@ export default class User extends ReqHandler {
   }
 
   async getDetails(
-    data: UserDetailsDto,
+    data: UserDetailsDto[],
     locals: types.IUsersTokens,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: types.IUserEntity;
+    payload: types.IUserEntity[];
   }> {
     return (await this.sendReq(
       this.service,
@@ -31,7 +31,7 @@ export default class User extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: types.IUserEntity;
+      payload: types.IUserEntity[];
     };
   }
 
