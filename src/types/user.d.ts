@@ -25,8 +25,5 @@ export interface IUserSession extends session.Session, Partial<session.SessionDa
 export interface IUserEntity {
   _id: string;
   login: string;
-  email: string;
   verified: boolean;
-  password: string;
-  type: enums.EUserTypes;
 }

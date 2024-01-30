@@ -6,7 +6,6 @@ import Logger from '../../../../tools/logger/log';
 import type * as types from '../../../../types';
 import type ReqHandler from '../../../reqHandler';
 import type express from 'express';
-import type { Session, SessionData } from 'express-session';
 import type Provider from 'oidc-provider';
 
 export default class UserRouter extends RouterFactory {
@@ -68,7 +67,7 @@ export default class UserRouter extends RouterFactory {
 
       const result = {
         login: {
-          account: (req.session as Session & Partial<SessionData & Record<string, string>>).userId as string,
+          account: (req.session as types.IUserSession).userId,
           remember: true,
         },
         consent: {

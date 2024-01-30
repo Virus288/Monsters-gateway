@@ -3,7 +3,7 @@ export enum EUserMainTargets {
   Chat = 'chat',
   Party = 'party',
   Profile = 'profile',
-  Messages = 'messages',
+  Message = 'message',
   Inventory = 'inventory',
 }
 
@@ -25,11 +25,11 @@ export enum EItemsTargets {
   Drop = 'dropItem',
 }
 
-export enum EMessageTargets {
-  Send = 'sendMessage',
-  Get = 'getMessage',
-  Read = 'readMessage',
-  GetUnread = 'getUnreadMessages',
+export enum EMessagesTargets {
+  Send = 'send',
+  Get = 'get',
+  Read = 'read',
+  GetUnread = 'getUnread',
 }
 
 export enum EChatTargets {

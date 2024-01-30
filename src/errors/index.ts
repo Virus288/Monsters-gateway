@@ -370,3 +370,12 @@ export class ProviderNotInitialized extends FullError {
     this.status = 400;
   }
 }
+
+export class NoUserWithProvidedName extends FullError {
+  constructor() {
+    super('NoUserWithProvidedName');
+    this.message = 'No user with provided name';
+    this.name = 'NoUserWithProvidedName';
+    this.status = 400;
+  }
+}

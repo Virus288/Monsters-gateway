@@ -20,7 +20,7 @@ export type IRabbitSubTargets =
   | enums.EUserTargets
   | enums.EItemsTargets
   | enums.EPartyTargets
-  | enums.EMessageTargets
+  | enums.EMessagesTargets
   | enums.EChatTargets;
 
 export interface IProfileConnectionData {
@@ -30,7 +30,7 @@ export interface IProfileConnectionData {
 
 export interface IUserConnectionData {
   [enums.EUserTargets.Login]: LoginDto;
-  [enums.EUserTargets.GetName]: UserDetailsDto;
+  [enums.EUserTargets.GetName]: UserDetailsDto[];
   [enums.EUserTargets.Register]: RegisterDto;
   [enums.EUserTargets.Remove]: RemoveUserDto;
 }
@@ -46,10 +46,10 @@ export interface IPartyConnectionData {
 }
 
 export interface IMessageConnectionData {
-  [enums.EMessageTargets.Get]: GetMessagesDto;
-  [enums.EMessageTargets.GetUnread]: GetUnreadMessagesDto;
-  [enums.EMessageTargets.Read]: ReadMessagesDto;
-  [enums.EMessageTargets.Send]: SendMessagesDto;
+  [enums.EMessagesTargets.Get]: GetMessagesDto;
+  [enums.EMessagesTargets.GetUnread]: GetUnreadMessagesDto;
+  [enums.EMessagesTargets.Read]: ReadMessagesDto;
+  [enums.EMessagesTargets.Send]: SendMessagesDto;
 }
 
 export interface IChatConnectionData {

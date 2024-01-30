@@ -2,6 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import Middleware from './middleware';
 import initInventoryRoutes from './modules/inventory';
+import initMessagesRoutes from './modules/message';
 import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
@@ -34,6 +35,7 @@ export default class AppRouter {
     initProfileRoutes(this.router);
     initSecuredUserRoutes(this.router);
     initPartyRoutes(this.router);
+    initMessagesRoutes(this.router);
     initInventoryRoutes(this.router);
   }
 

@@ -42,6 +42,8 @@ export default class Middleware {
       const user = await State.redis.getRemovedUsers(payload.sub);
       if (user) throw new errors.UnauthorizedError();
 
+      res.locals.userId = payload.sub;
+
       return next();
     } catch (err) {
       return handleErr(new errors.UnauthorizedError(), res);
