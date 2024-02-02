@@ -1,18 +1,22 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from '@jest/globals';
 import State from '../../../src/state';
 import SocketServer from '../../utils/mocks/websocket';
-import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
-import { EMessageSubTargets, EMessageTypes, ESocketType } from '../../../src/enums';
+import { EMessageSubTargets, EMessageTypes } from '../../../src/enums';
+import { ESocketType } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import { FakeBroker } from '../../utils/mocks';
-import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
-import { UnauthorizedError } from '../../../src/errors';
-import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/types';
+import { IFullError } from '../../../src/types';
 import type { IClient } from 'moc-socket';
 import MocSocket from 'moc-socket';
+import { getKeys } from '../../../src/oidc/utils';
+import * as jose from 'node-jose';
+import jwt from 'jsonwebtoken';
+import { UnauthorizedError } from '../../../src/errors';
+import Utils from '../../utils/utils';
+import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
 
 describe('Socket - chat', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -21,12 +25,8 @@ describe('Socket - chat', () => {
   let client: IClient;
   const fakeUser = fakeData.users[0] as IUserEntity;
   const fakeUser2 = fakeData.users[1] as IUserEntity;
-  const clientOptions = {
-    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)}` },
-  };
-  const client2Options = {
-    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User)}` },
-  };
+  let clientOptions: Record<string, unknown>;
+  let client2Options: Record<string, unknown>;
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
     subTarget: enums.EMessageSubTargets.Send,
@@ -54,13 +54,37 @@ describe('Socket - chat', () => {
   };
 
   beforeAll(async () => {
+    State.keys = await getKeys(1);
+    const privateKey = (await jose.JWK.asKey(State.keys[0]!)).toPEM(true);
+
+    const payload = {
+      sub: fakeUser._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+    const payload2 = {
+      sub: fakeUser2._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+
+    const loginToken1 = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    const loginToken2 = jwt.sign(payload2, privateKey, { algorithm: 'RS256' });
+
+    clientOptions = {
+      headers: { Authorization: `Bearer ${loginToken1}` },
+    };
+    client2Options = {
+      headers: { Authorization: `Bearer ${loginToken2}` },
+    };
+
     server = new MocSocket((State.socket as SocketServer).server);
     client = server.createClient();
+
     await client.connect(clientOptions);
   });
 
   afterAll(() => {
     client.disconnect();
+    State.keys = [];
   });
 
   describe('Should throw', () => {
@@ -100,6 +124,8 @@ describe('Socket - chat', () => {
     });
 
     it(`Get message from db`, async () => {
+      console.log('message');
+      console.log(message);
       fakeBroker.action = {
         shouldFail: false,
         returns: {
@@ -117,6 +143,8 @@ describe('Socket - chat', () => {
       };
       await client2.connect(client2Options);
       const userMessage = (await client2.sendAsyncMessage(getMessage)) as ISocketOutMessage;
+      console.log('userMessage');
+      console.log(userMessage);
 
       expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
       client2.disconnect();

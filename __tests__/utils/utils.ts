@@ -10,12 +10,6 @@ export default class Utils {
     });
   };
 
-  generateRefreshToken = (id: string, type: types.EUserTypes): string => {
-    return jwt.sign({ id, type }, getConfig().refToken, {
-      expiresIn: enums.EJwtTime.RefreshTokenMaxAge,
-    });
-  };
-
   async sleep(milliseconds: number): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(() => {
