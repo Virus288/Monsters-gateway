@@ -10,6 +10,9 @@ import MocSocket, { IClient } from 'moc-socket';
 import { FakeBroker } from '../../utils/mocks';
 import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/types';
+import { getKeys } from '../../../src/oidc/utils';
+import * as jose from 'node-jose';
+import jwt from 'jsonwebtoken';
 
 describe('Socket - generic tests', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -18,12 +21,8 @@ describe('Socket - generic tests', () => {
   let client: IClient;
   const fakeUser = fakeData.users[0] as IUserEntity;
   const fakeUser2 = fakeData.users[1] as IUserEntity;
-  const clientOptions = {
-    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)}` },
-  };
-  const client2Options = {
-    headers: { Authorization: `Bearer ${utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User)}` },
-  };
+  let clientOptions: Record<string, unknown>;
+  let client2Options: Record<string, unknown>;
   const message: ISocketInMessage = {
     payload: { message: 'asd', target: fakeUser2._id },
     subTarget: enums.EMessageSubTargets.Send,
@@ -31,6 +30,28 @@ describe('Socket - generic tests', () => {
   };
 
   beforeAll(async () => {
+    State.keys = await getKeys(1);
+    const privateKey = (await jose.JWK.asKey(State.keys[0]!)).toPEM(true);
+
+    const payload = {
+      sub: fakeUser._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+    const payload2 = {
+      sub: fakeUser2._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+
+    const loginToken1 = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    const loginToken2 = jwt.sign(payload2, privateKey, { algorithm: 'RS256' });
+
+    clientOptions = {
+      headers: { Authorization: `Bearer ${loginToken1}` },
+    };
+    client2Options = {
+      headers: { Authorization: `Bearer ${loginToken2}` },
+    };
+
     server = new MocSocket((State.socket as SocketServer).server);
     client = server.createClient();
     await client.connect(clientOptions);
@@ -38,6 +59,7 @@ describe('Socket - generic tests', () => {
 
   afterAll(() => {
     client.disconnect();
+    State.keys = [];
   });
 
   describe('Should throw', () => {

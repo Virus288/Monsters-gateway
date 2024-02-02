@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import Websocket from 'ws';
 import Router from './router';
 import * as enums from '../../enums';
@@ -6,6 +5,7 @@ import * as errors from '../../errors';
 import ReqHandler from '../../structure/reqHandler';
 import getConfig from '../../tools/configLoader';
 import Log from '../../tools/logger/log';
+import { validateToken } from '../../tools/token';
 import type * as types from './types';
 import type { ESocketType } from '../../enums';
 import type { IFullError } from '../../types';
@@ -21,10 +21,6 @@ export default class WebsocketServer {
 
   protected get users(): types.ISocketUser[] {
     return this._users;
-  }
-
-  protected set users(value: types.ISocketUser[]) {
-    this._users = value;
   }
 
   protected get server(): Websocket.WebSocketServer {
@@ -122,39 +118,43 @@ export default class WebsocketServer {
       const preparedCookie = auth.cookies
         .split(';')
         .map((e) => e.split('='))
-        .find((e) => e[0] === 'accessToken');
-      if (!preparedCookie || preparedCookie.length === 0) return ws.close(1000, unauthorizedErrorMessage);
+        .find((e) => e[0]!.trim() === 'monsters.uid');
+
+      if (!preparedCookie || preparedCookie.length === 0) {
+        ws.close(1000, unauthorizedErrorMessage);
+        return;
+      }
       access = preparedCookie[1];
     }
 
-    if (!access) return ws.close(1000, unauthorizedErrorMessage);
-
-    try {
-      const { id, type } = jwt.verify(access, getConfig().accessToken) as {
-        id: string;
-        type: enums.EUserTypes;
-      };
-      ws.userId = id;
-
-      const isAlreadyOnline = this.users.findIndex((u) => {
-        return u.userId === id;
-      });
-
-      // #TODO This is broken and incorrectly sends messages back to user, who is logged in on 2 devices
-      if (isAlreadyOnline > -1) {
-        this._users[isAlreadyOnline] = {
-          ...this.users[isAlreadyOnline],
-          userId: this.users[isAlreadyOnline]!.userId,
-          type: this.users[isAlreadyOnline]!.type,
-          clients: [...this.users[isAlreadyOnline]!.clients, ws],
-        };
-        return undefined;
-      }
-      this._users.push({ clients: [ws], userId: id, type });
-      return undefined;
-    } catch (err) {
-      return ws.close(1000, unauthorizedErrorMessage);
+    if (!access) {
+      ws.close(1000, unauthorizedErrorMessage);
+      return;
     }
+
+    validateToken(access)
+      .then((payload) => {
+        ws.userId = payload.sub;
+
+        const isAlreadyOnline = this.users.findIndex((u) => {
+          return u.userId === payload.sub;
+        });
+
+        // #TODO This is broken and incorrectly sends messages back to user, who is logged in on 2 devices
+        if (isAlreadyOnline > -1) {
+          this._users[isAlreadyOnline] = {
+            ...this.users[isAlreadyOnline],
+            userId: this.users[isAlreadyOnline]!.userId,
+            clients: [...this.users[isAlreadyOnline]!.clients, ws],
+          };
+          return undefined;
+        }
+
+        return this._users.push({ clients: [ws], userId: payload.sub });
+      })
+      .catch(() => {
+        ws.close(1000, unauthorizedErrorMessage);
+      });
   }
 
   private initializeUser(ws: types.ISocket): void {

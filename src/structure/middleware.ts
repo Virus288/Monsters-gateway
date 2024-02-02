@@ -3,15 +3,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
-import * as jose from 'node-jose';
 import ReqHandler from './reqHandler';
 import * as errors from '../errors';
 import { IncorrectDataType, InternalError } from '../errors';
 import handleErr from '../errors/utils';
-import State from '../state';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import errLogger from '../tools/logger/logger';
+import { validateToken } from '../tools/token';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
@@ -23,25 +22,12 @@ export default class Middleware {
     if (Middleware.shouldSkipUserValidation(req)) {
       return next();
     }
-
-    const token = (req.cookies as Record<string, string>)['monsters.uid'] as string;
+    const token =
+      ((req.cookies as Record<string, string>)['monsters.uid'] as string) ??
+      (req.headers.authorization !== undefined ? req.headers.authorization.split('Bearer')[1]!.trim() : undefined);
 
     try {
-      const keyStore = await jose.JWK.asKeyStore({ keys: State.keys });
-      const verifier = jose.JWS.createVerify(keyStore);
-      const payload = JSON.parse((await verifier.verify(token)).payload.toString()) as types.ITokenPayload;
-      await verifier.verify(token);
-
-      if (!token) throw new errors.UnauthorizedError();
-      if (new Date(payload.exp * 1000) < new Date()) {
-        // Token expired
-        throw new errors.UnauthorizedError();
-      }
-
-      // Validate if user's token is still active, but account got removed
-      const user = await State.redis.getRemovedUsers(payload.sub);
-      if (user) throw new errors.UnauthorizedError();
-
+      const payload = await validateToken(token);
       res.locals.userId = payload.sub;
 
       return next();
@@ -57,11 +43,7 @@ export default class Middleware {
     // Disable token validation for oidc routes
     const oidcRoutes = ['.well-known', 'me', 'auth', 'token', 'session', 'certs'];
     const splitRoute = req.path.split('/');
-    if (splitRoute.length > 1 && oidcRoutes.includes(splitRoute[1] as string)) {
-      return true;
-    }
-
-    return false;
+    return splitRoute.length > 1 && oidcRoutes.includes(splitRoute[1] as string);
   }
 
   generateMiddleware(app: Express): void {
