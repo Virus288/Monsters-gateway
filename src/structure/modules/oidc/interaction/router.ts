@@ -32,11 +32,11 @@ service.router.get('/:grant', limitRate, async (req, res, next) => {
 
 /**
  * @openapi
- * /users/login:
+ * /interaction/:grant:
  *   post:
  *     tags:
- *       - user
- *     description: Log in user
+ *       - interaction
+ *     description: Validate user input and create login token
  *     security: []
  *     requestBody:
  *       description: Request body for logging in
@@ -48,27 +48,11 @@ service.router.get('/:grant', limitRate, async (req, res, next) => {
  *     responses:
  *       200:
  *         description: Success. The user is logged in.
- *         headers:
- *           Authorization:
- *             description: The user's access token for authorization.
- *             schema:
- *               type: string
- *             example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *           x-refresh-token:
- *             description: The user's refresh token.
- *             schema:
- *               type: string
- *             example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *       400:
- *         description: Bad request.
- *         content:
- *           application/json:
- *             schema:
- *               oneOf:
- *                 - $ref: '#/components/schemas/NoDataProvidedError'
- *                 - $ref: '#/components/schemas/MissingArgError'
- *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *         x-token-url:
+ *           description: On success, user will be redirected to previously provided path with code in url
+ *           value: "/code=....."
  */
+
 service.router.post('/:grant/login', limitRate, async (req, res) => {
   try {
     await service.post(req, res);
