@@ -61,7 +61,7 @@ export default class WebsocketServer {
     this.server.on('close', () => Log.log('Websocket', 'Server closed'));
   }
 
-  sendToUser(userId: string, payload: unknown, type: ESocketType = enums.ESocketType.Message): void {
+  sendToUser(userId: string, payload: unknown, type: ESocketType = enums.ESocketType.ChatMessage): void {
     const formatted: types.ISocketOutMessage = { type, payload };
     const target = this.users.find((e) => {
       return e.userId === userId;

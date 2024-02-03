@@ -8,8 +8,7 @@ const limiter =
         next();
       }
     : rateLimit({
-        windowMs: 60 * 1000,
-        max: 10,
+        limit: 10,
         message: 'Too many requests from this IP, please try again in an 1 min',
       });
 

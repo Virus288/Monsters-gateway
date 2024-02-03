@@ -196,7 +196,7 @@ describe('Socket - chat', () => {
         },
         { timeout: 100 },
       )) as ISocketOutMessage;
-      expect(userMessage2?.type).toEqual(ESocketType.Confirmation);
+      expect(userMessage2?.type).toEqual(ESocketType.Success);
 
       fakeBroker.action = {
         shouldFail: false,

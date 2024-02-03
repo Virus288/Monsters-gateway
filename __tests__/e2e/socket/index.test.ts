@@ -213,7 +213,7 @@ describe('Socket - generic tests', () => {
 
       const { payload, type } = m;
 
-      expect(type).toEqual(enums.ESocketType.Message.toString());
+      expect(type).toEqual(enums.ESocketType.ChatMessage.toString());
       expect(payload).toEqual(message.payload.message);
 
       client2.disconnect();

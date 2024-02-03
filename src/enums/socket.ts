@@ -12,5 +12,6 @@ export enum EMessageSubTargets {
 export enum ESocketType {
   Error = 'error',
   Message = 'message',
-  Confirmation = 'confirmation',
+  ChatMessage = 'chatMessage',
+  Success = 'success',
 }

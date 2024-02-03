@@ -61,7 +61,7 @@ export default class Router {
     ws.reqHandler.chat
       .send(prepared, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
       .then(() => {
-        ws.send(JSON.stringify({ type: ESocketType.Confirmation } as types.ISocketOutMessage));
+        ws.send(JSON.stringify({ type: ESocketType.Success } as types.ISocketOutMessage));
 
         const { message, target } = data;
         const isOnline = State.socket.isOnline(target);
@@ -79,7 +79,7 @@ export default class Router {
     ws.reqHandler.chat
       .read(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
       .then(() => {
-        ws.send(JSON.stringify({ type: ESocketType.Confirmation } as types.ISocketOutMessage));
+        ws.send(JSON.stringify({ type: ESocketType.Success } as types.ISocketOutMessage));
       })
       .catch((err) => {
         Log.error('Socket read message error', err);
@@ -95,7 +95,7 @@ export default class Router {
       .then((callback) => {
         ws.send(
           JSON.stringify({
-            type: ESocketType.Confirmation,
+            type: ESocketType.Success,
             payload: callback.payload,
           } as types.ISocketOutMessage),
         );
@@ -114,7 +114,7 @@ export default class Router {
       .then((callback) => {
         ws.send(
           JSON.stringify({
-            type: ESocketType.Confirmation,
+            type: ESocketType.Success,
             payload: callback.payload,
           } as types.ISocketOutMessage),
         );
