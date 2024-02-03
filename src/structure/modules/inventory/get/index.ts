@@ -8,6 +8,12 @@ export default class InventoryGetDto extends RouterFactory {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
-    return (await reqHandler.inventory.get(locals)).payload;
+    return (
+      await reqHandler.inventory.get({
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload;
   }
 }

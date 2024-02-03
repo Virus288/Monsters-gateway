@@ -10,6 +10,6 @@ export default class MessagesRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new InventoryDropDto(req.body as IReadMessageDto);
-    await reqHandler.message.read(data, locals);
+    await reqHandler.message.read(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
   }
 }

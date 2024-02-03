@@ -1,4 +1,3 @@
-import * as enums from '../enums';
 import UserDetailsDto from '../structure/modules/user/details/dto';
 import ReqHandler from '../structure/reqHandler';
 import type { IUserEntity } from '../types';
@@ -28,11 +27,9 @@ class UserAccount implements oidc.Account {
     const callback = await this.reqHandler.user.getDetails([new UserDetailsDto({ id: this.accountId })], {
       userId: undefined,
       validated: false,
-      type: enums.EUserTypes.User,
-      reqHandler: this.reqHandler,
-      tempId: '',
-      initializedProfile: false,
+      tempId: undefined,
     });
+
     const account = callback.payload[0] as IUserEntity;
 
     return new Promise((resolve) => {

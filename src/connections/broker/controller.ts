@@ -25,12 +25,7 @@ export default class Communicator {
           }>,
     ) => void,
     reject: (reason?: unknown) => void,
-    locals: {
-      tempId: string;
-      userId: string | undefined;
-      validated: boolean;
-      type: enums.EUserTypes;
-    },
+    userData: types.IUserBrokerInfo,
     service: enums.EServices,
     channel: amqplib.Channel,
     payload?: types.IRabbitConnectionData[T],
@@ -38,16 +33,16 @@ export default class Communicator {
     const tempId = generateTempId();
     const body: types.IRabbitMessage = {
       user: {
-        ...locals,
+        ...userData,
         tempId,
-        validated: locals.validated ?? true,
+        validated: userData.validated ?? true,
       },
       payload,
       target,
       subTarget,
     };
 
-    this.queue[locals.userId ?? tempId] = { resolve, reject, target: service };
+    this.queue[userData.userId ?? tempId] = { resolve, reject, target: service };
 
     switch (service) {
       case enums.EServices.Users:
@@ -84,7 +79,7 @@ export default class Communicator {
   sendExternally(payload: types.IRabbitMessage): void {
     Log.log('Server', 'Got new message');
     Log.log('Server', JSON.stringify(payload));
-    const target = this.findTarget(payload.user!.userId ?? payload.user!.tempId)!;
+    const target = this.findTarget((payload.user!.userId as string) ?? payload.user!.tempId)!;
     if (!target) return undefined;
 
     switch (payload.target) {

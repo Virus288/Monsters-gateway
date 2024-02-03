@@ -25,17 +25,12 @@ export default class ReqHandler {
       service: EServices,
       mainTarget: types.IRabbitTargets,
       subTarget: T,
-      locals: {
-        tempId: string;
-        userId: string | undefined;
-        validated: boolean;
-        type: enums.EUserTypes;
-      },
+      userData: types.IUserBrokerInfo,
       data?: types.IRabbitConnectionData[T],
     ): Promise<{
       type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
       payload: unknown;
-    }> => this.send(service, mainTarget, subTarget, locals, data);
+    }> => this.send(service, mainTarget, subTarget, userData, data);
 
     this.user = new User(EServices.Users, action);
     this.chat = new Chat(EServices.Messages, action);
@@ -49,19 +44,14 @@ export default class ReqHandler {
     service: EServices,
     mainTarget: types.IRabbitTargets,
     subTarget: T,
-    locals: {
-      tempId: string;
-      userId: string | undefined;
-      validated: boolean;
-      type: enums.EUserTypes;
-    },
+    userData: types.IUserBrokerInfo,
     data?: types.IRabbitConnectionData[T],
   ): Promise<{
     type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
     payload: unknown;
   }> {
     return new Promise((resolve, reject) => {
-      State.broker.sendLocally(mainTarget, subTarget, resolve, reject, locals, service, data);
+      State.broker.sendLocally(mainTarget, subTarget, resolve, reject, userData, service, data);
     });
   }
 }

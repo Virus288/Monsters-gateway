@@ -8,17 +8,17 @@ import type RegisterDto from '../../modules/user/register/dto';
 import type RemoveUserDto from '../../modules/user/remove/dto';
 
 export default class User extends ReqHandler {
-  async delete(data: RemoveUserDto, locals: types.IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Remove, locals, data);
+  async delete(data: RemoveUserDto, userInfo: types.IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Remove, userInfo, data);
   }
 
-  async register(data: RegisterDto, locals: types.IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Register, locals, data);
+  async register(data: RegisterDto, userInfo: types.IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Register, userInfo, data);
   }
 
   async getDetails(
     data: UserDetailsDto[],
-    locals: types.IUsersTokens,
+    userInfo: types.IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: types.IUserEntity[];
@@ -27,7 +27,7 @@ export default class User extends ReqHandler {
       this.service,
       enums.EUserMainTargets.User,
       enums.EUserTargets.GetName,
-      locals,
+      userInfo,
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
@@ -37,12 +37,18 @@ export default class User extends ReqHandler {
 
   async login(
     data: LoginDto,
-    locals: types.IUsersTokens,
+    userInfo: types.IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: types.IUserCredentials;
   }> {
-    return (await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Login, locals, data)) as {
+    return (await this.sendReq(
+      this.service,
+      enums.EUserMainTargets.User,
+      enums.EUserTargets.Login,
+      userInfo,
+      data,
+    )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
       payload: types.IUserCredentials;
     };

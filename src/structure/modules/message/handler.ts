@@ -3,24 +3,24 @@ import ReqHandler from '../../../tools/abstracts/reqHandler';
 import type * as getTypes from './get/types';
 import type { IUnreadMessage } from './getUnread/types';
 import type { EMessageTypes } from '../../../enums';
-import type { IUsersTokens } from '../../../types';
+import type { IUserBrokerInfo } from '../../../types';
 import type GetMessagesDto from '../../modules/message/get/dto';
 import type GetUnreadMessagesDto from '../../modules/message/getUnread/dto';
 import type ReadMessagesDto from '../../modules/message/read/dto';
 import type SendMessagesDto from '../../modules/message/send/dto';
 
 export default class Message extends ReqHandler {
-  async send(data: SendMessagesDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Send, locals, data);
+  async send(data: SendMessagesDto, userData: IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Send, userData, data);
   }
 
-  async read(data: ReadMessagesDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Read, locals, data);
+  async read(data: ReadMessagesDto, userData: IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.Message, enums.EMessagesTargets.Read, userData, data);
   }
 
   async getUnread(
     data: GetUnreadMessagesDto,
-    locals: IUsersTokens,
+    userData: IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: IUnreadMessage[];
@@ -29,7 +29,7 @@ export default class Message extends ReqHandler {
       this.service,
       enums.EUserMainTargets.Message,
       enums.EMessagesTargets.GetUnread,
-      locals,
+      userData,
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
@@ -39,7 +39,7 @@ export default class Message extends ReqHandler {
 
   async get(
     data: GetMessagesDto,
-    locals: IUsersTokens,
+    userData: IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: Record<string, getTypes.IPreparedMessagesBody> | getTypes.IFullMessageEntity[];
@@ -48,7 +48,7 @@ export default class Message extends ReqHandler {
       this.service,
       enums.EUserMainTargets.Message,
       enums.EMessagesTargets.Get,
-      locals,
+      userData,
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;

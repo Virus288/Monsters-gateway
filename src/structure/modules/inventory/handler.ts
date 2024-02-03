@@ -2,20 +2,20 @@ import * as enums from '../../../enums';
 import ReqHandler from '../../../tools/abstracts/reqHandler';
 import type { IInventoryEntity } from './get/types';
 import type { EMessageTypes } from '../../../enums';
-import type { IUsersTokens } from '../../../types';
+import type { IUserBrokerInfo } from '../../../types';
 import type InventoryDropDto from '../../modules/inventory/drop/dto';
 import type InventoryUseDto from '../../modules/inventory/use/dto';
 
 export default class Inventory extends ReqHandler {
-  async use(data: InventoryUseDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Inventory, enums.EItemsTargets.Use, locals, data);
+  async use(data: InventoryUseDto, userData: IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.Inventory, enums.EItemsTargets.Use, userData, data);
   }
 
-  async drop(data: InventoryDropDto, locals: IUsersTokens): Promise<void> {
-    await this.sendReq(this.service, enums.EUserMainTargets.Inventory, enums.EItemsTargets.Drop, locals, data);
+  async drop(data: InventoryDropDto, userData: IUserBrokerInfo): Promise<void> {
+    await this.sendReq(this.service, enums.EUserMainTargets.Inventory, enums.EItemsTargets.Drop, userData, data);
   }
 
-  async get(locals: IUsersTokens): Promise<{
+  async get(userData: IUserBrokerInfo): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
     payload: IInventoryEntity;
   }> {
@@ -23,7 +23,7 @@ export default class Inventory extends ReqHandler {
       this.service,
       enums.EUserMainTargets.Message,
       enums.EMessagesTargets.GetUnread,
-      locals,
+      userData,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
       payload: IInventoryEntity;

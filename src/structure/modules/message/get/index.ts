@@ -19,12 +19,24 @@ export default class MessagesRouter extends RouterFactory {
       data = new GetMessagesDto(Number(req.query.page), req.query.target as string);
     }
 
-    const messages = (await reqHandler.message.get(data, locals)).payload;
+    const messages = (
+      await reqHandler.message.get(data, {
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload;
 
     if (Array.isArray(messages)) {
       const userIds = messages.map((m) => (m.receiver === locals.userId ? m.sender : m.receiver));
       const cleaned = [...new Set(userIds), locals.userId].map((id) => new UserDetailsDto({ id }));
-      const users = (await reqHandler.user.getDetails(cleaned, locals)).payload;
+      const users = (
+        await reqHandler.user.getDetails(cleaned, {
+          userId: locals.userId,
+          validated: locals.validated,
+          tempId: locals.tempId,
+        })
+      ).payload;
       return messages.map((m) => {
         return {
           ...m,
@@ -37,7 +49,13 @@ export default class MessagesRouter extends RouterFactory {
       return m.receiver === locals.userId ? m.sender : m.receiver;
     });
     const cleaned = [...new Set(userIds), locals.userId].map((id) => new UserDetailsDto({ id }));
-    const users = (await reqHandler.user.getDetails(cleaned, locals)).payload;
+    const users = (
+      await reqHandler.user.getDetails(cleaned, {
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload;
     const prepared: Record<string, types.IPreparedMessagesBody> = {};
     Object.entries(messages).forEach(([k, v]) => {
       prepared[k] = {

@@ -60,18 +60,13 @@ export default class Broker {
           }>,
     ) => void,
     reject: (reason?: unknown) => void,
-    locals: {
-      tempId: string;
-      userId: string | undefined;
-      validated: boolean;
-      type: enums.EUserTypes;
-    },
+    userData: types.IUserBrokerInfo,
     service: enums.EServices,
     payload?: types.IRabbitConnectionData[T],
   ): void {
     const queue = this._services[service as types.IAvailableServices];
     if (queue.dead) throw new InternalError();
-    return this.controller.sendLocally(target, subTarget, resolve, reject, locals, service, this.channel!, payload);
+    return this.controller.sendLocally(target, subTarget, resolve, reject, userData, service, this.channel!, payload);
   }
 
   close(): void {

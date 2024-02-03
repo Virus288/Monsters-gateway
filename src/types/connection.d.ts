@@ -1,3 +1,4 @@
+import type { IUserBrokerInfo } from './user';
 import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
@@ -70,14 +71,7 @@ export interface IRabbitConnectionData
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets;
 
 export interface IRabbitMessage {
-  user:
-    | {
-        tempId: string;
-        userId: string | undefined;
-        validated: boolean;
-        type: enums.EUserTypes;
-      }
-    | undefined;
+  user: IUserBrokerInfo | undefined;
   target: IRabbitTargets;
   subTarget: IRabbitSubTargets;
   payload: unknown;

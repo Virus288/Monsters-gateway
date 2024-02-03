@@ -10,7 +10,11 @@ export default class GetProfileRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new GetProfileDto(req.query.id as string);
-    const aa = await reqHandler.profile.get(data, locals);
+    const aa = await reqHandler.profile.get(data, {
+      userId: locals.userId,
+      validated: locals.validated,
+      tempId: locals.tempId,
+    });
     return aa.payload;
   }
 }

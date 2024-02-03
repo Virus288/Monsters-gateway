@@ -22,7 +22,7 @@ export default class MessagesRouter extends RouterFactory {
 
     const users = await reqHandler.user.getDetails(
       [new UserDetailsDto({ name: (req.body as ISendMessageDto).receiver }), new UserDetailsDto({ id: locals.userId })],
-      locals,
+      { userId: locals.userId, validated: locals.validated, tempId: locals.tempId },
     );
     if (!users || users.payload.length === 0) {
       throw new NoUserWithProvidedName();
@@ -33,7 +33,16 @@ export default class MessagesRouter extends RouterFactory {
       throw new NoUserWithProvidedName();
     }
 
-    await reqHandler.message.send(new SendMessagesDto({ ...data, receiver: receiver?._id }, locals.userId!), locals);
+    await reqHandler.message.send(
+      new SendMessagesDto(
+        {
+          ...data,
+          receiver: receiver?._id,
+        },
+        locals.userId!,
+      ),
+      { userId: locals.userId, validated: locals.validated, tempId: locals.tempId },
+    );
     State.socket.sendToUser(
       receiver._id,
       { body: data.body, sender: sender?.login, receiver: sender?.login },
