@@ -6,12 +6,7 @@ export default abstract class ReqHandler {
     service: enums.EServices,
     mainTarget: types.IRabbitTargets,
     subTarget: T,
-    locals: {
-      tempId: string;
-      userId: string | undefined;
-      validated: boolean;
-      type: enums.EUserTypes;
-    },
+    userData: types.IUserBrokerInfo,
     data?: types.IRabbitConnectionData[T],
   ) => Promise<{
     type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
@@ -25,12 +20,7 @@ export default abstract class ReqHandler {
       service: enums.EServices,
       mainTarget: types.IRabbitTargets,
       subTarget: T,
-      locals: {
-        tempId: string;
-        userId: string | undefined;
-        validated: boolean;
-        type: enums.EUserTypes;
-      },
+      userData: types.IUserBrokerInfo,
       data?: types.IRabbitConnectionData[T],
     ) => Promise<{
       type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;
@@ -45,12 +35,7 @@ export default abstract class ReqHandler {
     service: enums.EServices,
     mainTarget: types.IRabbitTargets,
     subTarget: T,
-    locals: {
-      tempId: string;
-      userId: string | undefined;
-      validated: boolean;
-      type: enums.EUserTypes;
-    },
+    userData: types.IUserBrokerInfo,
     data?: types.IRabbitConnectionData[T],
   ) => Promise<{
     type: enums.EMessageTypes.Credentials | enums.EMessageTypes.Send;

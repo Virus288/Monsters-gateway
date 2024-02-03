@@ -9,7 +9,6 @@ export interface IUsersTokens extends Locals {
   tempId: string;
   validated: boolean;
   initializedProfile: boolean;
-  newToken?: string;
   type: enums.EUserTypes;
 
   [key: string]: unknown;
@@ -27,4 +26,10 @@ export interface IUserEntity {
   _id: string;
   login: string;
   verified: boolean;
+}
+
+export interface IUserBrokerInfo {
+  validated: boolean;
+  userId: string | undefined;
+  tempId: string | undefined;
 }

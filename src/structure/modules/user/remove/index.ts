@@ -9,6 +9,6 @@ export default class UserRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new RemoveUserDto(req.body as RemoveUserDto);
-    await reqHandler.user.delete(data, locals);
+    await reqHandler.user.delete(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
   }
 }

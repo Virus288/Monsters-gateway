@@ -9,6 +9,12 @@ export default class UserRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new UserDetailsDto({ name: req.query.name as string, id: req.query.id as string });
-    return (await reqHandler.user.getDetails([data], locals)).payload[0]!;
+    return (
+      await reqHandler.user.getDetails([data], {
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload[0]!;
   }
 }

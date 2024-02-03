@@ -9,6 +9,6 @@ export default class UserRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new RegisterDto(req.body as RegisterDto);
-    await reqHandler.user.register(data, locals);
+    await reqHandler.user.register(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
   }
 }

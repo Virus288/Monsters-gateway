@@ -10,6 +10,12 @@ export default class GetPartyRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new GetPartyDto(req.query.id as string);
-    return (await reqHandler.party.get(data, locals)).payload;
+    return (
+      await reqHandler.party.get(data, {
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload;
   }
 }
