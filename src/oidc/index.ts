@@ -31,7 +31,7 @@ export default class Oidc {
 
     for (const e of errors) {
       provider.on(e, (...err: Record<string, unknown>[]) => {
-        Log.error(e, JSON.stringify(err[0]));
+        Log.error(e, err[0]);
       });
     }
     return provider;

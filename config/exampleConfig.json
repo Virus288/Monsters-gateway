@@ -1,13 +1,10 @@
 {
   "amqpURI": "rabbitUrl",
   "redisURI": "redisUrl",
-  "redisTestURI": "redisTestUrl",
   "corsOrigin": "*",
   "myAddress": "http://localhost",
   "httpPort": 80,
   "socketPort": 81,
-  "accessToken": "accessToken",
-  "refToken": "refreshToken",
   "mysql": {
     "user": "mysqlUser",
     "password": "mysqlPassword",

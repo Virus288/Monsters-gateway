@@ -2,7 +2,6 @@ import { beforeAll, describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/types';
 import supertest from 'supertest';
-import Utils from '../../utils/utils';
 import fakeData from '../../fakeData.json';
 import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
@@ -10,18 +9,29 @@ import * as enums from '../../../src/enums';
 import State from '../../../src/state';
 import { FakeBroker } from '../../utils/mocks';
 import * as errors from '../../../src/errors';
+import { getKeys } from '../../../src/oidc/utils';
+import * as jose from 'node-jose';
+import jwt from 'jsonwebtoken';
 
 describe('Profiles = get', () => {
   const fakeBroker = State.broker as FakeBroker;
   const getProfile: types.IGetProfileDto = {
     id: '63e55edbe8a800060941121d',
   };
-  const utils = new Utils();
   let accessToken;
   const fakeUser = fakeData.users[0] as IUserEntity;
   const { app } = State.router;
 
-  beforeAll(async () => (accessToken = utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User)));
+  beforeAll(async () => {
+    State.keys = await getKeys(1);
+    const privateKey = (await jose.JWK.asKey(State.keys[0]!)).toPEM(true);
+
+    const payload = {
+      sub: fakeUser._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+    accessToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+  });
 
   describe('Should throw', () => {
     describe('No data passed', () => {

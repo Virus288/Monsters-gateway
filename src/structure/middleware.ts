@@ -22,6 +22,7 @@ export default class Middleware {
     if (Middleware.shouldSkipUserValidation(req)) {
       return next();
     }
+    // Validate token
     const token =
       ((req.cookies as Record<string, string>)['monsters.uid'] as string) ??
       (req.headers.authorization !== undefined ? req.headers.authorization.split('Bearer')[1]!.trim() : undefined);
@@ -29,6 +30,8 @@ export default class Middleware {
     try {
       const payload = await validateToken(token);
       res.locals.userId = payload.sub;
+
+      // #TODO Validate if profile is initialized. Without initializing profile, user should not be able to send most of requests
 
       return next();
     } catch (err) {
