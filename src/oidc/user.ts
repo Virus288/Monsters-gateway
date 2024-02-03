@@ -31,6 +31,7 @@ class UserAccount implements oidc.Account {
       type: enums.EUserTypes.User,
       reqHandler: this.reqHandler,
       tempId: '',
+      initializedProfile: false,
     });
     const account = callback.payload[0] as IUserEntity;
 

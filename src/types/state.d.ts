@@ -16,13 +16,10 @@ export interface IState {
 
 export interface IConfigInterface {
   amqpURI: string;
-  accessToken: string;
-  refToken: string;
   corsOrigin: string | string[];
   myAddress: string;
   httpPort: number;
   socketPort: number;
-  redisTestURI: string;
   redisURI: string;
   mysql: {
     user: string;

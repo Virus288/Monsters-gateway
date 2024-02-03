@@ -2,20 +2,21 @@ import { beforeAll, describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/types';
 import supertest from 'supertest';
-import Utils from '../../utils/utils';
 import * as enums from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
 import State from '../../../src/state';
 import { MissingArgError } from '../../../src/errors';
 import { FakeBroker } from '../../utils/mocks';
+import { getKeys } from '../../../src/oidc/utils';
+import * as jose from 'node-jose';
+import jwt from 'jsonwebtoken';
 
 describe('Profiles - add', () => {
   const fakeBroker = State.broker as FakeBroker;
   const addProfile: types.IAddProfileDto = {
     race: enums.EUserRace.Elf,
   };
-  const utils = new Utils();
   let accessToken: string;
   let accessToken2: string;
   let accessToken3: string;
@@ -25,9 +26,25 @@ describe('Profiles - add', () => {
   const { app } = State.router;
 
   beforeAll(async () => {
-    accessToken = utils.generateAccessToken(fakeUser._id, enums.EUserTypes.User);
-    accessToken2 = utils.generateAccessToken(fakeUser2._id, enums.EUserTypes.User);
-    accessToken3 = utils.generateAccessToken(fakeUser3._id, enums.EUserTypes.User);
+    State.keys = await getKeys(1);
+    const privateKey = (await jose.JWK.asKey(State.keys[0]!)).toPEM(true);
+
+    const payload = {
+      sub: fakeUser._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+    const payload2 = {
+      sub: fakeUser2._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+    const payload3 = {
+      sub: fakeUser3._id,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+
+    accessToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    accessToken2 = jwt.sign(payload2, privateKey, { algorithm: 'RS256' });
+    accessToken3 = jwt.sign(payload3, privateKey, { algorithm: 'RS256' });
   });
 
   describe('Should throw', () => {

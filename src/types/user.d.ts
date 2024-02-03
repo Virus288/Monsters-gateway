@@ -8,6 +8,7 @@ export interface IUsersTokens extends Locals {
   userId: string | undefined;
   tempId: string;
   validated: boolean;
+  initializedProfile: boolean;
   newToken?: string;
   type: enums.EUserTypes;
 

@@ -7,8 +7,8 @@ export default class RegisterDto implements IRegisterDto {
   password: string;
 
   constructor(data: IRegisterDto) {
-    this.email = data.email;
-    this.login = data.login;
+    this.email = data.email?.trim();
+    this.login = data.login?.trim();
     this.password = data.password;
 
     this.validate();
