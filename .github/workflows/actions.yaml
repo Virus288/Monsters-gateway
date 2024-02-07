@@ -45,6 +45,7 @@ jobs:
         run: |
           cp config/exampleConfig.json config/devConfig.json
           cp config/exampleConfig.json config/prodConfig.json
+          cp config/exampleConfig.json config/testConfig.json
 
       - name: Upload config
         uses: actions/upload-artifact@v2

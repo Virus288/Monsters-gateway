@@ -7,7 +7,12 @@ import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
 import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
+import UserDetailsDto from './modules/user/details/dto';
 import { version } from '../../package.json';
+import * as errors from '../errors';
+import handleErr from '../errors/utils';
+import { validateToken } from '../tools/token';
+import type * as types from '../types';
 import type { Router } from 'express';
 import type Provider from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
@@ -27,6 +32,10 @@ export default class AppRouter {
     oidc.init(provider);
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
+
+    if (process.env.NODE_END === 'testDev') {
+      this.initDebugRoutes();
+    }
   }
 
   initSecuredRoutes(): void {
@@ -92,6 +101,39 @@ export default class AppRouter {
     this.router.get('docs.json', (_req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(swaggerSpec);
+    });
+  }
+
+  private initDebugRoutes(): void {
+    // Disable oidc token validation for 'testDev' environment
+    this.router.get('/me', async (req, res): Promise<void> => {
+      const token =
+        ((req.cookies as Record<string, string>)['monsters.uid'] as string) ??
+        (req.headers.authorization !== undefined ? req.headers.authorization.split('Bearer')[1]!.trim() : undefined);
+
+      try {
+        const payload = await validateToken(token);
+        res.locals.userId = payload.sub;
+
+        const locals = res.locals as types.IUsersTokens;
+        const { reqHandler } = locals;
+
+        const data = new UserDetailsDto({ id: payload.sub });
+        const userData = (
+          await reqHandler.user.getDetails([data], {
+            userId: locals.userId,
+            validated: locals.validated,
+            tempId: locals.tempId,
+          })
+        ).payload[0]!;
+
+        res.send({
+          login: userData.login,
+          sub: payload.sub,
+        });
+      } catch (err) {
+        handleErr(new errors.UnauthorizedError(), res);
+      }
     });
   }
 }
