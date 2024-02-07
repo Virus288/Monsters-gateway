@@ -12,6 +12,7 @@ export enum EUserTargets {
   Login = 'login',
   GetName = 'getName',
   Remove = 'removeUser',
+  DebugGetAll = 'debugGetAll',
 }
 
 export enum EProfileTargets {

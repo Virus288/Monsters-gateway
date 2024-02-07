@@ -11,6 +11,7 @@ import type SendMessagesDto from '../structure/modules/message/send/dto';
 import type GetPartyDto from '../structure/modules/party/get/dto';
 import type AddProfileDto from '../structure/modules/profile/add/dto';
 import type GetProfileDto from '../structure/modules/profile/get/dto';
+import type DebugGetAllUsersDto from '../structure/modules/user/debug/dto';
 import type UserDetailsDto from '../structure/modules/user/details/dto';
 import type LoginDto from '../structure/modules/user/login/dto';
 import type RegisterDto from '../structure/modules/user/register/dto';
@@ -34,6 +35,7 @@ export interface IUserConnectionData {
   [enums.EUserTargets.GetName]: UserDetailsDto[];
   [enums.EUserTargets.Register]: RegisterDto;
   [enums.EUserTargets.Remove]: RemoveUserDto;
+  [enums.EUserTargets.DebugGetAll]: DebugGetAllUsersDto;
 }
 
 export interface IInventoryConnectionData {

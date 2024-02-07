@@ -1,5 +1,6 @@
 import * as enums from '../../../enums';
 import ReqHandler from '../../../tools/abstracts/reqHandler';
+import type DebugGetAllUsersDto from './debug/dto';
 import type { EMessageTypes } from '../../../enums';
 import type * as types from '../../../types';
 import type LoginDto from '../../modules/oidc/interaction/dto';
@@ -14,6 +15,25 @@ export default class User extends ReqHandler {
 
   async register(data: RegisterDto, userInfo: types.IUserBrokerInfo): Promise<void> {
     await this.sendReq(this.service, enums.EUserMainTargets.User, enums.EUserTargets.Register, userInfo, data);
+  }
+
+  async debugGetAll(
+    data: DebugGetAllUsersDto,
+    userInfo: types.IUserBrokerInfo,
+  ): Promise<{
+    type: EMessageTypes.Credentials | EMessageTypes.Send;
+    payload: types.IUserEntity[];
+  }> {
+    return (await this.sendReq(
+      this.service,
+      enums.EUserMainTargets.User,
+      enums.EUserTargets.DebugGetAll,
+      userInfo,
+      data,
+    )) as {
+      type: EMessageTypes.Credentials | EMessageTypes.Send;
+      payload: types.IUserEntity[];
+    };
   }
 
   async getDetails(

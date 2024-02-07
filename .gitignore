@@ -67,3 +67,4 @@ yarn-error.log*
 # Config files
 config/devConfig.json
 config/prodConfig.json
+config/testConfig.json

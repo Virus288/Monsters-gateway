@@ -1,3 +1,4 @@
+import debug from './debug/router';
 import getDetails from './details/router';
 import register from './register/router';
 import remove from './remove/router';
@@ -13,4 +14,8 @@ export const initUserRoutes = (router: Router): void => {
   const prefix = '/users';
 
   router.use(prefix, register.router);
+  // Debug routes
+  if (process.env.NODE_END !== 'prod') {
+    router.use(prefix, debug.router);
+  }
 };

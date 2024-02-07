@@ -10,3 +10,6 @@ test:
 
 buildDocker:
 	docker build -t monsters/monsters-gateway .
+
+buildTestDocker:
+	docker build -t monsters/monsters-gateway-test .
