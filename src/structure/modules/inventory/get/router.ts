@@ -17,6 +17,13 @@ const service = new Router();
  *     responses:
  *       200:
  *         description: Success. Get user's inventory back in request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#/components/schemas/IInventoryEntity'
  *       400:
  *         description: Bad request.
  *         content:
@@ -27,11 +34,10 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-
 service.router.get('/', limitRate, async (_req, res) => {
   try {
     const data = await service.get(res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

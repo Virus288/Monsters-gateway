@@ -22,12 +22,6 @@ export interface IUserSession extends session.Session, Partial<session.SessionDa
   userId: string;
 }
 
-export interface IUserEntity {
-  _id: string;
-  login: string;
-  verified: boolean;
-}
-
 export interface IUserBrokerInfo {
   validated: boolean;
   userId: string | undefined;

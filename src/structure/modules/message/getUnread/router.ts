@@ -23,6 +23,13 @@ const service = new Router();
  *     responses:
  *       200:
  *         description: Success. Got user's unread messages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#/components/schemas/IUnreadMessage'
  *       400:
  *         description: Bad request.
  *         content:
@@ -39,11 +46,10 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-
 service.router.get('/unread', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

@@ -5,18 +5,18 @@ import { EMessageTypes } from '../../../src/enums';
 import { IBrokerAction } from '../../types';
 
 export default class FakeBroker extends Broker {
-  private _action: IBrokerAction | undefined;
+  private _actions: IBrokerAction[] = [];
 
   constructor() {
     super();
   }
 
-  get action(): IBrokerAction | undefined {
-    return this._action;
+  get actions(): IBrokerAction[] {
+    return this._actions;
   }
 
-  set action(value: IBrokerAction | undefined) {
-    this._action = value;
+  set actions(value: IBrokerAction[]) {
+    this._actions = value;
   }
 
   override sendLocally<T extends types.IRabbitSubTargets>(
@@ -40,12 +40,17 @@ export default class FakeBroker extends Broker {
     _service: enums.EServices,
     _payload?: types.IRabbitConnectionData[T],
   ): void {
-    const action = this.action;
-    if (!action) return resolve({ type: EMessageTypes.Send, payload: {} });
+    const action = this.actions[0];
+    if (!action) {
+      this.actions = this.actions.slice(1, this.actions.length);
+      return resolve({ type: EMessageTypes.Send, payload: {} });
+    }
 
     if (action.shouldFail) {
+      this.actions = this.actions.slice(1, this.actions.length);
       reject(action.returns.payload);
     } else {
+      this.actions = this.actions.slice(1, this.actions.length);
       resolve({
         type: action.returns.target as EMessageTypes.Credentials | EMessageTypes.Send,
         payload: action.returns.payload,

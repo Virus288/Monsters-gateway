@@ -7,7 +7,6 @@ import { ESocketType } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import { ISocketInMessage, ISocketOutMessage } from '../../../src/connections/websocket/types';
 import { FakeBroker } from '../../utils/mocks';
-import { IUserEntity } from '../../../src/types';
 import { IFullError } from '../../../src/types';
 import type { IClient } from 'moc-socket';
 import MocSocket from 'moc-socket';
@@ -17,6 +16,7 @@ import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '../../../src/errors';
 import Utils from '../../utils/utils';
 import { IFullMessageEntity } from '../../../src/structure/modules/message/get/types';
+import { IUserEntity } from '../../../src/structure/modules/user/entity';
 
 describe('Socket - chat', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -124,9 +124,7 @@ describe('Socket - chat', () => {
     });
 
     it(`Get message from db`, async () => {
-      console.log('message');
-      console.log(message);
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {
@@ -140,18 +138,16 @@ describe('Socket - chat', () => {
           },
           target: EMessageTypes.Send,
         },
-      };
+      });
       await client2.connect(client2Options);
       const userMessage = (await client2.sendAsyncMessage(getMessage)) as ISocketOutMessage;
-      console.log('userMessage');
-      console.log(userMessage);
 
       expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
       client2.disconnect();
     });
 
     it(`Read chat`, async () => {
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {
@@ -165,12 +161,12 @@ describe('Socket - chat', () => {
           },
           target: EMessageTypes.Send,
         },
-      };
+      });
 
       await client2.connect(client2Options);
       const userMessage = (await client2.sendAsyncMessage(getMessage, { timeout: 100 })) as ISocketOutMessage;
 
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {
@@ -184,7 +180,7 @@ describe('Socket - chat', () => {
           },
           target: EMessageTypes.Send,
         },
-      };
+      });
 
       const userMessage2 = (await client2.sendAsyncMessage(
         {
@@ -198,13 +194,13 @@ describe('Socket - chat', () => {
       )) as ISocketOutMessage;
       expect(userMessage2?.type).toEqual(ESocketType.Success);
 
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {},
           target: EMessageTypes.Send,
         },
-      };
+      });
 
       const userMessage3 = (await client2.sendAsyncMessage(getUnread, { timeout: 100 })) as ISocketOutMessage;
       expect(Object.keys(userMessage3?.payload as Record<string, string>).length).toEqual(0);
@@ -212,7 +208,7 @@ describe('Socket - chat', () => {
     });
 
     it(`Get with details`, async () => {
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {
@@ -226,14 +222,14 @@ describe('Socket - chat', () => {
           },
           target: EMessageTypes.Send,
         },
-      };
+      });
 
       await client2.connect(client2Options);
 
       const userMessage = (await client2.sendAsyncMessage(getMessage, { timeout: 100 })) as ISocketOutMessage;
       expect(Object.keys((userMessage?.payload as Record<string, string>) ?? {}).length).toBeGreaterThan(0);
 
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: [
@@ -247,7 +243,7 @@ describe('Socket - chat', () => {
           ],
           target: EMessageTypes.Send,
         },
-      };
+      });
 
       const userMessage2 = (await client2.sendAsyncMessage({
         ...getWithDetails,

@@ -9,10 +9,10 @@ import SocketServer from '../../utils/mocks/websocket';
 import MocSocket, { IClient } from 'moc-socket';
 import { FakeBroker } from '../../utils/mocks';
 import { IFullError } from '../../../src/types';
-import { IUserEntity } from '../../../src/types';
 import { getKeys } from '../../../src/oidc/utils';
 import * as jose from 'node-jose';
 import jwt from 'jsonwebtoken';
+import { IUserEntity } from '../../../src/structure/modules/user/entity';
 
 describe('Socket - generic tests', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -142,10 +142,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         clone.payload.target = 'a';
 
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: targetErr, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
         const { name } = m.payload as IFullError;
@@ -163,10 +163,10 @@ describe('Socket - generic tests', () => {
           clone.payload.message += 'A';
         }
 
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: targetErr, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
         const { name } = m.payload as IFullError;
@@ -180,10 +180,10 @@ describe('Socket - generic tests', () => {
         const clone = structuredClone(message);
         clone.payload.target = 'a';
 
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: targetErr, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const m = (await client.sendAsyncMessage(clone)) as ISocketOutMessage;
         const { name } = m.payload as IFullError;
@@ -198,13 +198,13 @@ describe('Socket - generic tests', () => {
       const client2 = server.createClient();
       await client2.connect(client2Options);
 
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: {
           payload: {},
           target: enums.EMessageTypes.Send,
         },
-      };
+      });
 
       await client.sendAsyncMessage(message);
       await utils.sleep(100);

@@ -13,16 +13,25 @@ const service = new Router();
  *       - user-debug
  *     description: Get all users
  *     parameters:
- *      - in: query
- *        name: page
- *        required: true
- *        schema:
- *          type: number
+ *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: number
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success. Get users back in request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/IUserEntity'
  *       400:
  *         description: Bad request.
  *         content:
@@ -33,10 +42,11 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
+
 service.router.get('/debug', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

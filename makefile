@@ -12,4 +12,4 @@ buildDocker:
 	docker build -t monsters/monsters-gateway .
 
 buildTestDocker:
-	docker build -t monsters/monsters-gateway-test .
+	docker build --build-arg NODE_ENV=testDev -t monsters/monsters-gateway-test .

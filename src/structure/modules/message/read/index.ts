@@ -1,4 +1,4 @@
-import InventoryDropDto from './dto';
+import ReadMessagesDto from './dto';
 import RouterFactory from '../../../../tools/abstracts/router';
 import type { IReadMessageDto } from './types';
 import type { IUsersTokens } from '../../../../types';
@@ -9,7 +9,7 @@ export default class MessagesRouter extends RouterFactory {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
-    const data = new InventoryDropDto(req.body as IReadMessageDto);
+    const data = new ReadMessagesDto(req.body as IReadMessageDto);
     await reqHandler.message.read(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
   }
 }

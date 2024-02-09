@@ -15,6 +15,30 @@ export interface IGetMessagesDto {
   target: string | undefined;
 }
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IFullMessageEntity:
+ *       type: object
+ *       properties:
+ *         sender:
+ *           type: string
+ *         receiver:
+ *           type: string
+ *         messages:
+ *           type: string
+ *         read:
+ *           type: boolean
+ *         chatId:
+ *           type: string
+ *       required:
+ *         - sender
+ *         - receiver
+ *         - messages
+ *         - read
+ *         - chatId
+ */
 export interface IFullMessageEntity {
   sender: string;
   receiver: string;
@@ -23,6 +47,24 @@ export interface IFullMessageEntity {
   message: string;
 }
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IPreparedMessagesBody:
+ *       type: object
+ *       properties:
+ *         sender:
+ *           type: string
+ *         receiver:
+ *           type: string
+ *         messages:
+ *           type: string
+ *       required:
+ *         - sender
+ *         - receiver
+ *         - messages
+ */
 export interface IPreparedMessagesBody {
   sender: string;
   receiver: string;

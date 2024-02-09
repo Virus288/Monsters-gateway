@@ -24,10 +24,17 @@ const service = new Router();
  *         schema:
  *           type: string
  *     security:
- *      - bearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Get party in response.
+ *         description: Success. Get party in response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#/components/schemas/IPartyEntity'
  *       400:
  *         description: Bad request.
  *         content:
@@ -47,7 +54,7 @@ const service = new Router();
 service.router.get('/', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }
