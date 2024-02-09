@@ -1,17 +1,18 @@
 import { beforeAll, describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
-import { IUserEntity } from '../../../src/types';
 import supertest from 'supertest';
 import fakeData from '../../fakeData.json';
 import type { IProfileEntity } from '../../types';
 import * as types from '../../types';
 import * as enums from '../../../src/enums';
+import { EUserTypes } from '../../../src/enums';
 import State from '../../../src/state';
 import { FakeBroker } from '../../utils/mocks';
 import * as errors from '../../../src/errors';
 import { getKeys } from '../../../src/oidc/utils';
 import * as jose from 'node-jose';
 import jwt from 'jsonwebtoken';
+import { IUserEntity } from '../../../src/structure/modules/user/entity';
 
 describe('Profiles = get', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -37,10 +38,10 @@ describe('Profiles = get', () => {
     describe('No data passed', () => {
       it(`Missing id`, async () => {
         const target = new errors.MissingArgError('id') as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .get('/profile')
@@ -56,10 +57,10 @@ describe('Profiles = get', () => {
     describe('Incorrect data', () => {
       it(`Incorrect id`, async () => {
         const target = new errors.IncorrectArgTypeError('id should be objectId') as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .get('/profile')
@@ -75,19 +76,33 @@ describe('Profiles = get', () => {
 
   describe('Should pass', () => {
     it(`Got profile`, async () => {
-      fakeBroker.action = {
+      fakeBroker.actions.push({
+        shouldFail: false,
+        returns: {
+          payload: [
+            {
+              _id: getProfile.id,
+              login: fakeUser.login,
+              verified: false,
+              type: EUserTypes.User,
+            },
+          ],
+          target: enums.EMessageTypes.Send,
+        },
+      });
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: { payload: { _id: getProfile.id }, target: enums.EMessageTypes.Send },
-      };
+      });
 
       const res = await supertest(app)
         .get('/profile')
         .query({ id: getProfile.id })
         .auth(accessToken, { type: 'bearer' })
         .send();
-      const body = res.body as IProfileEntity;
+      const body = res.body as { data: IProfileEntity };
 
-      expect(body._id).not.toBeUndefined();
+      expect(body.data._id).not.toBeUndefined();
     });
   });
 });

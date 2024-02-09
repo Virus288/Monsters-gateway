@@ -23,6 +23,15 @@ const service = new Router();
  *     responses:
  *       200:
  *         description: Success. Got user's messages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   oneOf:
+ *                     - $ref: '#/components/schemas/IPreparedMessagesBody'
+ *                     - $ref: '#/components/schemas/IFullMessageEntity'
  *       400:
  *         description: Bad request.
  *         content:
@@ -43,7 +52,7 @@ const service = new Router();
 service.router.get('/', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

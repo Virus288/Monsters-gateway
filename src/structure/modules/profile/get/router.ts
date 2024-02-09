@@ -47,7 +47,7 @@ const service = new Router();
 service.router.get('/', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
-    res.status(200).send(data);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

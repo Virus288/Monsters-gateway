@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from '@jest/globals';
 import { IFullError } from '../../../src/types';
-import { IUserEntity } from '../../../src/types';
+import { IUserEntity } from '../../../src/structure/modules/user/entity';
 import supertest from 'supertest';
 import * as enums from '../../../src/enums';
 import fakeData from '../../fakeData.json';
@@ -64,10 +64,10 @@ describe('Profiles - add', () => {
     describe('Incorrect data', () => {
       it(`Incorrect race`, async () => {
         const target = new Error('race has incorrect type') as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: enums.EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/profile')
@@ -80,12 +80,11 @@ describe('Profiles - add', () => {
 
       it(`Profile already exists`, async () => {
         const target = new Error('Profile already initialized') as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: enums.EMessageTypes.Send },
-        };
+        });
 
-        await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
         const res = await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
         const body = res.body as IFullError;
 

@@ -48,6 +48,7 @@ const service = new Router();
 service.router.patch('/read', limitRate, async (req, res) => {
   try {
     await service.patch(req, res);
+    res.status(200).send();
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

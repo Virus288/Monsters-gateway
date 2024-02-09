@@ -53,10 +53,10 @@ describe('Register', () => {
     describe('Incorrect data', () => {
       it(`Selected username is already in use`, async () => {
         const target = new UsernameAlreadyInUseError() as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app).post('/users/register').send(fakeData.users[0]);
         const body = res.body as IFullError;
@@ -68,10 +68,10 @@ describe('Register', () => {
         const target = new Error(
           'login should only contain arabic letters, numbers and special characters',
         ) as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -86,10 +86,10 @@ describe('Register', () => {
           string,
           unknown
         >;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -104,10 +104,10 @@ describe('Register', () => {
           string,
           unknown
         >;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -125,10 +125,10 @@ describe('Register', () => {
         const target = new Error(
           'password should contain at least 8 characters with: at least 1 digit, 1 letter, 1 upper case letter and 1 lower case letter',
         ) as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -145,10 +145,10 @@ describe('Register', () => {
           string,
           unknown
         >;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -163,10 +163,10 @@ describe('Register', () => {
           string,
           unknown
         >;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -182,10 +182,10 @@ describe('Register', () => {
 
       it(`Email incorrect`, async () => {
         const target = new Error('email invalid') as unknown as Record<string, unknown>;
-        fakeBroker.action = {
+        fakeBroker.actions.push({
           shouldFail: true,
           returns: { payload: target, target: EMessageTypes.Send },
-        };
+        });
 
         const res = await supertest(app)
           .post('/users/register')
@@ -199,10 +199,10 @@ describe('Register', () => {
 
   describe('Should pass', () => {
     it(`Validated register`, async () => {
-      fakeBroker.action = {
+      fakeBroker.actions.push({
         shouldFail: false,
         returns: { payload: {}, target: EMessageTypes.Send },
-      };
+      });
 
       const res = await supertest(app)
         .post('/users/register')

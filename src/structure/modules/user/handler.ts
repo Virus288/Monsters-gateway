@@ -1,6 +1,7 @@
 import * as enums from '../../../enums';
 import ReqHandler from '../../../tools/abstracts/reqHandler';
 import type DebugGetAllUsersDto from './debug/dto';
+import type { IUserEntity } from './entity';
 import type { EMessageTypes } from '../../../enums';
 import type * as types from '../../../types';
 import type LoginDto from '../../modules/oidc/interaction/dto';
@@ -22,7 +23,7 @@ export default class User extends ReqHandler {
     userInfo: types.IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: types.IUserEntity[];
+    payload: IUserEntity[];
   }> {
     return (await this.sendReq(
       this.service,
@@ -32,7 +33,7 @@ export default class User extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: types.IUserEntity[];
+      payload: IUserEntity[];
     };
   }
 
@@ -41,7 +42,7 @@ export default class User extends ReqHandler {
     userInfo: types.IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: types.IUserEntity[];
+    payload: IUserEntity[];
   }> {
     return (await this.sendReq(
       this.service,
@@ -51,7 +52,7 @@ export default class User extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: types.IUserEntity[];
+      payload: IUserEntity[];
     };
   }
 

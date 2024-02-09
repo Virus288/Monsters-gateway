@@ -1,5 +1,7 @@
 import GetProfileDto from './dto';
+import { NoUserWithProvidedName } from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
+import UserDetailsDto from '../../user/details/dto';
 import type { IUsersTokens } from '../../../../types';
 import type { IProfileEntity } from '../entity';
 import type express from 'express';
@@ -9,12 +11,24 @@ export default class GetProfileRouter extends RouterFactory {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
-    const data = new GetProfileDto(req.query.id as string);
-    const aa = await reqHandler.profile.get(data, {
+    const users = await reqHandler.user.getDetails([new UserDetailsDto({ id: req.query.id as string })], {
       userId: locals.userId,
       validated: locals.validated,
       tempId: locals.tempId,
     });
-    return aa.payload;
+
+    if (!users || users.payload.length === 0) {
+      throw new NoUserWithProvidedName();
+    }
+    const user = users.payload[0]!;
+    const data = new GetProfileDto(user._id);
+
+    return (
+      await reqHandler.profile.get(data, {
+        userId: locals.userId,
+        validated: locals.validated,
+        tempId: locals.tempId,
+      })
+    ).payload;
   }
 }

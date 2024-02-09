@@ -1,6 +1,6 @@
 import UserDetailsDto from '../structure/modules/user/details/dto';
 import ReqHandler from '../structure/reqHandler';
-import type { IUserEntity } from '../types';
+import type { IUserEntity } from '../structure/modules/user/entity';
 import type * as oidc from 'oidc-provider';
 
 class UserAccount implements oidc.Account {
