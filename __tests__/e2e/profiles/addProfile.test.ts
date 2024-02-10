@@ -3,14 +3,15 @@ import { IFullError } from '../../../src/types';
 import { IUserEntity } from '../../../src/structure/modules/user/entity';
 import supertest from 'supertest';
 import * as enums from '../../../src/enums';
+import { EUserTypes } from '../../../src/enums';
 import fakeData from '../../fakeData.json';
 import * as types from '../../types';
 import State from '../../../src/state';
 import { MissingArgError } from '../../../src/errors';
-import { FakeBroker } from '../../utils/mocks';
 import { getKeys } from '../../../src/oidc/utils';
 import * as jose from 'node-jose';
 import jwt from 'jsonwebtoken';
+import { FakeBroker } from '../../utils/mocks';
 
 describe('Profiles - add', () => {
   const fakeBroker = State.broker as FakeBroker;
@@ -52,6 +53,25 @@ describe('Profiles - add', () => {
       it(`Missing race`, async () => {
         const clone = structuredClone(addProfile);
         delete clone.race;
+
+        fakeBroker.actions.push({
+          shouldFail: false,
+          returns: {
+            payload: [
+              {
+                _id: fakeUser._id,
+                login: fakeUser.login,
+                verified: false,
+                type: EUserTypes.User,
+              },
+            ],
+            target: enums.EMessageTypes.Send,
+          },
+        });
+        fakeBroker.actions.push({
+          shouldFail: false,
+          returns: { payload: { _id: fakeUser._id, initialized: false }, target: enums.EMessageTypes.Send },
+        });
 
         const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(clone);
         const body = res.body as IFullError;
@@ -95,6 +115,25 @@ describe('Profiles - add', () => {
 
   describe('Should pass', () => {
     it(`Add profile`, async () => {
+      fakeBroker.actions.push({
+        shouldFail: false,
+        returns: {
+          payload: [
+            {
+              _id: fakeUser._id,
+              login: fakeUser.login,
+              verified: false,
+              type: EUserTypes.User,
+            },
+          ],
+          target: enums.EMessageTypes.Send,
+        },
+      });
+      fakeBroker.actions.push({
+        shouldFail: false,
+        returns: { payload: { _id: fakeUser._id, initialized: false }, target: enums.EMessageTypes.Send },
+      });
+
       const res = await supertest(app)
         .post('/profile')
         .auth(accessToken2, { type: 'bearer' })

@@ -62,7 +62,7 @@ describe('Profiles = get', () => {
         returns: {
           payload: [
             {
-              _id: getProfile.name,
+              _id: fakeUser._id,
               login: fakeUser.login,
               verified: false,
               type: EUserTypes.User,

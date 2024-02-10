@@ -13,7 +13,6 @@ export default class GetPartyRouter extends RouterFactory {
     return (
       await reqHandler.party.get(data, {
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload;

@@ -12,7 +12,6 @@ export default class UserRouter extends RouterFactory {
     const data = new InventoryDropDto(req.body as IDropItemDto);
     await reqHandler.inventory.drop(data, {
       userId: locals.userId,
-      validated: locals.validated,
       tempId: locals.tempId,
     });
   }

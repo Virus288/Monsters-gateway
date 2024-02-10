@@ -73,7 +73,7 @@ const claims = (keys: JSONWebKey[], clients: oidc.ClientMetadata[]): oidc.Config
       ClientCredentials: 'jwt',
     },
 
-    issueRefreshToken: (_ctx, client /* , code*/): boolean => {
+    issueRefreshToken: (_ctx, client): boolean => {
       return client.grantTypeAllowed('refresh_token');
     },
     expiresWithSession: (): boolean => false,

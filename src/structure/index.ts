@@ -91,7 +91,6 @@ export default class Router {
    * Init secured routes.
    */
   private initSecuredRouter(): void {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     this.router.initSecuredRoutes();
   }
 

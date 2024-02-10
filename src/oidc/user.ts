@@ -26,7 +26,6 @@ class UserAccount implements oidc.Account {
     // #TODO Currently broker require user locals to be present and there is no way to send req "as system"
     const callback = await this.reqHandler.user.getDetails([new UserDetailsDto({ id: this.accountId })], {
       userId: undefined,
-      validated: false,
       tempId: undefined,
     });
 

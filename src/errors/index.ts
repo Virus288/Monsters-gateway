@@ -379,3 +379,12 @@ export class NoUserWithProvidedName extends FullError {
     this.status = 400;
   }
 }
+
+export class ProfileNotInitialized extends FullError {
+  constructor() {
+    super('ProfileNotInitialized');
+    this.message = 'User profile is not initialized';
+    this.name = 'ProfileNotInitialized';
+    this.status = 400;
+  }
+}

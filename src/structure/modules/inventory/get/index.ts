@@ -11,7 +11,6 @@ export default class InventoryGetDto extends RouterFactory {
     return (
       await reqHandler.inventory.get({
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload;

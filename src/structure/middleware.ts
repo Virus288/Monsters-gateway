@@ -3,19 +3,23 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
+import GetProfileDto from './modules/profile/get/dto';
+import UserDetailsDto from './modules/user/details/dto';
 import ReqHandler from './reqHandler';
 import * as errors from '../errors';
-import { IncorrectDataType, InternalError } from '../errors';
+import { IncorrectDataType, IncorrectTokenError, InternalError, ProfileNotInitialized } from '../errors';
 import handleErr from '../errors/utils';
+import State from '../state';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger/log';
 import errLogger from '../tools/logger/logger';
 import { validateToken } from '../tools/token';
+import type { IProfileEntity } from './modules/profile/entity';
+import type { IUserEntity } from './modules/user/entity';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
 import * as path from 'path';
-import * as process from 'process';
 
 export default class Middleware {
   static async userValidation(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
@@ -31,18 +35,75 @@ export default class Middleware {
       const payload = await validateToken(token);
       res.locals.userId = payload.sub;
 
-      // #TODO Validate if profile is initialized. Without initializing profile, user should not be able to send most of requests
-
       return next();
     } catch (err) {
       return handleErr(new errors.UnauthorizedError(), res);
     }
   }
 
-  private static shouldSkipUserValidation(req: express.Request): boolean {
-    // #TODO Disable token validation in tests for now. Find a way to generate keys for tests
-    if (process.env.NODE_ENV === 'test') return true;
+  static async initUserProfile(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+    if (Middleware.shouldSkipUserValidation(req)) {
+      return next();
+    }
 
+    try {
+      const userId = res.locals.userId as string;
+      // Validate if profile is initialized
+      let user = await State.redis.getCachedUser(userId);
+
+      if (!user) {
+        const reqHandler = new ReqHandler();
+        user = { account: undefined, profile: undefined };
+        user.account = (
+          await reqHandler.user.getDetails([new UserDetailsDto({ id: userId })], {
+            userId,
+            tempId: (res.locals.tempId ?? '') as string,
+          })
+        ).payload[0];
+        user.profile = (
+          await reqHandler.profile.get(new GetProfileDto(userId), {
+            userId,
+            tempId: (res.locals.tempId ?? '') as string,
+          })
+        ).payload;
+
+        if (!user.profile || !user.account) {
+          Log.error(
+            'Token validation',
+            'User tried to log in using token, that got validated, but there is no user related to token. Is token fake ?',
+          );
+          throw new IncorrectTokenError();
+        }
+
+        await State.redis.addCachedUser(user as { account: IUserEntity; profile: IProfileEntity });
+      }
+
+      res.locals.profile = user.profile;
+      res.locals.user = user.account;
+
+      return next();
+    } catch (err) {
+      return handleErr(err as types.IFullError, res);
+    }
+  }
+
+  static userProfileValidation(req: express.Request, res: express.Response, next: express.NextFunction): void {
+    if (Middleware.shouldSkipUserValidation(req)) {
+      return next();
+    }
+
+    try {
+      if (!(res.locals.profile as IProfileEntity)?.initialized) {
+        throw new ProfileNotInitialized();
+      }
+
+      return next();
+    } catch (err) {
+      return handleErr(new errors.ProfileNotInitialized(), res);
+    }
+  }
+
+  private static shouldSkipUserValidation(req: express.Request): boolean {
     // Disable token validation for oidc routes
     const oidcRoutes = ['.well-known', 'me', 'auth', 'token', 'session', 'certs'];
     const splitRoute = req.path.split('/');
