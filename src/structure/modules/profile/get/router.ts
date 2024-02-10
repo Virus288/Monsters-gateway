@@ -16,7 +16,7 @@ const service = new Router();
  *     description: Get user profile
  *     parameters:
  *       - in: query
- *         name: id
+ *         name: name
  *         required: true
  *         schema:
  *           type: string
