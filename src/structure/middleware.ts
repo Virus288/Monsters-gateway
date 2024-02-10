@@ -95,6 +95,30 @@ export default class Middleware {
     );
     app.set('views', path.join(__dirname, '..', '..', '..', 'public'));
     app.set('view engine', 'ejs');
+
+    app.use((req, _res, next) => {
+      try {
+        const logBody: Record<string, string | Record<string, string>> = {
+          method: req.method,
+          path: req.path,
+          ip: req.ip as string,
+        };
+        if (req.query) logBody.query = JSON.stringify(req.query);
+        if (req.body) {
+          if (req.path.includes('interaction') || req.path.includes('register')) {
+            logBody.body = { ...(req.body as Record<string, string>) };
+            logBody.body.password = '***';
+          } else {
+            logBody.body = req.body as Record<string, string>;
+          }
+        }
+
+        Log.log('New req', logBody);
+        next();
+      } catch (err) {
+        Log.error('Middleware validation', err);
+      }
+    });
   }
 
   generateOidc(app: Express, provider: Provider): void {

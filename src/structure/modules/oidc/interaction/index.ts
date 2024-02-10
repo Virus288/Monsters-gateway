@@ -2,7 +2,7 @@ import LoginDto from './dto';
 import { ProviderNotInitialized } from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
 import getConfig from '../../../../tools/configLoader';
-import Logger from '../../../../tools/logger/log';
+import Log from '../../../../tools/logger/log';
 import type * as types from '../../../../types';
 import type ReqHandler from '../../../reqHandler';
 import type express from 'express';
@@ -27,7 +27,7 @@ export default class UserRouter extends RouterFactory {
     try {
       const { provider } = this;
       if (!provider) {
-        Logger.error('Oidc', 'Provider was not initialized');
+        Log.error('Oidc', 'Provider was not initialized');
         throw new ProviderNotInitialized();
       }
       const interactionDetails = await provider.interactionDetails(req, res);
@@ -42,7 +42,7 @@ export default class UserRouter extends RouterFactory {
           next();
       }
     } catch (err) {
-      Logger.error('Oidc get Err', { message: (err as Error).message, stack: (err as Error).stack });
+      Log.error('Oidc get Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
         url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
@@ -55,7 +55,7 @@ export default class UserRouter extends RouterFactory {
     try {
       const { provider } = this;
       if (!provider) {
-        Logger.error('Oidc', 'Provider was not initialized');
+        Log.error('Oidc', 'Provider was not initialized');
         return;
       }
 
@@ -80,7 +80,7 @@ export default class UserRouter extends RouterFactory {
 
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false });
     } catch (err) {
-      Logger.error('Oidc post Err', { message: (err as Error).message, stack: (err as Error).stack });
+      Log.error('Oidc post Err', { message: (err as Error).message, stack: (err as Error).stack });
       res.type('html');
       res.render('login', {
         url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,

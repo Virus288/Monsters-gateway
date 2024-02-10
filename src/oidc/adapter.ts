@@ -1,5 +1,5 @@
 import State from '../state';
-import Logger from '../tools/logger/log';
+import Log from '../tools/logger/log';
 import type * as oidc from 'oidc-provider';
 
 export default class Adapter implements oidc.Adapter {
@@ -41,12 +41,12 @@ export default class Adapter implements oidc.Adapter {
   }
 
   async findByUserCode(_userCode: string): Promise<oidc.AdapterPayload | undefined> {
-    Logger.log('Find by user code', 'Not implemented');
+    Log.log('Find by user code', 'Not implemented');
     return new Promise((resolve) => resolve(undefined));
   }
 
   async findByUid(_uid: string): Promise<oidc.AdapterPayload | undefined> {
-    Logger.log('Find by uid', 'Not implemented');
+    Log.log('Find by uid', 'Not implemented');
     return new Promise((resolve) => resolve(undefined));
   }
 

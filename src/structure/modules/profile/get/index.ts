@@ -11,7 +11,7 @@ export default class GetProfileRouter extends RouterFactory {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
-    const users = await reqHandler.user.getDetails([new UserDetailsDto({ id: req.query.id as string })], {
+    const users = await reqHandler.user.getDetails([new UserDetailsDto({ name: req.query.name as string })], {
       userId: locals.userId,
       validated: locals.validated,
       tempId: locals.tempId,
