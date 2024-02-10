@@ -10,6 +10,6 @@ export default class UserRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new InventoryUseDto(req.body as IUseItemDto);
-    await reqHandler.inventory.use(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
+    await reqHandler.inventory.use(data, { userId: locals.userId, tempId: locals.tempId });
   }
 }

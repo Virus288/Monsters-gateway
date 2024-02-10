@@ -22,7 +22,6 @@ export default class MessagesRouter extends RouterFactory {
     const messages = (
       await reqHandler.message.get(data, {
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload;
@@ -33,7 +32,6 @@ export default class MessagesRouter extends RouterFactory {
       const users = (
         await reqHandler.user.getDetails(cleaned, {
           userId: locals.userId,
-          validated: locals.validated,
           tempId: locals.tempId,
         })
       ).payload;
@@ -52,7 +50,6 @@ export default class MessagesRouter extends RouterFactory {
     const users = (
       await reqHandler.user.getDetails(cleaned, {
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload;

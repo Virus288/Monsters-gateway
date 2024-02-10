@@ -13,7 +13,6 @@ export default class MessagesRouter extends RouterFactory {
     return (
       await reqHandler.message.getUnread(data, {
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload;

@@ -18,6 +18,12 @@
  *             type: string
  *         lvl:
  *           type: integer
+ *         initialized:
+ *           type: boolean
+ *         inventory:
+ *           type: string
+ *         party:
+ *           type: string
  *         exp:
  *           type: array
  *           items:
@@ -32,4 +38,7 @@ export interface IProfileEntity {
   friends: string[];
   lvl: number;
   exp: [number, number];
+  initialized: boolean;
+  inventory: string;
+  party: string;
 }

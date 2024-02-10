@@ -34,7 +34,6 @@ export default class FakeBroker extends Broker {
     _locals: {
       tempId: string;
       userId: string | undefined;
-      validated: boolean;
       type: enums.EUserTypes;
     },
     _service: enums.EServices,

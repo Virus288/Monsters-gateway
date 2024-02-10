@@ -15,7 +15,11 @@ export default class UserDetailsDto implements IUserDetailsDto {
 
   validate(): void {
     if (!this.name && !this.id) throw new MissingArgError('name');
-    if (!this.name) new Validation(this.id, 'id').isDefined();
-    if (!this.id) new Validation(this.name, 'name').isDefined();
+
+    if (!this.name) {
+      new Validation(this.id, 'id').isDefined();
+    } else {
+      new Validation(this.name, 'name').isDefined();
+    }
   }
 }

@@ -10,6 +10,6 @@ export default class AddProfileRouter extends RouterFactory {
     const { reqHandler } = locals;
 
     const data = new AddProfileDto(req.body as IAddProfileDto);
-    await reqHandler.profile.add(data, { userId: locals.userId, validated: locals.validated, tempId: locals.tempId });
+    await reqHandler.profile.add(data, { userId: locals.userId, tempId: locals.tempId });
   }
 }

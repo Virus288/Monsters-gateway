@@ -7,7 +7,6 @@ import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
 import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
-import UserDetailsDto from './modules/user/details/dto';
 import { version } from '../../package.json';
 import * as errors from '../errors';
 import handleErr from '../errors/utils';
@@ -40,8 +39,12 @@ export default class AppRouter {
 
   initSecuredRoutes(): void {
     this.router.use(Middleware.userValidation);
+    this.router.use(Middleware.initUserProfile);
 
     initProfileRoutes(this.router);
+
+    this.router.use(Middleware.userProfileValidation);
+
     initSecuredUserRoutes(this.router);
     initPartyRoutes(this.router);
     initMessagesRoutes(this.router);
@@ -116,19 +119,9 @@ export default class AppRouter {
         res.locals.userId = payload.sub;
 
         const locals = res.locals as types.IUsersTokens;
-        const { reqHandler } = locals;
-
-        const data = new UserDetailsDto({ id: payload.sub });
-        const userData = (
-          await reqHandler.user.getDetails([data], {
-            userId: locals.userId,
-            validated: locals.validated,
-            tempId: locals.tempId,
-          })
-        ).payload[0]!;
 
         res.send({
-          login: userData.login,
+          login: locals.user?.login,
           sub: payload.sub,
         });
       } catch (err) {

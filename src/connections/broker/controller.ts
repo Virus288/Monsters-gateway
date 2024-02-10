@@ -35,7 +35,6 @@ export default class Communicator {
       user: {
         ...userData,
         tempId,
-        validated: userData.validated ?? true,
       },
       payload,
       target,

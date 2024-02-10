@@ -1,9 +1,12 @@
 import { createClient } from 'redis';
 import Rooster from './rooster';
 import * as enums from '../../enums';
+import { ERedisTargets } from '../../enums';
 import getConfig from '../../tools/configLoader';
 import Log from '../../tools/logger/log';
-import type { IFullError } from '../../types';
+import type { IProfileEntity } from '../../structure/modules/profile/entity';
+import type { IUserEntity } from '../../structure/modules/user/entity';
+import type { ICachedUser, IFullError } from '../../types';
 import type { RedisClientType } from 'redis';
 
 export default class Redis {
@@ -68,6 +71,16 @@ export default class Redis {
 
   async getOidcHash(target: string, id: string): Promise<string | undefined> {
     return this.rooster.getFromHash({ target, value: id });
+  }
+
+  async addCachedUser(user: { account: IUserEntity; profile: IProfileEntity }): Promise<void> {
+    await this.rooster.addToHash(ERedisTargets.CachedUser, user.account._id, JSON.stringify(user));
+    await this.rooster.setExpirationDate(`${ERedisTargets.CachedUser}:${user.account._id}`, 60000);
+  }
+
+  async getCachedUser(id: string): Promise<ICachedUser | undefined> {
+    const cachedUser = await this.rooster.getFromHash({ target: ERedisTargets.CachedUser, value: id });
+    return cachedUser ? (JSON.parse(cachedUser) as ICachedUser) : undefined;
   }
 
   private initClient(): void {

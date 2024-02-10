@@ -35,10 +35,6 @@ export default class Rooster {
     return this.client.hGet(target, value);
   }
 
-  async getAllFromHash(target: string): Promise<Record<string, string>> {
-    return this.client.hGetAll(target);
-  }
-
   async get(target: string): Promise<string | null> {
     return this.client.get(target);
   }

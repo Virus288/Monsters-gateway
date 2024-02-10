@@ -13,7 +13,6 @@ export default class UserRouter extends RouterFactory {
     return (
       await reqHandler.user.getDetails([data], {
         userId: locals.userId,
-        validated: locals.validated,
         tempId: locals.tempId,
       })
     ).payload[0]!;

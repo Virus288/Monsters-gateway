@@ -59,7 +59,7 @@ export default class Router {
     };
 
     ws.reqHandler.chat
-      .send(prepared, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .send(prepared, { userId: ws.userId, tempId: '', type: EUserTypes.User })
       .then(() => {
         ws.send(JSON.stringify({ type: ESocketType.Success } as types.ISocketOutMessage));
 
@@ -77,7 +77,7 @@ export default class Router {
     this.validator.validateReadMessage(data);
 
     ws.reqHandler.chat
-      .read(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .read(data, { userId: ws.userId, tempId: '', type: EUserTypes.User })
       .then(() => {
         ws.send(JSON.stringify({ type: ESocketType.Success } as types.ISocketOutMessage));
       })
@@ -91,7 +91,7 @@ export default class Router {
     this.validator.validateGetMessage(data);
 
     ws.reqHandler.chat
-      .get(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .get(data, { userId: ws.userId, tempId: '', type: EUserTypes.User })
       .then((callback) => {
         ws.send(
           JSON.stringify({
@@ -110,7 +110,7 @@ export default class Router {
     this.validator.validateGetMessage(data);
 
     ws.reqHandler.chat
-      .getUnread(data, { userId: ws.userId, tempId: '', type: EUserTypes.User, validated: true })
+      .getUnread(data, { userId: ws.userId, tempId: '', type: EUserTypes.User })
       .then((callback) => {
         ws.send(
           JSON.stringify({

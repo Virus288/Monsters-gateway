@@ -11,7 +11,6 @@ export default class Chat extends ReqHandler {
     locals: {
       tempId: string;
       userId: string | undefined;
-      validated: boolean;
       type: enums.EUserTypes;
     },
   ): Promise<void> {
@@ -23,7 +22,6 @@ export default class Chat extends ReqHandler {
     locals: {
       tempId: string;
       userId: string | undefined;
-      validated: boolean;
       type: enums.EUserTypes;
     },
   ): Promise<void> {
@@ -35,7 +33,6 @@ export default class Chat extends ReqHandler {
     locals: {
       tempId: string;
       userId: string | undefined;
-      validated: boolean;
       type: enums.EUserTypes;
     },
   ): Promise<{
@@ -53,7 +50,6 @@ export default class Chat extends ReqHandler {
     locals: {
       tempId: string;
       userId: string | undefined;
-      validated: boolean;
       type: enums.EUserTypes;
     },
   ): Promise<{
