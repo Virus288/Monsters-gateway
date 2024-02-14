@@ -5,11 +5,10 @@ import remove from './remove/router';
 import type { Router } from 'express';
 import type Provider from 'oidc-provider';
 
-export const initSecuredUserRoutes = (router: Router, provider: Provider): void => {
+export const initSecuredUserRoutes = (router: Router): void => {
   const prefix = '/users';
-  remove.init(provider);
 
-  router.use(prefix, remove.router).use(prefix, getDetails.router);
+  router.use(prefix, getDetails.router);
 };
 
 export const initUserRoutes = (router: Router): void => {
@@ -20,4 +19,12 @@ export const initUserRoutes = (router: Router): void => {
   if (process.env.NODE_END !== 'prod') {
     router.use(prefix, debug.router);
   }
+};
+
+export const initRemoveAccountRoutes = (router: Router, provider: Provider): void => {
+  const prefix = '/users';
+
+  remove.init(provider);
+
+  router.use(prefix, remove.router);
 };
