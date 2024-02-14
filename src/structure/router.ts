@@ -9,11 +9,15 @@ import initProfileRoutes from './modules/profile';
 import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
 import { version } from '../../package.json';
 import * as errors from '../errors';
+import { IncorrectTokenError } from '../errors';
 import handleErr from '../errors/utils';
+import State from '../state';
+import Log from '../tools/logger/log';
 import { validateToken } from '../tools/token';
 import type * as types from '../types';
 import type { Router } from 'express';
 import type Provider from 'oidc-provider';
+import type { AdapterPayload } from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
 
 export default class AppRouter {
@@ -37,7 +41,7 @@ export default class AppRouter {
     }
   }
 
-  initSecuredRoutes(): void {
+  initSecuredRoutes(provider: Provider): void {
     this.router.use(Middleware.userValidation);
     this.router.use(Middleware.initUserProfile);
 
@@ -45,7 +49,7 @@ export default class AppRouter {
 
     this.router.use(Middleware.userProfileValidation);
 
-    initSecuredUserRoutes(this.router);
+    initSecuredUserRoutes(this.router, provider);
     initPartyRoutes(this.router);
     initMessagesRoutes(this.router);
     initInventoryRoutes(this.router);
@@ -116,8 +120,22 @@ export default class AppRouter {
 
       try {
         const payload = await validateToken(token);
-        res.locals.userId = payload.sub;
+        const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
+        if (!cachedToken) {
+          Log.error(
+            'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+          );
+          throw new IncorrectTokenError();
+        }
+        const t = JSON.parse(cachedToken) as AdapterPayload;
+        if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+          Log.error('User tried to log in using expired token, which for some reason is in redis', {
+            token: payload.jti,
+          });
+          throw new IncorrectTokenError();
+        }
 
+        res.locals.userId = payload.sub;
         const locals = res.locals as types.IUsersTokens;
 
         res.send({
