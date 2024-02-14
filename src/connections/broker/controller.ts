@@ -41,7 +41,7 @@ export default class Communicator {
       subTarget,
     };
 
-    this.queue[userData.userId ?? tempId] = { resolve, reject, target: service };
+    this.queue[tempId] = { resolve, reject, target: service };
 
     switch (service) {
       case enums.EServices.Users:
@@ -78,7 +78,7 @@ export default class Communicator {
   sendExternally(payload: types.IRabbitMessage): void {
     Log.log('Server', 'Got new message');
     Log.log('Server', JSON.stringify(payload));
-    const target = this.findTarget((payload.user!.userId as string) ?? payload.user!.tempId)!;
+    const target = this.findTarget(payload.user!.tempId as string)!;
     if (!target) return undefined;
 
     switch (payload.target) {
