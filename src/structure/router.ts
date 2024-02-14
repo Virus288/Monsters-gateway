@@ -6,7 +6,7 @@ import initMessagesRoutes from './modules/message';
 import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
-import { initSecuredUserRoutes, initUserRoutes } from './modules/user';
+import { initRemoveAccountRoutes, initSecuredUserRoutes, initUserRoutes } from './modules/user';
 import { version } from '../../package.json';
 import * as errors from '../errors';
 import { IncorrectTokenError } from '../errors';
@@ -43,13 +43,16 @@ export default class AppRouter {
 
   initSecuredRoutes(provider: Provider): void {
     this.router.use(Middleware.userValidation);
+
+    initRemoveAccountRoutes(this.router, provider);
+
     this.router.use(Middleware.initUserProfile);
 
     initProfileRoutes(this.router);
 
     this.router.use(Middleware.userProfileValidation);
 
-    initSecuredUserRoutes(this.router, provider);
+    initSecuredUserRoutes(this.router);
     initPartyRoutes(this.router);
     initMessagesRoutes(this.router);
     initInventoryRoutes(this.router);
