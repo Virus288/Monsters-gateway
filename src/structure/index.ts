@@ -41,7 +41,7 @@ export default class Router {
     this.initMiddleware(provider);
     this.initRouter(provider);
     this.initServer();
-    this.initSecuredRouter();
+    this.initSecuredRouter(provider);
     this.initErrHandler();
     this.initOidc(provider);
   }
@@ -90,8 +90,8 @@ export default class Router {
   /**
    * Init secured routes.
    */
-  private initSecuredRouter(): void {
-    this.router.initSecuredRoutes();
+  private initSecuredRouter(provider: Provider): void {
+    this.router.initSecuredRoutes(provider);
   }
 
   /**

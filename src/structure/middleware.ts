@@ -19,6 +19,7 @@ import type { IUserEntity } from './modules/user/entity';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
+import type { AdapterPayload } from 'oidc-provider';
 import * as path from 'path';
 
 export default class Middleware {
@@ -33,10 +34,28 @@ export default class Middleware {
 
     try {
       const payload = await validateToken(token);
+      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
       res.locals.userId = payload.sub;
+
+      if (process.env.NODE_ENV === 'test') return next();
+
+      if (!cachedToken) {
+        Log.error(
+          'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+        );
+        throw new IncorrectTokenError();
+      }
+      const t = JSON.parse(cachedToken) as AdapterPayload;
+      if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+        Log.error('User tried to log in using expired token, which for some reason is in redis', {
+          token: payload.jti,
+        });
+        throw new IncorrectTokenError();
+      }
 
       return next();
     } catch (err) {
+      Log.error('Token validation error', err);
       return handleErr(new errors.UnauthorizedError(), res);
     }
   }
@@ -52,30 +71,7 @@ export default class Middleware {
       let user = await State.redis.getCachedUser(userId);
 
       if (!user) {
-        const reqHandler = new ReqHandler();
-        user = { account: undefined, profile: undefined };
-        user.account = (
-          await reqHandler.user.getDetails([new UserDetailsDto({ id: userId })], {
-            userId,
-            tempId: (res.locals.tempId ?? '') as string,
-          })
-        ).payload[0];
-        user.profile = (
-          await reqHandler.profile.get(new GetProfileDto(userId), {
-            userId,
-            tempId: (res.locals.tempId ?? '') as string,
-          })
-        ).payload;
-
-        if (!user.profile || !user.account) {
-          Log.error(
-            'Token validation',
-            'User tried to log in using token, that got validated, but there is no user related to token. Is token fake ?',
-          );
-          throw new IncorrectTokenError();
-        }
-
-        await State.redis.addCachedUser(user as { account: IUserEntity; profile: IProfileEntity });
+        user = await Middleware.fetchUserProfile(res, userId);
       }
 
       res.locals.profile = user.profile;
@@ -87,13 +83,24 @@ export default class Middleware {
     }
   }
 
-  static userProfileValidation(req: express.Request, res: express.Response, next: express.NextFunction): void {
+  static async userProfileValidation(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): Promise<void> {
     if (Middleware.shouldSkipUserValidation(req)) {
       return next();
     }
 
     try {
-      if (!(res.locals.profile as IProfileEntity)?.initialized) {
+      let { profile } = res.locals as types.IUsersTokens;
+      if (!profile) {
+        const user = await Middleware.fetchUserProfile(res, (res.locals as types.IUsersTokens).userId as string);
+        // eslint-disable-next-line prefer-destructuring
+        profile = user.profile;
+      }
+
+      if (!profile?.initialized) {
         throw new ProfileNotInitialized();
       }
 
@@ -108,6 +115,34 @@ export default class Middleware {
     const oidcRoutes = ['.well-known', 'me', 'auth', 'token', 'session', 'certs'];
     const splitRoute = req.path.split('/');
     return splitRoute.length > 1 && oidcRoutes.includes(splitRoute[1] as string);
+  }
+
+  private static async fetchUserProfile(res: express.Response, userId: string): Promise<types.ICachedUser> {
+    const reqHandler = new ReqHandler();
+    const user: types.ICachedUser = { account: undefined, profile: undefined };
+
+    user.account = (
+      await reqHandler.user.getDetails([new UserDetailsDto({ id: userId })], {
+        userId,
+        tempId: (res.locals.tempId ?? '') as string,
+      })
+    ).payload[0];
+    user.profile = (
+      await reqHandler.profile.get(new GetProfileDto(userId), {
+        userId,
+        tempId: (res.locals.tempId ?? '') as string,
+      })
+    ).payload;
+
+    if (!user.profile || !user.account) {
+      Log.error(
+        'Token validation',
+        'User tried to log in using token, that got validated, but there is no user related to token. Is token fake ?',
+      );
+      throw new IncorrectTokenError();
+    }
+    await State.redis.addCachedUser(user as { account: IUserEntity; profile: IProfileEntity });
+    return user;
   }
 
   generateMiddleware(app: Express): void {
