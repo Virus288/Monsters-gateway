@@ -3,9 +3,11 @@ import getDetails from './details/router';
 import register from './register/router';
 import remove from './remove/router';
 import type { Router } from 'express';
+import type Provider from 'oidc-provider';
 
-export const initSecuredUserRoutes = (router: Router): void => {
+export const initSecuredUserRoutes = (router: Router, provider: Provider): void => {
   const prefix = '/users';
+  remove.init(provider);
 
   router.use(prefix, remove.router).use(prefix, getDetails.router);
 };
