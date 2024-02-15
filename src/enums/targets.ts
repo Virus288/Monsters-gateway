@@ -1,4 +1,5 @@
 export enum EUserMainTargets {
+  Log = 'log',
   User = 'user',
   Chat = 'chat',
   Party = 'party',

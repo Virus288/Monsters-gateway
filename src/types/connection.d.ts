@@ -3,6 +3,8 @@ import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
 import type InventoryAddDto from '../structure/modules/inventory/use/dto';
+import type AddLogDto from '../structure/modules/log/add/dto';
+import type GetLogDto from '../structure/modules/log/get/dto';
 import type GetMessagesDto from '../structure/modules/message/get/dto';
 import type GetUnreadMessagesDto from '../structure/modules/message/getUnread/dto';
 import type { IGetUnreadMessagesDto } from '../structure/modules/message/getUnread/types';
@@ -23,7 +25,8 @@ export type IRabbitSubTargets =
   | enums.EItemsTargets
   | enums.EPartyTargets
   | enums.EMessagesTargets
-  | enums.EChatTargets;
+  | enums.EChatTargets
+  | enums.ELogTargets;
 
 export interface IProfileConnectionData {
   [enums.EProfileTargets.Get]: GetProfileDto;
@@ -36,6 +39,11 @@ export interface IUserConnectionData {
   [enums.EUserTargets.Register]: RegisterDto;
   [enums.EUserTargets.Remove]: RemoveUserDto;
   [enums.EUserTargets.DebugGetAll]: DebugGetAllUsersDto;
+}
+
+export interface ILogConnectionData {
+  [enums.ELogTargets.GetLog]: GetLogDto;
+  [enums.ELogTargets.AddLog]: AddLogDto;
 }
 
 export interface IInventoryConnectionData {
@@ -68,6 +76,7 @@ export interface IRabbitConnectionData
     IPartyConnectionData,
     IMessageConnectionData,
     IChatConnectionData,
+    ILogConnectionData,
     IInventoryConnectionData {}
 
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets;
