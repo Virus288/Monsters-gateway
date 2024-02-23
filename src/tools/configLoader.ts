@@ -19,7 +19,7 @@ export default function getConfig(): types.IConfigInterface {
       if (devConfig.session) return devConfig;
       Log.error('Config', 'Config file is incomplete. Using example config');
       return exampleConfig;
-    case 'prod':
+    case 'production':
       if (prodConfig.session) return prodConfig;
       Log.error('Config', 'Config file is incomplete. Using example config');
       return exampleConfig;

@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "start": "cross-env NODE_ENV=prod node build/src/main.js",
+    "start": "cross-env NODE_ENV=production node build/src/main.js",
     "start:dev": "concurrently 'npm run build:watch' 'cross-env NODE_ENV=dev TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon build/src/main.js'",
     "start:testDev": "cross-env NODE_ENV=testDev TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon build/src/main.js",
     "build": "tsc -p tsconfig.release.json",
@@ -19,7 +19,7 @@
     "test:e2e": "cross-env NODE_ENV=test jest --config __tests__/jest.config.e2e.ts",
     "test:db": "cross-env NODE_ENV=test jest --config __tests__/jest.config.db.ts",
     "test:unit": "cross-env NODE_ENV=test jest --config __tests__/jest.config.unit.ts",
-    "prepare": "husky install",
+    "preparee": "husky install",
     "migrate:latest": "npx knex --knexfile src/migrations/index.ts migrate:latest",
     "migrate:rollback": "npx knex --knexfile src/migrations/index.ts migrate:latest"
   },
