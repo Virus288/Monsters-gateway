@@ -50,6 +50,9 @@ export default class Communicator {
       case enums.EServices.Messages:
         channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)));
         return;
+      case enums.EServices.Fights:
+        channel.sendToQueue(enums.EAmqQueues.Fights, Buffer.from(JSON.stringify(body)));
+        return;
       default:
         throw new Error('Incorrect service target');
     }
@@ -69,6 +72,9 @@ export default class Communicator {
         return;
       case enums.EServices.Messages:
         channel.sendToQueue(enums.EAmqQueues.Messages, Buffer.from(JSON.stringify(body)), { persistent: true });
+        return;
+      case enums.EServices.Fights:
+        channel.sendToQueue(enums.EAmqQueues.Fights, Buffer.from(JSON.stringify(body)), { persistent: true });
         return;
       default:
         throw new Error('Unknown message target');

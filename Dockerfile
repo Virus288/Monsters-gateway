@@ -1,6 +1,6 @@
 FROM node:18
 ARG NODE_ENV
-ENV NODE_ENV ${NODE_ENV:-prod}
+ENV NODE_ENV ${NODE_ENV:-production}
 
 WORKDIR /usr/src/app
 ADD package.json /usr/src/app

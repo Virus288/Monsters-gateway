@@ -8,17 +8,15 @@ import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
 import { initRemoveAccountRoutes, initSecuredUserRoutes, initUserRoutes } from './modules/user';
+import UserDetailsDto from './modules/user/details/dto';
 import { version } from '../../package.json';
 import * as errors from '../errors';
-import { IncorrectTokenError } from '../errors';
 import handleErr from '../errors/utils';
-import State from '../state';
-import Log from '../tools/logger/log';
 import { validateToken } from '../tools/token';
+import type { IUserEntity } from './modules/user/entity';
 import type * as types from '../types';
 import type { Router } from 'express';
 import type Provider from 'oidc-provider';
-import type { AdapterPayload } from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
 
 export default class AppRouter {
@@ -37,7 +35,7 @@ export default class AppRouter {
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
 
-    if (process.env.NODE_END === 'testDev') {
+    if (process.env.NODE_ENV === 'testDev') {
       this.initDebugRoutes();
     }
   }
@@ -125,26 +123,23 @@ export default class AppRouter {
 
       try {
         const payload = await validateToken(token);
-        const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
-        if (!cachedToken) {
-          Log.error(
-            'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
-          );
-          throw new IncorrectTokenError();
-        }
-        const t = JSON.parse(cachedToken) as AdapterPayload;
-        if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
-          Log.error('User tried to log in using expired token, which for some reason is in redis', {
-            token: payload.jti,
-          });
-          throw new IncorrectTokenError();
-        }
 
         res.locals.userId = payload.sub;
         const locals = res.locals as types.IUsersTokens;
 
+        let userName: string = locals.user?.login as string;
+
+        if (!userName) {
+          const users = await locals.reqHandler.user.getDetails([new UserDetailsDto({ id: payload.sub })], {
+            userId: locals.userId,
+            tempId: locals.tempId,
+          });
+          const { login } = users.payload[0] as IUserEntity;
+          userName = login;
+        }
+
         res.send({
-          login: locals.user?.login,
+          login: userName,
           sub: payload.sub,
         });
       } catch (err) {

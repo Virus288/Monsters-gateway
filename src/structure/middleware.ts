@@ -37,7 +37,7 @@ export default class Middleware {
       const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
       res.locals.userId = payload.sub;
 
-      if (process.env.NODE_ENV === 'test') return next();
+      if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'testDev') return next();
 
       if (!cachedToken) {
         Log.error(
@@ -190,6 +190,7 @@ export default class Middleware {
       }),
     );
     app.set('views', path.join(__dirname, '..', '..', '..', 'public'));
+    app.use('/public', express.static(path.join(__dirname, '..', '..', '..', 'public', 'static')));
     app.set('view engine', 'ejs');
 
     app.use((req, _res, next) => {

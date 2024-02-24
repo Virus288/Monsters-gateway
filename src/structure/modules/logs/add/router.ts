@@ -29,7 +29,6 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-
 service.router.post('/', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);

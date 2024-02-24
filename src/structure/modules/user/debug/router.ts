@@ -42,7 +42,6 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-
 service.router.get('/debug', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);
