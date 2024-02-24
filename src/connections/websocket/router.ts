@@ -36,7 +36,7 @@ export default class Router {
   }
 
   handleError(err: IFullError, ws: types.ISocket): void {
-    if (process.env.NODE_END !== 'production') console.trace(err);
+    if (process.env.NODE_ENV !== 'production') console.trace(err);
     const { message, code, name } = err;
 
     const body = JSON.stringify({

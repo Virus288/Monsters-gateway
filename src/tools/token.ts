@@ -1,7 +1,7 @@
 import * as jose from 'node-jose';
 import Log from './logger/log';
 import * as errors from '../errors';
-import { InternalError } from '../errors';
+import { InternalError, IncorrectTokenError } from '../errors';
 import State from '../state';
 import type { ITokenPayload } from '../types';
 import type { AdapterPayload } from 'oidc-provider';
@@ -26,6 +26,24 @@ export const revokeUserToken = async (provider: Provider, token: string | undefi
   try {
     const payload = await validateToken(token);
     const userToken = (await provider.AccessToken.adapter.find(payload.jti)) as AdapterPayload;
+
+    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'testDev') {
+      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
+
+      if (!cachedToken) {
+        Log.error(
+          'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+        );
+        throw new IncorrectTokenError();
+      }
+      const t = JSON.parse(cachedToken) as AdapterPayload;
+      if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+        Log.error('User tried to log in using expired token, which for some reason is in redis', {
+          token: payload.jti,
+        });
+        throw new IncorrectTokenError();
+      }
+    }
 
     if (userToken) {
       const prefix = 'oidc:';

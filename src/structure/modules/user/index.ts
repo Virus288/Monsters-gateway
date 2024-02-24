@@ -16,7 +16,7 @@ export const initUserRoutes = (router: Router): void => {
 
   router.use(prefix, register.router);
   // Debug routes
-  if (process.env.NODE_END !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     router.use(prefix, debug.router);
   }
 };

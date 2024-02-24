@@ -2,6 +2,8 @@ import Websocket from 'ws';
 import Router from './router';
 import * as enums from '../../enums';
 import * as errors from '../../errors';
+import { IncorrectTokenError } from '../../errors';
+import State from '../../state';
 import ReqHandler from '../../structure/reqHandler';
 import getConfig from '../../tools/configLoader';
 import Log from '../../tools/logger/log';
@@ -9,6 +11,7 @@ import { validateToken } from '../../tools/token';
 import type * as types from './types';
 import type { ESocketType } from '../../enums';
 import type { IFullError } from '../../types';
+import type { AdapterPayload } from 'oidc-provider';
 
 export default class WebsocketServer {
   protected _server: Websocket.WebSocketServer | null = null;
@@ -85,7 +88,16 @@ export default class WebsocketServer {
   }
 
   protected onUserConnected(ws: types.ISocket, cookies: string | undefined, header: string | undefined): void {
-    this.validateUser(ws, { cookies, header });
+    this.validateUser(ws, { cookies, header }).catch((err) => {
+      Log.error("Couldn't validate user token in websocket", err);
+      ws.close(
+        1000,
+        JSON.stringify({
+          type: enums.ESocketType.Error,
+          payload: new errors.UnauthorizedError(),
+        }),
+      );
+    });
     this.initializeUser(ws);
 
     ws.on('message', (message: string) => this.errorWrapper(() => this.handleUserMessage(message, ws), ws));
@@ -102,7 +114,13 @@ export default class WebsocketServer {
     }
   }
 
-  private validateUser(ws: types.ISocket, auth: { cookies: string | undefined; header: string | undefined }): void {
+  private async validateUser(
+    ws: types.ISocket,
+    auth: {
+      cookies: string | undefined;
+      header: string | undefined;
+    },
+  ): Promise<void> {
     const unauthorizedErrorMessage = JSON.stringify({
       type: enums.ESocketType.Error,
       payload: new errors.UnauthorizedError(),
@@ -132,29 +150,43 @@ export default class WebsocketServer {
       return;
     }
 
-    validateToken(access)
-      .then((payload) => {
-        ws.userId = payload.sub;
+    const payload = await validateToken(access);
 
-        const isAlreadyOnline = this.users.findIndex((u) => {
-          return u.userId === payload.sub;
+    if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'testDev') {
+      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
+
+      if (!cachedToken) {
+        Log.error(
+          'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+        );
+        throw new IncorrectTokenError();
+      }
+      const t = JSON.parse(cachedToken) as AdapterPayload;
+      if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+        Log.error('User tried to log in using expired token, which for some reason is in redis', {
+          token: payload.jti,
         });
+        throw new IncorrectTokenError();
+      }
+    }
 
-        // #TODO This is broken and incorrectly sends messages back to user, who is logged in on 2 devices
-        if (isAlreadyOnline > -1) {
-          this._users[isAlreadyOnline] = {
-            ...this.users[isAlreadyOnline],
-            userId: this.users[isAlreadyOnline]!.userId,
-            clients: [...this.users[isAlreadyOnline]!.clients, ws],
-          };
-          return undefined;
-        }
+    ws.userId = payload.sub;
 
-        return this._users.push({ clients: [ws], userId: payload.sub });
-      })
-      .catch(() => {
-        ws.close(1000, unauthorizedErrorMessage);
-      });
+    const isAlreadyOnline = this.users.findIndex((u) => {
+      return u.userId === payload.sub;
+    });
+
+    // #TODO This is broken and incorrectly sends messages back to user, who is logged in on 2 devices
+    if (isAlreadyOnline > -1) {
+      this._users[isAlreadyOnline] = {
+        ...this.users[isAlreadyOnline],
+        userId: this.users[isAlreadyOnline]!.userId,
+        clients: [...this.users[isAlreadyOnline]!.clients, ws],
+      };
+      return;
+    }
+
+    this._users.push({ clients: [ws], userId: payload.sub });
   }
 
   private initializeUser(ws: types.ISocket): void {
