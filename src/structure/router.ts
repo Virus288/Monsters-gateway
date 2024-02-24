@@ -127,18 +127,19 @@ export default class AppRouter {
         res.locals.userId = payload.sub;
         const locals = res.locals as types.IUsersTokens;
 
-        const login: string = locals.user?.login as string;
+        let userName: string = locals.user?.login as string;
 
-        if (!login) {
+        if (!userName) {
           const users = await locals.reqHandler.user.getDetails([new UserDetailsDto({ id: payload.sub })], {
             userId: locals.userId,
             tempId: locals.tempId,
           });
-          (users.payload[0] as IUserEntity).login;
+          const { login } = users.payload[0] as IUserEntity;
+          userName = login;
         }
 
         res.send({
-          login,
+          login: userName,
           sub: payload.sub,
         });
       } catch (err) {
