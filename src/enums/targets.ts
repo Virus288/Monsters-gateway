@@ -3,6 +3,7 @@ export enum EUserMainTargets {
   User = 'user',
   Chat = 'chat',
   Party = 'party',
+  Fight = 'fight',
   Profile = 'profile',
   Message = 'message',
   Inventory = 'inventory',
@@ -39,6 +40,12 @@ export enum EChatTargets {
   Get = 'getChatMessage',
   Read = 'readChatMessage',
   GetUnread = 'getUnreadChatMessages',
+}
+
+export enum EFightsTargets {
+  Attack = 'attack',
+  CreateFight = 'createFight',
+  Leave = 'leave',
 }
 
 export enum EPartyTargets {

@@ -388,3 +388,33 @@ export class ProfileNotInitialized extends FullError {
     this.status = 400;
   }
 }
+
+export class ElementTooShortError extends FullError {
+  constructor(target: string, min: number) {
+    super('ElementTooShortError');
+    this.message = `Element ${target} is too short. Minimum length is ${min}`;
+    this.name = 'ElementTooShortError';
+    this.code = '021';
+    this.status = 400;
+  }
+}
+
+export class ElementTooLongError extends FullError {
+  constructor(target: string, min: number) {
+    super('ElementTooShortLongError');
+    this.message = `Element ${target} is too long. Maximum length is ${min}`;
+    this.name = 'ElementTooShortLongError';
+    this.code = '022';
+    this.status = 400;
+  }
+}
+
+export class ActionNotAllowed extends FullError {
+  constructor() {
+    super('ActionNotAllowed');
+    this.message = 'Action not allowed';
+    this.name = 'ActionNotAllowed';
+    this.code = '014';
+    this.status = 400;
+  }
+}

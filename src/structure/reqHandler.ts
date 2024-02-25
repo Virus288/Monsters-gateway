@@ -1,4 +1,5 @@
 import Chat from './modules/chat/handler';
+import Fights from './modules/fights/handler';
 import Inventory from './modules/inventory/handler';
 import Log from './modules/logs/handler';
 import Message from './modules/message/handler';
@@ -21,6 +22,7 @@ export default class ReqHandler {
   profile: Profile;
   message: Message;
   inventory: Inventory;
+  fights: Fights;
 
   constructor() {
     const action = <T extends types.IRabbitSubTargets>(
@@ -36,8 +38,9 @@ export default class ReqHandler {
 
     this.log = new Log(EServices.Users, action);
     this.user = new User(EServices.Users, action);
-    this.chat = new Chat(EServices.Messages, action);
     this.party = new Party(EServices.Users, action);
+    this.chat = new Chat(EServices.Messages, action);
+    this.fights = new Fights(EServices.Fights, action);
     this.profile = new Profile(EServices.Users, action);
     this.message = new Message(EServices.Messages, action);
     this.inventory = new Inventory(EServices.Users, action);

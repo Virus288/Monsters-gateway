@@ -2,7 +2,7 @@ import { createClient } from 'redis';
 import Rooster from './rooster';
 import { ERedisTargets } from '../../enums';
 import getConfig from '../../tools/configLoader';
-import Log from '../../tools/logger/log';
+import Log from '../../tools/logger';
 import type * as enums from '../../enums';
 import type { IProfileEntity } from '../../structure/modules/profile/entity';
 import type { IUserEntity } from '../../structure/modules/user/entity';

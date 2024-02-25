@@ -1,6 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import Middleware from './middleware';
+import initFightsRoutes from './modules/fights';
 import initInventoryRoutes from './modules/inventory';
 import initLogsRoutes from './modules/logs';
 import initMessagesRoutes from './modules/message';
@@ -35,7 +36,7 @@ export default class AppRouter {
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
 
-    if (process.env.NODE_ENV === 'testDev') {
+    if (process.env.NODE_ENV !== 'production') {
       this.initDebugRoutes();
     }
   }
@@ -56,6 +57,7 @@ export default class AppRouter {
     initMessagesRoutes(this.router);
     initInventoryRoutes(this.router);
     initLogsRoutes(this.router);
+    initFightsRoutes(this.router);
   }
 
   generateDocumentation(): void {

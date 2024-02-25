@@ -3,7 +3,7 @@ import * as enums from '../../enums';
 import { ESocketType, EUserTypes } from '../../enums';
 import * as errors from '../../errors';
 import State from '../../state';
-import Log from '../../tools/logger/log';
+import Log from '../../tools/logger';
 import type * as types from './types';
 import type { IFullError } from '../../types';
 

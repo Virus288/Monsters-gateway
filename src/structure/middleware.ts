@@ -11,7 +11,7 @@ import { IncorrectDataType, IncorrectTokenError, InternalError, ProfileNotInitia
 import handleErr from '../errors/utils';
 import State from '../state';
 import getConfig from '../tools/configLoader';
-import Log from '../tools/logger/log';
+import Log from '../tools/logger';
 import errLogger from '../tools/logger/logger';
 import { validateToken } from '../tools/token';
 import type { IProfileEntity } from './modules/profile/entity';
@@ -19,7 +19,6 @@ import type { IUserEntity } from './modules/user/entity';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
-import type { AdapterPayload } from 'oidc-provider';
 import * as path from 'path';
 
 export default class Middleware {
@@ -34,24 +33,24 @@ export default class Middleware {
 
     try {
       const payload = await validateToken(token);
-      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
       res.locals.userId = payload.sub;
 
       if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'testDev') return next();
 
-      if (!cachedToken) {
-        Log.error(
-          'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
-        );
-        throw new IncorrectTokenError();
-      }
-      const t = JSON.parse(cachedToken) as AdapterPayload;
-      if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
-        Log.error('User tried to log in using expired token, which for some reason is in redis', {
-          token: payload.jti,
-        });
-        throw new IncorrectTokenError();
-      }
+      // const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
+      // if (!cachedToken) {
+      //   Log.error(
+      //     'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+      //   );
+      //   throw new IncorrectTokenError();
+      // }
+      // const t = JSON.parse(cachedToken) as AdapterPayload;
+      // if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+      //   Log.error('User tried to log in using expired token, which for some reason is in redis', {
+      //     token: payload.jti,
+      //   });
+      //   throw new IncorrectTokenError();
+      // }
 
       return next();
     } catch (err) {
@@ -204,7 +203,9 @@ export default class Middleware {
         if (req.body) {
           if (req.path.includes('interaction') || req.path.includes('register')) {
             logBody.body = { ...(req.body as Record<string, string>) };
-            logBody.body.password = '***';
+            if (logBody.password) {
+              logBody.body.password = '***';
+            }
           } else {
             logBody.body = req.body as Record<string, string>;
           }

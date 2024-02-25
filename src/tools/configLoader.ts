@@ -1,4 +1,4 @@
-import Log from './logger/log';
+import Log from './logger';
 import devConfig from '../../config/devConfig.json';
 import exampleConfig from '../../config/exampleConfig.json';
 import prodConfig from '../../config/prodConfig.json';

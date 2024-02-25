@@ -3,7 +3,7 @@ import Middleware from './middleware';
 import AppRouter from './router';
 import Oidc from '../oidc';
 import getConfig from '../tools/configLoader';
-import Log from '../tools/logger/log';
+import Log from '../tools/logger';
 import type Provider from 'oidc-provider';
 import http from 'http';
 

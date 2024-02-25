@@ -1,7 +1,7 @@
 import * as jose from 'node-jose';
-import Log from './logger/log';
+import Log from './logger';
 import * as errors from '../errors';
-import { InternalError, IncorrectTokenError } from '../errors';
+import { IncorrectTokenError, InternalError } from '../errors';
 import State from '../state';
 import type { ITokenPayload } from '../types';
 import type { AdapterPayload } from 'oidc-provider';
