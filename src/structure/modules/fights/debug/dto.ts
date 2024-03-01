@@ -1,8 +1,8 @@
 import Validation from '../../../../tools/validation';
-import type { ICreateFightDto, IFightProfile } from './types';
+import type { ICreateFightDto, IFightStateTeam } from './types';
 
 export default class CreateFightDto implements ICreateFightDto {
-  teams: [IFightProfile[], IFightProfile[]] = [[], []];
+  teams: [IFightStateTeam[], IFightStateTeam[]] = [[], []];
   attacker: string;
 
   constructor(body: ICreateFightDto) {

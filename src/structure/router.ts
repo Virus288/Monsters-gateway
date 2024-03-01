@@ -36,7 +36,7 @@ export default class AppRouter {
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'testDev') {
       this.initDebugRoutes();
     }
   }

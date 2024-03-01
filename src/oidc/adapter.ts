@@ -20,7 +20,10 @@ export default class Adapter implements oidc.Adapter {
 
   async upsert(id: string, payload: oidc.AdapterPayload, expiresIn?: number): Promise<void> {
     if (this.name === 'Session' && payload.authorizations) {
-      await this.addGrandId(id, payload.authorizations.oidcClient!.grantId as string);
+      await this.addGrandId(
+        id,
+        payload.authorizations[Object.keys(payload.authorizations)[0] as string]!.grantId as string,
+      );
       return;
     }
     if (this.name === 'RefreshToken') {

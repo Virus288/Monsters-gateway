@@ -372,9 +372,13 @@ export class ProviderNotInitialized extends FullError {
 }
 
 export class NoUserWithProvidedName extends FullError {
-  constructor() {
+  constructor(names?: string[]) {
     super('NoUserWithProvidedName');
-    this.message = 'No user with provided name';
+    this.message = names
+      ? names.length === 1
+        ? `User ${names.join(', ')} does not exist`
+        : `Users ${names.join(', ')} does not exist`
+      : 'No user with provided name';
     this.name = 'NoUserWithProvidedName';
     this.status = 400;
   }

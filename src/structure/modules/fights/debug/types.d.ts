@@ -2,30 +2,14 @@
  * @openapi
  * components:
  *   schemas:
- *     IFightProfile:
+ *     IStateTeam:
  *       type: object
  *       properties:
- *         user:
- *           type: string
- *         lvl:
- *           type: number
- *         exp:
- *           type: array
- *           items:
- *             type: number
- *             format: int64
- *             minimum: 0
- *             maximum: 9223372036854775807
- *             description: Array containing current experience and total experience
- *         inventory:
+ *         character:
  *           type: string
  */
-export interface IFightProfile {
-  userName: string;
-  userId: string;
-  lvl: number;
-  exp: [number, number];
-  inventory: string;
+export interface IFightStateTeam {
+  character: string;
 }
 
 /**
@@ -42,10 +26,10 @@ export interface IFightProfile {
  *           items:
  *             type: array
  *             items:
- *               $ref: '#/components/schemas/IFightProfile'
+ *               $ref: '#/components/schemas/IStateTeam'
  */
 export interface ICreateFightDto {
-  teams: [IFightProfile[], IFightProfile[]];
+  teams: [IFightStateTeam[], IFightStateTeam[]];
   attacker: string;
 }
 
@@ -59,9 +43,7 @@ export interface ICreateFightDto {
  *         teams:
  *           type: array
  *           items:
- *             type: array
- *             items:
- *               $ref: '#/components/schemas/IFightProfile'
+ *             type: string
  *         owner:
  *           type: string
  */

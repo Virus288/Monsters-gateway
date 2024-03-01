@@ -10,7 +10,7 @@ const service = new Router();
  * /fights/leave:
  *   get:
  *     tags:
- *       - user-debug
+ *       - fights
  *     description: Get all users
  *     security:
  *       - bearerAuth: []

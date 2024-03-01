@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import errLogger from './logger';
 import * as enums from '../../enums';
-import type { ELogTypes } from '../../enums';
+import { ELogTypes } from '../../enums';
 
 /**
  * Log passed data and save it in local files
@@ -25,6 +25,12 @@ export default class Log {
     });
   }
 
+  static debug(target: string, ...messages: unknown[]): void {
+    messages.forEach((m) => {
+      Log.buildLog(() => chalk.blueBright(`Log.Debug: ${target}`), enums.ELogTypes.Debug, m);
+    });
+  }
+
   static trace(target: string, ...messages: unknown[]): void {
     console.trace(chalk.yellowBright(target));
     messages.forEach((m) => {
@@ -34,7 +40,8 @@ export default class Log {
 
   private static buildLog(color: () => string, type: ELogTypes, message: unknown): void {
     console.info(`[${chalk.gray(Log.getDate())}] ${color()} ${Log.toString(message)}`);
-    Log.saveLog(message, type);
+
+    if (type === ELogTypes.Debug && process.env.NODE_ENV !== 'production') Log.saveLog(message, type);
   }
 
   private static saveLog(message: unknown, type: enums.ELogTypes): void {

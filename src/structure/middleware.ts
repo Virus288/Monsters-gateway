@@ -19,6 +19,7 @@ import type { IUserEntity } from './modules/user/entity';
 import type * as types from '../types';
 import type { Express } from 'express';
 import type Provider from 'oidc-provider';
+import type { AdapterPayload } from 'oidc-provider';
 import * as path from 'path';
 
 export default class Middleware {
@@ -37,20 +38,20 @@ export default class Middleware {
 
       if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'testDev') return next();
 
-      // const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
-      // if (!cachedToken) {
-      //   Log.error(
-      //     'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
-      //   );
-      //   throw new IncorrectTokenError();
-      // }
-      // const t = JSON.parse(cachedToken) as AdapterPayload;
-      // if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
-      //   Log.error('User tried to log in using expired token, which for some reason is in redis', {
-      //     token: payload.jti,
-      //   });
-      //   throw new IncorrectTokenError();
-      // }
+      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
+      if (!cachedToken) {
+        Log.error(
+          'User tried to log in using token, which does not exist in redis. Might just expired between validation and redis',
+        );
+        throw new IncorrectTokenError();
+      }
+      const t = JSON.parse(cachedToken) as AdapterPayload;
+      if (Date.now() - new Date((t.exp as number) * 1000).getTime() > 0) {
+        Log.error('User tried to log in using expired token, which for some reason is in redis', {
+          token: payload.jti,
+        });
+        throw new IncorrectTokenError();
+      }
 
       return next();
     } catch (err) {

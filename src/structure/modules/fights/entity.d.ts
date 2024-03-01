@@ -2,22 +2,26 @@
  * @openapi
  * components:
  *   schemas:
- *     IUserEntity:
+ *     IActionEntity:
  *       type: object
  *       properties:
- *         _id:
+ *         character:
  *           type: string
- *         login:
+ *         action:
  *           type: string
- *         verified:
+ *         target:
  *           type: string
+ *         value:
+ *           type: number
  *       required:
- *         - _id
- *         - login
- *         - verified
+ *         - character
+ *         - action
+ *         - target
+ *         - value
  */
-export interface IUserEntity {
-  _id: string;
-  login: string;
-  verified: boolean;
+export interface IActionEntity {
+  character: string;
+  action: EAction;
+  target: string;
+  value: number;
 }

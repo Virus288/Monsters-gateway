@@ -7,16 +7,16 @@ const service = new Router();
 
 /**
  * @openapi
- * /debug/fights/create:
- *   get:
+ * /fights/attack:
+ *   post:
  *     tags:
- *       - fights-debug
- *     description: Get all users
+ *       - fights
+ *     description: Attack target
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Get users back in request.
+ *         description: Success. Get attack stage report back
  *         content:
  *           application/json:
  *             schema:
@@ -25,7 +25,7 @@ const service = new Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/IUserEntity'
+ *                     $ref: '#/components/schemas/IActionEntity'
  *       400:
  *         description: Bad request.
  *         content:
@@ -36,10 +36,10 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
  */
-service.router.post('/create', limitRate, async (req, res) => {
+service.router.post('/attack', limitRate, async (req, res) => {
   try {
-    await service.post(req, res);
-    res.status(200).send();
+    const data = await service.post(req, res);
+    res.status(200).send({ data });
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

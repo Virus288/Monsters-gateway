@@ -13,7 +13,6 @@ export const validateToken = async (token: string | undefined): Promise<ITokenPa
   const keyStore = await jose.JWK.asKeyStore({ keys: State.keys });
   const verifier = jose.JWS.createVerify(keyStore);
   const payload = JSON.parse((await verifier.verify(token)).payload.toString()) as ITokenPayload;
-  await verifier.verify(token);
 
   if (new Date(payload.exp * 1000) < new Date()) {
     // Token expired

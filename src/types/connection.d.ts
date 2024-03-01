@@ -1,6 +1,7 @@
 import type { IUserBrokerInfo } from './user';
 import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
+import type AttackDto from '../structure/modules/fights/attack/dto';
 import type CreateFightDto from '../structure/modules/fights/debug/dto';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
 import type InventoryAddDto from '../structure/modules/inventory/use/dto';
@@ -51,7 +52,7 @@ export interface ILogConnectionData {
 export interface IFightConnectionData {
   [enums.EFightsTargets.Leave]: null;
   [enums.EFightsTargets.CreateFight]: CreateFightDto;
-  [enums.EFightsTargets.Attack]: Record<string, string>; // Temporary change
+  [enums.EFightsTargets.Attack]: AttackDto;
 }
 
 export interface IInventoryConnectionData {
