@@ -9,13 +9,7 @@ import oidc, { initOidcRoutes } from './modules/oidc';
 import initPartyRoutes from './modules/party';
 import initProfileRoutes from './modules/profile';
 import { initRemoveAccountRoutes, initSecuredUserRoutes, initUserRoutes } from './modules/user';
-import UserDetailsDto from './modules/user/details/dto';
 import { version } from '../../package.json';
-import * as errors from '../errors';
-import handleErr from '../errors/utils';
-import { validateToken } from '../tools/token';
-import type { IUserEntity } from './modules/user/entity';
-import type * as types from '../types';
 import type { Router } from 'express';
 import type Provider from 'oidc-provider';
 import type swaggerJsdoc from 'swagger-jsdoc';
@@ -35,10 +29,6 @@ export default class AppRouter {
     oidc.init(provider);
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
-
-    if (process.env.NODE_ENV === 'testDev') {
-      this.initDebugRoutes();
-    }
   }
 
   initSecuredRoutes(provider: Provider): void {
@@ -113,40 +103,6 @@ export default class AppRouter {
     this.router.get('docs.json', (_req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(swaggerSpec);
-    });
-  }
-
-  private initDebugRoutes(): void {
-    // Disable oidc token validation for 'testDev' environment
-    this.router.get('/me', async (req, res): Promise<void> => {
-      const token =
-        ((req.cookies as Record<string, string>)['monsters.uid'] as string) ??
-        (req.headers.authorization !== undefined ? req.headers.authorization.split('Bearer')[1]!.trim() : undefined);
-
-      try {
-        const payload = await validateToken(token);
-
-        res.locals.userId = payload.sub;
-        const locals = res.locals as types.IUsersTokens;
-
-        let userName: string = locals.user?.login as string;
-
-        if (!userName) {
-          const users = await locals.reqHandler.user.getDetails([new UserDetailsDto({ id: payload.sub })], {
-            userId: locals.userId,
-            tempId: locals.tempId,
-          });
-          const { login } = users.payload[0] as IUserEntity;
-          userName = login;
-        }
-
-        res.send({
-          login: userName,
-          sub: payload.sub,
-        });
-      } catch (err) {
-        handleErr(new errors.UnauthorizedError(), res);
-      }
     });
   }
 }
