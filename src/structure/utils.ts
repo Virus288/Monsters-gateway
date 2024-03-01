@@ -9,7 +9,7 @@ const limiter =
       }
     : rateLimit({
         limit: 30,
-        message: 'Too many requests from this IP, please try again in an 1 min',
+        message: { data: 'Too many requests from this IP, please try again in an 1 min' },
       });
 
 export default limiter;
