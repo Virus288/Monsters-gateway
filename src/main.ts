@@ -4,7 +4,7 @@ import Redis from './connections/redis';
 import WebsocketServer from './connections/websocket';
 import State from './state';
 import Router from './structure';
-import Log from './tools/logger/log';
+import Log from './tools/logger';
 import type { IFullError } from './types';
 
 class App {

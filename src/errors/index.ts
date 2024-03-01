@@ -372,9 +372,13 @@ export class ProviderNotInitialized extends FullError {
 }
 
 export class NoUserWithProvidedName extends FullError {
-  constructor() {
+  constructor(names?: string[]) {
     super('NoUserWithProvidedName');
-    this.message = 'No user with provided name';
+    this.message = names
+      ? names.length === 1
+        ? `User ${names.join(', ')} does not exist`
+        : `Users ${names.join(', ')} does not exist`
+      : 'No user with provided name';
     this.name = 'NoUserWithProvidedName';
     this.status = 400;
   }
@@ -385,6 +389,36 @@ export class ProfileNotInitialized extends FullError {
     super('ProfileNotInitialized');
     this.message = 'User profile is not initialized';
     this.name = 'ProfileNotInitialized';
+    this.status = 400;
+  }
+}
+
+export class ElementTooShortError extends FullError {
+  constructor(target: string, min: number) {
+    super('ElementTooShortError');
+    this.message = `Element ${target} is too short. Minimum length is ${min}`;
+    this.name = 'ElementTooShortError';
+    this.code = '021';
+    this.status = 400;
+  }
+}
+
+export class ElementTooLongError extends FullError {
+  constructor(target: string, min: number) {
+    super('ElementTooShortLongError');
+    this.message = `Element ${target} is too long. Maximum length is ${min}`;
+    this.name = 'ElementTooShortLongError';
+    this.code = '022';
+    this.status = 400;
+  }
+}
+
+export class ActionNotAllowed extends FullError {
+  constructor() {
+    super('ActionNotAllowed');
+    this.message = 'Action not allowed';
+    this.name = 'ActionNotAllowed';
+    this.code = '014';
     this.status = 400;
   }
 }

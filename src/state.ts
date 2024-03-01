@@ -1,4 +1,4 @@
-import Log from './tools/logger/log';
+import Log from './tools/logger';
 import type Broker from './connections/broker';
 import type Mysql from './connections/mysql';
 import type Redis from './connections/redis';

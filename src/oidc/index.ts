@@ -3,7 +3,7 @@ import oidcClaims from './claims';
 import { getKeys as generateKeys } from './utils';
 import State from '../state';
 import getConfig from '../tools/configLoader';
-import Log from '../tools/logger/log';
+import Log from '../tools/logger';
 import type { ILoginKeys } from '../types';
 import type { Configuration } from 'oidc-provider';
 

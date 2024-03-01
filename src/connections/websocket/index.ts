@@ -6,7 +6,7 @@ import { IncorrectTokenError } from '../../errors';
 import State from '../../state';
 import ReqHandler from '../../structure/reqHandler';
 import getConfig from '../../tools/configLoader';
-import Log from '../../tools/logger/log';
+import Log from '../../tools/logger';
 import { validateToken } from '../../tools/token';
 import type * as types from './types';
 import type { ESocketType } from '../../enums';

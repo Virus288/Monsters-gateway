@@ -11,7 +11,7 @@ import { IncorrectDataType, IncorrectTokenError, InternalError, ProfileNotInitia
 import handleErr from '../errors/utils';
 import State from '../state';
 import getConfig from '../tools/configLoader';
-import Log from '../tools/logger/log';
+import Log from '../tools/logger';
 import errLogger from '../tools/logger/logger';
 import { validateToken } from '../tools/token';
 import type { IProfileEntity } from './modules/profile/entity';
@@ -34,14 +34,14 @@ export default class Middleware {
 
     try {
       const payload = await validateToken(token);
-      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
       res.locals.userId = payload.sub;
 
       if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'testDev') return next();
 
+      const cachedToken = await State.redis.getOidcHash(`oidc:AccessToken:${payload.jti}`, payload.jti);
       if (!cachedToken) {
         Log.error(
-          'User tried to log in using token, which does not exists in redis. Might just expired between validation and redis',
+          'User tried to log in using token, which does not exist in redis. Might just expired between validation and redis',
         );
         throw new IncorrectTokenError();
       }
@@ -204,7 +204,9 @@ export default class Middleware {
         if (req.body) {
           if (req.path.includes('interaction') || req.path.includes('register')) {
             logBody.body = { ...(req.body as Record<string, string>) };
-            logBody.body.password = '***';
+            if (logBody.password) {
+              logBody.body.password = '***';
+            }
           } else {
             logBody.body = req.body as Record<string, string>;
           }

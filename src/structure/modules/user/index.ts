@@ -15,6 +15,7 @@ export const initUserRoutes = (router: Router): void => {
   const prefix = '/users';
 
   router.use(prefix, register.router);
+
   // Debug routes
   if (process.env.NODE_ENV !== 'production') {
     router.use(prefix, debug.router);

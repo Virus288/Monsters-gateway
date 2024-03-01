@@ -13,7 +13,7 @@ const routes = {
 export const initOidcRoutes = (router: Router): void => {
   const prefix = '/interaction';
 
-  if (process.env.NODE_ENV === 'testDev') {
+  if (process.env.NODE_ENV !== 'production') {
     router.use(`/debug${prefix}`, debug.router);
   }
 

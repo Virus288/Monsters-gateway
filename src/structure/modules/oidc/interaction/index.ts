@@ -2,7 +2,7 @@ import LoginDto from './dto';
 import { ProviderNotInitialized } from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
 import getConfig from '../../../../tools/configLoader';
-import Log from '../../../../tools/logger/log';
+import Log from '../../../../tools/logger';
 import type * as types from '../../../../types';
 import type ReqHandler from '../../../reqHandler';
 import type express from 'express';

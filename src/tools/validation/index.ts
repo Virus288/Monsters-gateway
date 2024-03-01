@@ -55,4 +55,43 @@ export default class Validation {
 
     return this;
   }
+
+  /**
+   * Validate if element is typeof array
+   * Require param: array of strings
+   */
+  isArray(): this {
+    const { v, name } = this;
+    const value = v as string;
+
+    if (!Array.isArray(value)) throw new errors.IncorrectArgTypeError(`${name} should be array`);
+
+    return this;
+  }
+
+  /**
+   * Validate if element has more children than x
+   * Require param: array of strings
+   */
+  minElements(amount: number): this {
+    const { v, name } = this;
+    const value = v as string;
+
+    if (value.length < amount) throw new errors.ElementTooShortError(name, amount);
+
+    return this;
+  }
+
+  /**
+   * Validate if element has fewer children than x
+   * Require param: array of strings
+   */
+  maxElements(amount: number): this {
+    const { v, name } = this;
+    const value = v as string;
+
+    if (value.length > amount) throw new errors.ElementTooLongError(name, amount);
+
+    return this;
+  }
 }

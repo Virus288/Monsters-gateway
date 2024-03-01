@@ -1,4 +1,4 @@
-import Log from '../tools/logger/log';
+import Log from '../tools/logger';
 import type * as types from '../types';
 import type express from 'express';
 

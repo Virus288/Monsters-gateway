@@ -3,7 +3,7 @@ import Controller from './controller';
 import * as enums from '../../enums';
 import { InternalError } from '../../errors';
 import getConfig from '../../tools/configLoader';
-import Log from '../../tools/logger/log';
+import Log from '../../tools/logger';
 import { generateRandomName } from '../../utils';
 import type Communicator from './controller';
 import type { EMessageTypes } from '../../enums';
@@ -162,13 +162,13 @@ export default class Broker {
     await this.channel!.consume(
       this.queueName,
       (message) => {
-        Log.log('Rabbit', 'Got new message');
-
-        if (!message) return Log.warn('Rabbit', 'Received empty message');
+        if (!message) return Log.error('Rabbit', 'Received empty message');
         const payload = JSON.parse(message.content.toString()) as types.IRabbitMessage;
         if (payload.target === enums.EMessageTypes.Heartbeat) {
           return this.validateHeartbeat(payload.payload as types.IAvailableServices);
         }
+        Log.log('Rabbit', 'Got new message');
+        Log.log('Rabbit', payload);
         return this.errorWrapper(() => this.controller.sendExternally(payload));
       },
       { noAck: true },
@@ -208,7 +208,7 @@ export default class Broker {
     const service = this._services[target];
     service.dead = true;
     if (service.retries >= 10) {
-      Log.error(target, `Is down!. Stopped retrying after ${service.retries} tries.`);
+      Log.error(target, `Is down!. Stopped retrying after ${service.retries} retries.`);
       this.closeDeadQueue(target).catch((err) => {
         Log.error('Rabbit', "Couldn't clear queue");
         const error = err as types.IFullError;

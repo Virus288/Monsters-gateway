@@ -1,6 +1,6 @@
 import * as enums from '../../enums';
 import { InternalError } from '../../errors';
-import Log from '../../tools/logger/log';
+import Log from '../../tools/logger';
 import { generateTempId } from '../../utils';
 import type * as errors from '../../errors';
 import type * as types from '../../types';
