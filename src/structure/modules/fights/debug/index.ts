@@ -1,6 +1,8 @@
 import CreateFightDto from './dto';
+import { ECharacterState } from '../../../../enums';
 import { ActionNotAllowed, ElementTooShortError, NoUserWithProvidedName } from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
+import ChangeCharacterStatusDto from '../../character/changeState/dto';
 import UserDetailsDto from '../../user/details/dto';
 import type { ICreateFight, ICreateFightDto } from './types';
 import type * as types from '../../../../types';
@@ -40,7 +42,12 @@ export default class UserRouter extends RouterFactory {
     });
 
     const data = new CreateFightDto(teams);
-    return reqHandler.fights.createFight(data, {
+    await reqHandler.fights.createFight(data, {
+      userId: locals.userId,
+      tempId: locals.tempId,
+    });
+    const characterState = new ChangeCharacterStatusDto({ state: ECharacterState.Fight });
+    await reqHandler.characterState.changeState(characterState, {
       userId: locals.userId,
       tempId: locals.tempId,
     });

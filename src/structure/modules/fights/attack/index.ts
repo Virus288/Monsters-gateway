@@ -1,6 +1,8 @@
 import AttackDto from './dto';
+import { ECharacterState, EFightStatus } from '../../../../enums';
 import * as errors from '../../../../errors';
 import RouterFactory from '../../../../tools/abstracts/router';
+import ChangeCharacterStatusDto from '../../character/changeState/dto';
 import UserDetailsDto from '../../user/details/dto';
 import type { IAttackDto } from './types';
 import type * as types from '../../../../types';
@@ -8,7 +10,7 @@ import type { IActionEntity } from '../entity';
 import type express from 'express';
 
 export default class FightRouter extends RouterFactory {
-  async post(req: express.Request, res: express.Response): Promise<IActionEntity> {
+  async post(req: express.Request, res: express.Response): Promise<{ logs: IActionEntity[]; status: EFightStatus }> {
     const locals = res.locals as types.IUsersTokens;
     const { reqHandler } = locals;
 
@@ -20,11 +22,18 @@ export default class FightRouter extends RouterFactory {
       tempId: locals.tempId,
     });
 
-    return (
-      await reqHandler.fights.attack(new AttackDto({ target: users.payload[0]?._id as string }), {
+    const { payload } = await reqHandler.fights.attack(new AttackDto({ target: users.payload[0]?._id as string }), {
+      userId: locals.userId,
+      tempId: locals.tempId,
+    });
+
+    if (payload.status !== EFightStatus.Ongoing) {
+      const characterState = new ChangeCharacterStatusDto({ state: ECharacterState.Map });
+      await reqHandler.characterState.changeState(characterState, {
         userId: locals.userId,
         tempId: locals.tempId,
-      })
-    ).payload;
+      });
+    }
+    return payload;
   }
 }

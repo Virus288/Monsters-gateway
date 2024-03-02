@@ -7,6 +7,7 @@ export enum EUserMainTargets {
   Profile = 'profile',
   Message = 'message',
   Inventory = 'inventory',
+  CharacterState = 'characterState',
 }
 
 export enum EUserTargets {
@@ -50,4 +51,8 @@ export enum EFightsTargets {
 
 export enum EPartyTargets {
   Get = 'getParty',
+}
+
+export enum ECharacterStateTargets {
+  ChangeState = 'changeState',
 }

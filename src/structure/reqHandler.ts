@@ -1,3 +1,4 @@
+import CharacterState from './modules/character/handler';
 import Chat from './modules/chat/handler';
 import Fights from './modules/fights/handler';
 import Inventory from './modules/inventory/handler';
@@ -23,6 +24,7 @@ export default class ReqHandler {
   message: Message;
   inventory: Inventory;
   fights: Fights;
+  characterState: CharacterState;
 
   constructor() {
     const action = <T extends types.IRabbitSubTargets>(
@@ -44,6 +46,7 @@ export default class ReqHandler {
     this.profile = new Profile(EServices.Users, action);
     this.message = new Message(EServices.Messages, action);
     this.inventory = new Inventory(EServices.Users, action);
+    this.characterState = new CharacterState(EServices.Users, action);
   }
 
   private async send<T extends types.IRabbitSubTargets>(
