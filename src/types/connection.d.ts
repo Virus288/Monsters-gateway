@@ -1,6 +1,7 @@
 import type { IUserBrokerInfo } from './user';
 import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
+import type ChangeCharacterStatusDto from '../structure/modules/character/changeState/dto';
 import type AttackDto from '../structure/modules/fights/attack/dto';
 import type CreateFightDto from '../structure/modules/fights/debug/dto';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
@@ -29,6 +30,7 @@ export type IRabbitSubTargets =
   | enums.EMessagesTargets
   | enums.EChatTargets
   | enums.EFightsTargets
+  | enums.ECharacterStateTargets
   | enums.ELogTargets;
 
 export interface IProfileConnectionData {
@@ -65,6 +67,10 @@ export interface IPartyConnectionData {
   [enums.EPartyTargets.Get]: GetPartyDto;
 }
 
+export interface ICharacterStateConnectionData {
+  [enums.ECharacterStateTargets.ChangeState]: ChangeCharacterStatusDto;
+}
+
 export interface IMessageConnectionData {
   [enums.EMessagesTargets.Get]: GetMessagesDto;
   [enums.EMessagesTargets.GetUnread]: GetUnreadMessagesDto;
@@ -83,6 +89,7 @@ export interface IRabbitConnectionData
   extends IUserConnectionData,
     IProfileConnectionData,
     IPartyConnectionData,
+    ICharacterStateConnectionData,
     IMessageConnectionData,
     IChatConnectionData,
     ILogConnectionData,

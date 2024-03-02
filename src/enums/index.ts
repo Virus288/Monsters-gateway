@@ -6,4 +6,5 @@ export * from './socket';
 export * from './redis';
 export * from './targets';
 export * from './users';
+export * from './fights';
 export * from './log';

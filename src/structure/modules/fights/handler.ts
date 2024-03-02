@@ -3,7 +3,7 @@ import ReqHandler from '../../../tools/abstracts/reqHandler';
 import type AttackDto from './attack/dto';
 import type CreateFightDto from './debug/dto';
 import type { IActionEntity } from './entity';
-import type { EMessageTypes } from '../../../enums';
+import type { EFightStatus, EMessageTypes } from '../../../enums';
 import type * as types from '../../../types';
 
 export default class Fight extends ReqHandler {
@@ -23,7 +23,7 @@ export default class Fight extends ReqHandler {
     userInfo: types.IUserBrokerInfo,
   ): Promise<{
     type: EMessageTypes.Credentials | EMessageTypes.Send;
-    payload: IActionEntity;
+    payload: { logs: IActionEntity[]; status: EFightStatus };
   }> {
     return (await this.sendReq(
       this.service,
@@ -33,7 +33,7 @@ export default class Fight extends ReqHandler {
       data,
     )) as {
       type: EMessageTypes.Credentials | EMessageTypes.Send;
-      payload: IActionEntity;
+      payload: { logs: IActionEntity[]; status: EFightStatus };
     };
   }
 }
