@@ -1,3 +1,5 @@
+import type { ECharacterState, EUserRace } from '../../../enums';
+
 /**
  * @openapi
  * components:
@@ -11,7 +13,10 @@
  *           type: string
  *         race:
  *           type: string
- *           enum: ['human', 'elf']
+ *           enum: ['human', 'elf', 'goblin', 'dwarf', 'orc', 'fairy', 'dragonBorn']
+ *         state:
+ *           type: string
+ *           enum: ['fight', 'map']
  *         friends:
  *           type: array
  *           items:
@@ -34,11 +39,12 @@
 export interface IProfileEntity {
   _id: string;
   user: string;
-  race: enums.EUserRace;
+  race: EUserRace;
   friends: string[];
   lvl: number;
   exp: number[];
   initialized: boolean;
   inventory: string;
   party: string;
+  state: ECharacterState;
 }

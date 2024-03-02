@@ -56,6 +56,23 @@ export default class Redis {
     await this.rooster.addToHash(target, id, value);
   }
 
+  async updateCachedUser(
+    id: string,
+    value: {
+      profile?: Partial<IProfileEntity>;
+      account?: Partial<IUserEntity>;
+    },
+  ): Promise<void> {
+    const cachedUser = await this.rooster.getFromHash({ target: `${ERedisTargets.CachedUser}:${id}`, value: id });
+    if (!cachedUser) return;
+    const parsedUser = JSON.parse(cachedUser) as { account: IUserEntity; profile: IProfileEntity };
+    await this.addCachedUser({
+      ...parsedUser,
+      account: value.account ? { ...parsedUser.account, ...value.account } : parsedUser.account,
+      profile: value.profile ? { ...parsedUser.profile, ...value.profile } : parsedUser.profile,
+    });
+  }
+
   async getOidcHash(target: string, id: string): Promise<string | undefined> {
     return this.rooster.getFromHash({ target, value: id });
   }
