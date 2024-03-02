@@ -42,12 +42,20 @@ export default class UserRouter extends RouterFactory {
           next();
       }
     } catch (err) {
-      Log.error('Oidc get Err', { message: (err as Error).message, stack: (err as Error).stack });
+      Log.error('Oidc get Err', { message: (err as types.IFullError).message, stack: (err as types.IFullError).stack });
       res.type('html');
-      res.render('login', {
-        url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
-        error: (err as Error).message,
-      });
+
+      if ((err as types.IFullError).name === 'SessionNotFound') {
+        res.render('error', {
+          name: (err as types.IFullError).name,
+          message: (err as types.IFullError).message,
+        });
+      } else {
+        res.render('login', {
+          url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
+          error: (err as types.IFullError).message,
+        });
+      }
     }
   }
 
@@ -80,13 +88,24 @@ export default class UserRouter extends RouterFactory {
 
       await provider.interactionFinished(req, res, result, { mergeWithLastSubmission: false });
     } catch (err) {
-      Log.error('Oidc post Err', { message: (err as Error).message, stack: (err as Error).stack });
-      res.type('html');
-      res.render('login', {
-        url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
-        error: (err as Error).message,
-        userName: (req.body as LoginDto)?.login,
+      Log.error('Oidc post Err', {
+        message: (err as types.IFullError).message,
+        stack: (err as types.IFullError).stack,
       });
+      res.type('html');
+
+      if ((err as types.IFullError).name === 'SessionNotFound') {
+        res.render('error', {
+          name: (err as types.IFullError).name,
+          message: (err as types.IFullError).message,
+        });
+      } else {
+        res.render('login', {
+          url: `${getConfig().myAddress}/interaction/${req.params.grant}/login`,
+          error: (err as types.IFullError).message,
+          userName: (req.body as LoginDto)?.login,
+        });
+      }
     }
   }
 }
