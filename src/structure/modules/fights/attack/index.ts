@@ -6,11 +6,18 @@ import ChangeCharacterStatusDto from '../../character/changeState/dto';
 import UserDetailsDto from '../../user/details/dto';
 import type { IAttackDto } from './types';
 import type * as types from '../../../../types';
+import type { IProfileEntity } from '../../profile/entity';
 import type { IActionEntity } from '../entity';
 import type express from 'express';
 
 export default class FightRouter extends RouterFactory {
-  async post(req: express.Request, res: express.Response): Promise<{ logs: IActionEntity[]; status: EFightStatus }> {
+  async post(
+    req: express.Request,
+    res: express.Response,
+  ): Promise<{
+    data: { logs: IActionEntity[]; status: EFightStatus };
+    state?: Partial<IProfileEntity>;
+  }> {
     const locals = res.locals as types.IUsersTokens;
     const { reqHandler } = locals;
 
@@ -29,11 +36,14 @@ export default class FightRouter extends RouterFactory {
 
     if (payload.status !== EFightStatus.Ongoing) {
       const characterState = new ChangeCharacterStatusDto({ state: ECharacterState.Map });
-      await reqHandler.characterState.changeState(characterState, {
+      const stateUpdate = await reqHandler.characterState.changeState(characterState, {
         userId: locals.userId,
         tempId: locals.tempId,
       });
+
+      return { data: payload, state: stateUpdate };
     }
-    return payload;
+
+    return { data: payload };
   }
 }
