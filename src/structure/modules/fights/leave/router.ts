@@ -29,8 +29,8 @@ const service = new Router();
  */
 service.router.get('/leave', limitRate, async (req, res) => {
   try {
-    await service.get(req, res);
-    res.status(200).send();
+    const data = await service.get(req, res);
+    res.status(200).send(data);
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

@@ -38,8 +38,8 @@ const service = new Router();
  */
 service.router.post('/create', limitRate, async (req, res) => {
   try {
-    await service.post(req, res);
-    res.status(200).send();
+    const data = await service.post(req, res);
+    res.status(200).send(data);
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }

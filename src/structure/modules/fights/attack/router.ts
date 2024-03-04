@@ -39,7 +39,7 @@ const service = new Router();
 service.router.post('/attack', limitRate, async (req, res) => {
   try {
     const data = await service.post(req, res);
-    res.status(200).send({ data });
+    res.status(200).send(data);
   } catch (err) {
     handleErr(err as types.IFullError, res);
   }
