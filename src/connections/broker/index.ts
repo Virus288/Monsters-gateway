@@ -7,6 +7,7 @@ import Log from '../../tools/logger';
 import { generateRandomName } from '../../utils';
 import type Communicator from './controller';
 import type { EMessageTypes } from '../../enums';
+import type { IHealth } from '../../structure/modules/health/types';
 import type * as types from '../../types';
 
 export default class Broker {
@@ -79,6 +80,16 @@ export default class Broker {
         this.cleanAll();
       })
       .catch(() => undefined);
+  }
+
+  getHealth(): IHealth {
+    const data = { alive: 0 };
+    Object.entries(this._services).forEach(([k, v]) => {
+      data[k] = !v.dead;
+    });
+    data.alive = Math.round(process.uptime());
+
+    return data;
   }
 
   private async reconnect(): Promise<void> {

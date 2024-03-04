@@ -2,6 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import Middleware from './middleware';
 import initFightsRoutes from './modules/fights';
+import initHealthRoutes from './modules/health';
 import initInventoryRoutes from './modules/inventory';
 import initLogsRoutes from './modules/logs';
 import initMessagesRoutes from './modules/message';
@@ -29,6 +30,7 @@ export default class AppRouter {
     oidc.init(provider);
     initUserRoutes(this.router);
     initOidcRoutes(this.router);
+    initHealthRoutes(this.router);
   }
 
   initSecuredRoutes(provider: Provider): void {
