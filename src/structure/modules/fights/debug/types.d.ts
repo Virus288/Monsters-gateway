@@ -44,8 +44,6 @@ export interface ICreateFightDto {
  *           type: array
  *           items:
  *             type: string
- *         owner:
- *           type: string
  */
 export interface ICreateFight {
   team: string[];

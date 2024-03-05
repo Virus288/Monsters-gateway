@@ -1,10 +1,10 @@
 import RouterFactory from '../../../../tools/abstracts/router';
-import type { IInventoryEntity } from './types';
+import type { IInventoryItem } from './types';
 import type { IUsersTokens } from '../../../../types';
 import type express from 'express';
 
 export default class InventoryGetDto extends RouterFactory {
-  async get(res: express.Response): Promise<IInventoryEntity> {
+  async get(res: express.Response): Promise<IInventoryItem[]> {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
@@ -13,6 +13,6 @@ export default class InventoryGetDto extends RouterFactory {
         userId: locals.userId,
         tempId: locals.tempId,
       })
-    ).payload;
+    ).payload.items;
   }
 }

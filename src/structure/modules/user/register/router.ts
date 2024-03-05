@@ -14,7 +14,7 @@ const service = new Router();
  *     description: Register user
  *     security: []
  *     requestBody:
- *       description: Request body for registering user
+ *       description: Request body for user registration
  *       required: true
  *       content:
  *         application/json:

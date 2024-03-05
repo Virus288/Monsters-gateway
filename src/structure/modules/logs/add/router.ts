@@ -9,19 +9,30 @@ const service = new Router();
  * @openapi
  * /logs:
  *   post:
- *     security:
- *       - bearerAuth: []
  *     tags:
  *       - logs
  *     description: Request body to add new log
- *     required: true
- *     content:
- *       application/json:
- *         schema:
- *           $ref: '#/components/schemas/IAddLogDto'
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Request body for adding a new log
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IAddLogDto'
  *     responses:
  *       200:
- *         description: OK
+ *         description: Success. Empty response.
+ *       400:
+ *         description: Bad request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/MissingArgError'
+ *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *               description: Either required arguments are missing or provided arguments are incorrect.
  *       401:
  *         description: User not logged in
  *         content:

@@ -20,7 +20,7 @@ const service = new Router();
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User name
  *     responses:
  *       200:
  *         description: OK

@@ -7,7 +7,7 @@ const service = new Router();
 
 /**
  * @openapi
- * /fights/leave:
+ * /health:
  *   get:
  *     tags:
  *       - health

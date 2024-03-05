@@ -14,6 +14,13 @@ const service = new Router();
  *     description: Attack target
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       description: Request body for attacking enemies in fights
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IAttackDto'
  *     responses:
  *       200:
  *         description: Success. Get attack stage report back
@@ -32,9 +39,15 @@ const service = new Router();
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/UnauthorizedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *               description: Either required arguments are missing or provided arguments are incorrect.
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.post('/attack', limitRate, async (req, res) => {
   try {

@@ -9,7 +9,7 @@ import type { EUserRace } from '../../../../enums';
  *       properties:
  *         race:
  *           type: string
- *           enum: ['human', 'elf']
+ *           enum: ['human', 'elf', 'goblin', 'dwarf', 'orc', 'fairy', 'dragonBorn']
  */
 export interface IAddProfileDto {
   race: EUserRace;

@@ -5,10 +5,6 @@
  *     IInventoryEntity:
  *       type: object
  *       properties:
- *         _id:
- *           type: string
- *         userId:
- *           type: string
  *         items:
  *           type: array
  *           items:

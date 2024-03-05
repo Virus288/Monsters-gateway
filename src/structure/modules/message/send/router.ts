@@ -8,23 +8,19 @@ const service = new Router();
 /**
  * @openapi
  * /messages/send:
- *   put:
+ *   post:
  *     tags:
  *       - messages
  *     description: Send user messages
- *     parameters:
- *       - in: query
- *         name: receiver
- *         required: true
- *         schema:
- *           type: string
- *       - in: query
- *         name: body
- *         required: true
- *         schema:
- *           type: string
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       description: Request body for sending user message
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ISendMessageDto'
  *     responses:
  *       200:
  *         description: Success. Sent message
@@ -45,7 +41,7 @@ const service = new Router();
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
 
-service.router.put('/send', limitRate, async (req, res) => {
+service.router.post('/send', limitRate, async (req, res) => {
   try {
     await service.put(req, res);
     res.status(200).send();
