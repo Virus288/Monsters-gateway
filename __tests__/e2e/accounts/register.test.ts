@@ -21,10 +21,10 @@ describe('Register', () => {
         const clone = structuredClone(registerData);
         delete clone.login;
         const res = await supertest(app).post('/users/register').send(clone);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('Missing param: login');
-        expect(body.code).not.toBeUndefined();
+        expect(body.error.message).toEqual('Missing param: login');
+        expect(body.error.code).not.toBeUndefined();
       });
 
       it(`Missing password`, async () => {
@@ -32,10 +32,10 @@ describe('Register', () => {
         delete clone.password;
 
         const res = await supertest(app).post('/users/register').send(clone);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('Missing param: password');
-        expect(body.code).not.toBeUndefined();
+        expect(body.error.message).toEqual('Missing param: password');
+        expect(body.error.code).not.toBeUndefined();
       });
 
       it(`Missing email`, async () => {
@@ -43,10 +43,10 @@ describe('Register', () => {
         delete clone.email;
 
         const res = await supertest(app).post('/users/register').send(clone);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('Missing param: email');
-        expect(body.code).not.toBeUndefined();
+        expect(body.error.message).toEqual('Missing param: email');
+        expect(body.error.code).not.toBeUndefined();
       });
     });
 
@@ -59,9 +59,9 @@ describe('Register', () => {
         });
 
         const res = await supertest(app).post('/users/register').send(fakeData.users[0]);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('Selected username is already in use');
+        expect(body.error.message).toEqual('Selected username is already in use');
       });
 
       it(`Register incorrect`, async () => {
@@ -76,9 +76,9 @@ describe('Register', () => {
         const res = await supertest(app)
           .post('/users/register')
           .send({ ...registerData, login: '!@#$%^&*&*()_+P{:"<?a' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('login should only contain arabic letters, numbers and special characters');
+        expect(body.error.message).toEqual('login should only contain arabic letters, numbers and special characters');
       });
 
       it(`Login too short`, async () => {
@@ -94,9 +94,9 @@ describe('Register', () => {
         const res = await supertest(app)
           .post('/users/register')
           .send({ ...registerData, login: 'a' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('login should be more than 3 and less than 30 characters');
+        expect(body.error.message).toEqual('login should be more than 3 and less than 30 characters');
       });
 
       it(`Login too long`, async () => {
@@ -116,9 +116,9 @@ describe('Register', () => {
             login:
               'asssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss',
           });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('login should be more than 3 and less than 30 characters');
+        expect(body.error.message).toEqual('login should be more than 3 and less than 30 characters');
       });
 
       it(`Password incorrect`, async () => {
@@ -133,9 +133,9 @@ describe('Register', () => {
         const res = await supertest(app)
           .post('/users/register')
           .send({ ...registerData, password: 'a@$QEWASD+)}KO_PL{:">?' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual(
+        expect(body.error.message).toEqual(
           'password should contain at least 8 characters with: at least 1 digit, 1 letter, 1 upper case letter and 1 lower case letter',
         );
       });
@@ -153,9 +153,9 @@ describe('Register', () => {
         const res = await supertest(app)
           .post('/users/register')
           .send({ ...registerData, password: 'a' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('password should be more than 6 and less than 200 characters');
+        expect(body.error.message).toEqual('password should be more than 6 and less than 200 characters');
       });
 
       it(`Password too long`, async () => {
@@ -175,9 +175,9 @@ describe('Register', () => {
             password:
               'aasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsadaasdasdasasdassadsad',
           });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('password should be more than 6 and less than 200 characters');
+        expect(body.error.message).toEqual('password should be more than 6 and less than 200 characters');
       });
 
       it(`Email incorrect`, async () => {
@@ -190,9 +190,9 @@ describe('Register', () => {
         const res = await supertest(app)
           .post('/users/register')
           .send({ ...registerData, email: 'a' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('email invalid');
+        expect(body.error.message).toEqual('email invalid');
       });
     });
   });

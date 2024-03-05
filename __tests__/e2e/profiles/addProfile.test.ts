@@ -74,10 +74,10 @@ describe('Profiles - add', () => {
         });
 
         const res = await supertest(app).post('/profile').auth(accessToken, { type: 'bearer' }).send(clone);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
         const target = new MissingArgError('race');
 
-        expect(body.message).toEqual(target.message);
+        expect(body.error.message).toEqual(target.message);
       });
     });
 
@@ -93,9 +93,9 @@ describe('Profiles - add', () => {
           .post('/profile')
           .auth(accessToken, { type: 'bearer' })
           .send({ ...addProfile, race: 'abc' });
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('race has incorrect type');
+        expect(body.error.message).toEqual('race has incorrect type');
       });
 
       it(`Profile already exists`, async () => {
@@ -106,9 +106,9 @@ describe('Profiles - add', () => {
         });
 
         const res = await supertest(app).post('/profile').auth(accessToken3, { type: 'bearer' }).send(addProfile);
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual('Profile already initialized');
+        expect(body.error.message).toEqual('Profile already initialized');
       });
     });
   });
