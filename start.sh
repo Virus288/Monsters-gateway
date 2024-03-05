@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Running migration"
 
-npm run migrate:latest:prod
+npm run migrate:latest
 
 echo "Starting service"
 
