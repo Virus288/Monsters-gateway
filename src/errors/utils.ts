@@ -6,13 +6,13 @@ const handleErr = (err: types.IFullError, res: express.Response): void => {
   Log.error('Error', err.message, err.stack);
 
   const { message, code, name, status } = err;
-  !status
-    ? res.status(500).send({
-        message,
-        code,
-        name,
-      })
-    : res.status(status).send({ message, code, name });
+  res.status(!status ? 500 : status).send({
+    error: {
+      message,
+      code,
+      name,
+    },
+  });
 };
 
 export default handleErr;

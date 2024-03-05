@@ -48,9 +48,9 @@ describe('Profiles = get', () => {
           .query({ name: undefined })
           .auth(accessToken, { type: 'bearer' })
           .send();
-        const body = res.body as IFullError;
+        const body = res.body as { error: IFullError };
 
-        expect(body.message).toEqual(target.message);
+        expect(body.error.message).toEqual(target.message);
       });
     });
   });
