@@ -2,7 +2,7 @@
  * @openapi
  * components:
  *   schemas:
- *     IFightProfile:
+ *     IAttackDto:
  *       type: object
  *       properties:
  *         target:

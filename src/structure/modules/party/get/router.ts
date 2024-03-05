@@ -11,16 +11,11 @@ const service = new Router();
  *   get:
  *     tags:
  *       - party
- *     description: Get party with provided id
+ *     description: Get party by provided id
  *     parameters:
  *       - in: query
- *         name: name
- *         required: false
- *         schema:
- *           type: string
- *       - in: query
  *         name: id
- *         required: false
+ *         required: true
  *         schema:
  *           type: string
  *     security:

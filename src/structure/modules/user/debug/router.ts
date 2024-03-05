@@ -41,6 +41,12 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/UnauthorizedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.get('/debug', limitRate, async (req, res) => {
   try {

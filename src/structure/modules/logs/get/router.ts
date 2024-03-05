@@ -22,11 +22,20 @@ const service = new Router();
  *           type: string
  *     responses:
  *       200:
- *         description: OK
+ *         description: Success. Get last 100 user's logs in request.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ILogEntity'
+ *       400:
+ *         description: Bad request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/NoDataProvidedError'
+ *                 - $ref: '#/components/schemas/MissingArgError'
+ *                 - $ref: '#/components/schemas/IncorrectArgError'
  *       401:
  *         description: User not logged in
  *         content:

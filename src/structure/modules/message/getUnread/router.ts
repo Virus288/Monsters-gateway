@@ -11,7 +11,7 @@ const service = new Router();
  *   get:
  *     tags:
  *       - messages
- *     description: Get user messages
+ *     description: Get unread user messages
  *     parameters:
  *       - in: query
  *         name: page

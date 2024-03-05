@@ -1,3 +1,5 @@
+import type { IProfileEntity } from '../profile/entity';
+
 /**
  * @openapi
  * components:
@@ -25,3 +27,18 @@ export interface IActionEntity {
   target: string;
   value: number;
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IProfileUpdateEntity:
+ *       type: object
+ *       properties:
+ *         state:
+ *           type: string
+ *           enum: ['fight', 'map']
+ *       required:
+ *         - state
+ */
+export type IProfileUpdateEntity = Partial<IProfileEntity>;

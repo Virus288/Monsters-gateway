@@ -11,7 +11,7 @@ const service = new Router();
  *   get:
  *     tags:
  *       - inventory
- *     description: Get user's name
+ *     description: Get user's inventory
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -20,19 +20,22 @@ const service = new Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   $ref: '#/components/schemas/IInventoryEntity'
+ *               $ref: '#/components/schemas/IInventoryEntity'
  *       400:
  *         description: Bad request.
  *         content:
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/UnauthorizedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *               description: Either required arguments are missing or provided arguments are incorrect.
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.get('/', limitRate, async (_req, res) => {
   try {

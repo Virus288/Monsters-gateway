@@ -18,6 +18,12 @@ const service = new Router();
  *         required: true
  *         schema:
  *           type: number
+ *       - in: query
+ *         name: target
+ *         required: false
+ *         description: Optional param used to get messages details
+ *         schema:
+ *           type: number
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -48,7 +54,6 @@ const service = new Router();
  *             schema:
  *               $ref: '#/components/schemas/UnauthorizedError'
  */
-
 service.router.get('/', limitRate, async (req, res) => {
   try {
     const data = await service.get(req, res);

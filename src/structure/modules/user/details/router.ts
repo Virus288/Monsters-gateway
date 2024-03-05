@@ -8,10 +8,10 @@ const service = new Router();
 /**
  * @openapi
  * /users/details:
- *   post:
+ *   get:
  *     tags:
  *       - user
- *     description: Get user's name
+ *     description: Get user's details
  *     parameters:
  *       - in: query
  *         name: name
@@ -27,7 +27,7 @@ const service = new Router();
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Get user's name back in request.
+ *         description: Success. Get user's details back in request.
  *         content:
  *           application/json:
  *             schema:

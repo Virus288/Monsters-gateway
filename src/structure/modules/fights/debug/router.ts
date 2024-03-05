@@ -11,12 +11,19 @@ const service = new Router();
  *   get:
  *     tags:
  *       - fights-debug
- *     description: Get all users
+ *     description: Create fight
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       description: Request body for creating fight
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ICreateFight'
  *     responses:
  *       200:
- *         description: Success. Get users back in request.
+ *         description: Success. Fight created
  *         content:
  *           application/json:
  *             schema:
@@ -25,16 +32,22 @@ const service = new Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/IUserEntity'
+ *                     $ref: '#/components/schemas/IProfileUpdateEntity'
  *       400:
  *         description: Bad request.
  *         content:
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/UnauthorizedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *               description: Either required arguments are missing or provided arguments are incorrect.
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.post('/create', limitRate, async (req, res) => {
   try {

@@ -13,13 +13,6 @@ const service = new Router();
  *       - user
  *     description: Remove user
  *     security: []
- *     requestBody:
- *       description: Request body for removing user
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/IRemoveUserDto'
  *     responses:
  *       200:
  *         description: Success. User removed.
@@ -32,6 +25,12 @@ const service = new Router();
  *                 - $ref: '#/components/schemas/NoDataProvidedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.delete('/', limitRate, async (req, res) => {
   try {

@@ -11,21 +11,36 @@ const service = new Router();
  *   get:
  *     tags:
  *       - fights
- *     description: Get all users
+ *     description: Leave fight
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success. Get users back in request.
+ *         description: Success. Left fight.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/IProfileUpdateEntity'
  *       400:
  *         description: Bad request.
  *         content:
  *           application/json:
  *             schema:
  *               oneOf:
- *                 - $ref: '#/components/schemas/UnauthorizedError'
  *                 - $ref: '#/components/schemas/MissingArgError'
  *                 - $ref: '#/components/schemas/IncorrectArgError'
+ *               description: Either required arguments are missing or provided arguments are incorrect.
+ *       401:
+ *         description: User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
  */
 service.router.get('/leave', limitRate, async (req, res) => {
   try {
