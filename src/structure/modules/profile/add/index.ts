@@ -8,7 +8,7 @@ import type { IProfileEntity } from '../entity';
 import type express from 'express';
 
 export default class AddProfileRouter extends RouterFactory {
-  async post(req: express.Request, res: express.Response): Promise<void> {
+  async post(req: express.Request, res: express.Response): Promise<{ state: Partial<IProfileEntity> }> {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 
@@ -18,5 +18,7 @@ export default class AddProfileRouter extends RouterFactory {
       account: locals.user as IUserEntity,
       profile: { ...(locals.profile as IProfileEntity), initialized: true },
     });
+
+    return { state: { initialized: true, race: data.race } };
   }
 }
