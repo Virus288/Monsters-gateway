@@ -64,6 +64,11 @@ make test
 In order to run e2e tests, you should run other services in "test" mode. Test mode uses in memory database and does not
 save data anywhere ( except rabbitMQ )
 
-### 3,3 Docs
+### 3.3 Docs
 
 #### This project is using swagger docs. You can access them by route http://localhost:{port}/docs
+
+### 3.4 Additional notes
+
+This service uses oidc as authorization system. Migrations starting in docker image will initialize database and also
+default client called `oidcClient` with random password. Remember to adjust its data to your preferences
