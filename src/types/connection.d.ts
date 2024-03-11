@@ -4,6 +4,8 @@ import type * as enums from '../enums';
 import type ChangeCharacterStatusDto from '../structure/modules/character/changeState/dto';
 import type AttackDto from '../structure/modules/fights/attack/dto';
 import type CreateFightDto from '../structure/modules/fights/debug/dto';
+import type { IGetFightDto } from '../structure/modules/fights/getFights/types';
+import type { IGetFightLogsDto } from '../structure/modules/fights/getLogs/types';
 import type InventoryDropDto from '../structure/modules/inventory/drop/dto';
 import type InventoryAddDto from '../structure/modules/inventory/use/dto';
 import type AddLogDto from '../structure/modules/log/add/dto';
@@ -55,6 +57,8 @@ export interface IFightConnectionData {
   [enums.EFightsTargets.Leave]: null;
   [enums.EFightsTargets.CreateFight]: CreateFightDto;
   [enums.EFightsTargets.Attack]: AttackDto;
+  [enums.EFightsTargets.GetLogs]: IGetFightLogsDto;
+  [enums.EFightsTargets.GetFights]: IGetFightDto;
 }
 
 export interface IInventoryConnectionData {
