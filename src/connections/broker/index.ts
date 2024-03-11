@@ -178,8 +178,6 @@ export default class Broker {
         if (payload.target === enums.EMessageTypes.Heartbeat) {
           return this.validateHeartbeat(payload.payload as types.IAvailableServices);
         }
-        Log.log('Rabbit', 'Got new message');
-        Log.log('Rabbit', payload);
         return this.errorWrapper(() => this.controller.sendExternally(payload));
       },
       { noAck: true },

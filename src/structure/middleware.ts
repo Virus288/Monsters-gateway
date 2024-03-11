@@ -30,7 +30,9 @@ export default class Middleware {
     // Validate token
     const token =
       ((req.cookies as Record<string, string>)['monsters.uid'] as string) ??
-      (req.headers.authorization !== undefined ? req.headers.authorization.split('Bearer')[1]!.trim() : undefined);
+      (req.headers.authorization !== undefined
+        ? (req.headers.authorization.split('Bearer')?.[1] ?? '').trim()
+        : undefined);
 
     try {
       const payload = await validateToken(token);
