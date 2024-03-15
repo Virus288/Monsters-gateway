@@ -5,6 +5,7 @@ import State from '../state';
 import getConfig from '../tools/configLoader';
 import Log from '../tools/logger';
 import type { ILoginKeys } from '../types';
+import type { JSONWebKey } from 'jose';
 import type { Configuration } from 'oidc-provider';
 
 export default class Oidc {
@@ -31,7 +32,7 @@ export default class Oidc {
 
     for (const e of errors) {
       provider.on(e, (...err: Record<string, unknown>[]) => {
-        Log.error(e, JSON.stringify(err));
+        Log.error(e, err);
       });
     }
     return provider;
@@ -43,7 +44,7 @@ export default class Oidc {
     if (!keys || keys.length === 0) {
       const newKeys = await generateKeys(10);
       const now = new Date();
-      let keyNumber: number = 0;
+      let keyNumber: number = 1;
       keys = newKeys.map((k) => {
         return {
           id: keyNumber++,
@@ -53,7 +54,8 @@ export default class Oidc {
       }) as ILoginKeys[];
       await State.mysql.addKeys(keys);
     }
-    State.keys = keys.map((e) => e.key);
+
+    State.keys = keys.map((e) => (typeof e.key === 'string' ? (JSON.parse(e.key) as JSONWebKey) : e.key));
     const clients = await State.mysql.getOidcClients();
     return oidcClaims(State.keys, clients);
   }

@@ -33,7 +33,9 @@ export default class Redis {
   }
 
   async close(): Promise<void> {
-    await this.client!.quit();
+    if (this.client) {
+      await this.client.quit();
+    }
   }
 
   async setExpirationDate(target: enums.ERedisTargets | string, ttl: number): Promise<void> {

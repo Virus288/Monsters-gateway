@@ -30,6 +30,12 @@ export default class Mysql {
     });
   }
 
+  close(): void {
+    this.knex.destroy().catch(() => {
+      // Ignored
+    });
+  }
+
   async getKeys(): Promise<ILoginKeys[]> {
     return this.knex('keys').select();
   }
@@ -38,17 +44,8 @@ export default class Mysql {
     return this.knex('oidcClients').select();
   }
 
-  async addKeys(keys: unknown[]): Promise<void> {
-    const now = new Date();
-
-    await this.knex('keys').insert(
-      keys.map((k) => {
-        return {
-          key: JSON.stringify(k),
-          expiration: now,
-        };
-      }),
-    );
+  async addKeys(keys: ILoginKeys[]): Promise<void> {
+    await this.knex('keys').insert(keys);
   }
 
   async addOidcClient(client: ClientMetadata): Promise<void> {
