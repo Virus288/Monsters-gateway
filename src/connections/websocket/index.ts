@@ -47,7 +47,9 @@ export default class WebsocketServer {
   }
 
   close(): void {
-    this.server.close();
+    if (this.server) {
+      this.server.close();
+    }
     this.users.forEach((u) => {
       u.clients.forEach((c) => {
         c.close(1000, JSON.stringify(new errors.InternalError()));

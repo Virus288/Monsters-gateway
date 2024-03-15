@@ -68,6 +68,7 @@ class State implements IState {
     this.router.close();
     this.broker.close();
     this.socket.close();
+    this.mysql.close();
     Log.log('Server', 'Server closed');
   }
 }

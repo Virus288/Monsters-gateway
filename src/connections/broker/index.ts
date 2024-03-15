@@ -11,6 +11,7 @@ import type { IHealth } from '../../structure/modules/health/types';
 import type * as types from '../../types';
 
 export default class Broker {
+  private _closed: boolean = false;
   private _retryTimeout: NodeJS.Timeout | null = null;
   private _connection: amqplib.Connection | null = null;
   private _connectionTries = 0;
@@ -46,6 +47,14 @@ export default class Broker {
     return this._controller;
   }
 
+  private get closed(): boolean {
+    return this._closed;
+  }
+
+  private set closed(value: boolean) {
+    this._closed = value;
+  }
+
   async init(): Promise<void> {
     await this.initCommunication();
   }
@@ -72,6 +81,7 @@ export default class Broker {
   }
 
   close(): void {
+    this.closed = true;
     if (this._retryTimeout) clearTimeout(this._retryTimeout);
     this.cleanAll();
     this._connection!.close()
@@ -115,6 +125,7 @@ export default class Broker {
           resolve();
         })
         .catch((err) => {
+          if (this.closed) return;
           Log.warn('Rabbit', 'Error connecting to RabbitMQ, retrying in 1 second');
           const error = err as types.IFullError;
           Log.error('Rabbit', error.message, error.stack);
@@ -139,6 +150,7 @@ export default class Broker {
         return this.createQueue();
       })
       .catch((err) => {
+        if (this.closed) return;
         const error = err as types.IFullError;
         Log.error(
           'Rabbit',
