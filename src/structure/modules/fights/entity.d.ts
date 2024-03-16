@@ -1,3 +1,5 @@
+import type { EFightAction } from '../../../enums';
+
 /**
  * @openapi
  * components:
@@ -21,7 +23,7 @@
  */
 export interface IActionEntity {
   character: string;
-  action: EAction;
+  action: EFightAction;
   target: string;
   value: number;
 }

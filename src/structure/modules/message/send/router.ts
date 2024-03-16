@@ -43,7 +43,7 @@ const service = new Router();
 
 service.router.post('/send', limitRate, async (req, res) => {
   try {
-    await service.put(req, res);
+    await service.post(req, res);
     res.status(200).send();
   } catch (err) {
     handleErr(err as types.IFullError, res);

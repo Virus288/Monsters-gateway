@@ -9,7 +9,7 @@ import type { IUsersTokens } from '../../../../types';
 import type express from 'express';
 
 export default class MessagesRouter extends RouterFactory {
-  async put(req: express.Request, res: express.Response): Promise<void> {
+  async post(req: express.Request, res: express.Response): Promise<void> {
     const locals = res.locals as IUsersTokens;
     const { reqHandler } = locals;
 

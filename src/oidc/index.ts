@@ -44,10 +44,8 @@ export default class Oidc {
     if (!keys || keys.length === 0) {
       const newKeys = await generateKeys(10);
       const now = new Date();
-      let keyNumber: number = 1;
       keys = newKeys.map((k) => {
         return {
-          id: keyNumber++,
           key: k,
           expiration: now,
         };
