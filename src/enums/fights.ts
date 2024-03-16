@@ -4,3 +4,7 @@ export enum EFightStatus {
   Lose = 'lose',
   Ongoing = 'ongoing',
 }
+
+export enum EFightAction {
+  Attack = 'attack',
+}

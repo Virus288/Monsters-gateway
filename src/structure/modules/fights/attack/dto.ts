@@ -11,6 +11,6 @@ export default class AttackDto implements IAttackDto {
   }
 
   validate(): void {
-    new Validation(this.target, 'attacker').isDefined();
+    new Validation(this.target, 'target').isDefined();
   }
 }
