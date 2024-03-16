@@ -461,8 +461,6 @@
 
   const themeToggle = document.getElementById('theme-toggle');
   const theme = localStorage.getItem('theme');
-  const error = true;
-  const errorContainer = document.querySelector('.error-container');
   const themeContainer = document.querySelector('.theme');
   const container = document.querySelector('.container');
 
@@ -472,9 +470,12 @@
     toggleTheme();
   }
 
-
-  if (error) errorContainer.style.display = 'flex';
   themeToggle.addEventListener('change', toggleTheme);
+
+  <% if (typeof error !== 'undefined') { %>
+  const errorContainer = document.querySelector('.error-container');
+  errorContainer.style.display = 'flex';
+  <% } %>
 </script>
 </body>
 </html>
