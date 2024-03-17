@@ -193,6 +193,7 @@ export default class Middleware {
     );
     app.set('views', path.join(__dirname, '..', '..', '..', 'public'));
     app.use('/public', express.static(path.join(__dirname, '..', '..', '..', 'public', 'static')));
+    app.use('/favicon.ico', express.static(path.join(__dirname, '..', '..', '..', 'public', 'static', 'favicon.ico')));
     app.set('view engine', 'ejs');
 
     app.use((req, _res, next) => {

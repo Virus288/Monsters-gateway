@@ -100,9 +100,9 @@ export default class AppRouter {
         './src/structure/modules/*/*/*/router.ts',
         './src/structure/modules/*/*/*/entity.d.ts',
         './src/structure/modules/*/*/*/types.d.ts',
-        './src/tools/websocket/docs/index.ts',
-        './src/tools/websocket/dto.d.ts',
-        './src/tools/websocket/entities.d.ts',
+        './src/connections/websocket/docs/index.ts',
+        './src/connections/websocket/types/dto.d.ts',
+        './src/connections/websocket/types/entities.d.ts',
       ],
     };
 

@@ -13,7 +13,7 @@ import type * as enums from '../../../enums';
  *           example: 'chat'
  *         subTarget:
  *           type: string
- *           example: 'send'
+ *           example: 'read'
  *         payload:
  *           type: object
  *           properties:
@@ -42,7 +42,7 @@ export interface IReadMessageDto {
  *           example: 'chat'
  *         subTarget:
  *           type: string
- *           example: 'send'
+ *           example: 'get'
  *         payload:
  *           type: object
  *           properties:
@@ -72,7 +72,7 @@ export interface IGetDetailedDto {
  *           example: 'chat'
  *         subTarget:
  *           type: string
- *           example: 'send'
+ *           example: 'get'
  *         payload:
  *           type: object
  *           properties:
@@ -102,7 +102,7 @@ export interface ISocketSendMessageDto {
  *           example: 'chat'
  *         subTarget:
  *           type: string
- *           example: 'send'
+ *           example: 'get'
  *         payload:
  *           type: object
  *           properties:
