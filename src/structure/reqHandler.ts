@@ -1,3 +1,4 @@
+import BugReport from './modules/bugReport/handler';
 import CharacterState from './modules/character/handler';
 import Chat from './modules/chat/handler';
 import Fights from './modules/fights/handler';
@@ -20,10 +21,11 @@ export default class ReqHandler {
   user: User;
   chat: Chat;
   party: Party;
+  fights: Fights;
   profile: Profile;
   message: Message;
   inventory: Inventory;
-  fights: Fights;
+  bugReport: BugReport;
   characterState: CharacterState;
 
   constructor() {
@@ -46,6 +48,7 @@ export default class ReqHandler {
     this.profile = new Profile(EServices.Users, action);
     this.message = new Message(EServices.Messages, action);
     this.inventory = new Inventory(EServices.Users, action);
+    this.bugReport = new BugReport(EServices.Users, action);
     this.characterState = new CharacterState(EServices.Users, action);
   }
 

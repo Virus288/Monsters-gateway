@@ -118,7 +118,7 @@
             display: flex;
             flex-direction: column;
             color: #334155;
-
+            margin-top: 14px;
             width: 300px;
             color: #64748b;
             font-size: 0.875rem; /* 14px */
@@ -141,7 +141,7 @@
             height: 3em;
             border: 1px solid #94a3b8;
             border-radius: 4px;
-            background: #f9fafb;
+            background: #e5e7eb;
             border: none;
             padding: 0px 5px;
             font-weight: 600;
@@ -164,7 +164,7 @@
 
 
         .container .left form input::placeholder {
-            color: #cbd5e1;
+            color: #9ca3af;
             padding: 0px 4px;
             font-weight: 500;
         }
@@ -371,9 +371,9 @@
             }
 
             .container .left form label {
+
                 display: flex;
                 flex-direction: column;
-                color: white;
                 width: 250px;
                 color: #64748b;
                 font-size: 0.875rem; /* 14px */
@@ -461,6 +461,7 @@
 
   const themeToggle = document.getElementById('theme-toggle');
   const theme = localStorage.getItem('theme');
+  const error = true;
   const themeContainer = document.querySelector('.theme');
   const container = document.querySelector('.container');
 

@@ -6,6 +6,7 @@ export enum EUserMainTargets {
   Fight = 'fight',
   Profile = 'profile',
   Message = 'message',
+  BugReport = 'bugReport',
   Inventory = 'inventory',
   CharacterState = 'characterState',
 }
@@ -57,4 +58,9 @@ export enum EPartyTargets {
 
 export enum ECharacterStateTargets {
   ChangeState = 'changeState',
+}
+
+export enum EBugReportTargets {
+  AddBugReport = 'addBugReport',
+  GetBugReport = 'getBugReport',
 }
