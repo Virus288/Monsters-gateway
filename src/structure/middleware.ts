@@ -193,7 +193,9 @@ export default class Middleware {
     );
     app.set('views', path.join(__dirname, '..', '..', '..', 'public'));
     app.use('/public', express.static(path.join(__dirname, '..', '..', '..', 'public', 'static')));
-    app.use('/favicon.ico', express.static(path.join(__dirname, '..', '..', '..', 'public', 'static', 'favicon.ico')));
+    app.get('/favicon.ico', (_req, res) => {
+      res.status(404).send();
+    });
     app.set('view engine', 'ejs');
 
     app.use((req, _res, next) => {
@@ -204,10 +206,15 @@ export default class Middleware {
           ip: req.ip as string,
         };
         if (req.query) logBody.query = JSON.stringify(req.query);
-        if (req.body) {
+        if (
+          req.body !== undefined &&
+          typeof req.body === 'object' &&
+          Object.keys(req.body as Record<string, string>).length > 0
+        ) {
           if (req.path.includes('interaction') || req.path.includes('register')) {
             logBody.body = { ...(req.body as Record<string, string>) };
-            if (logBody.password) {
+
+            if (logBody.body.password) {
               logBody.body.password = '***';
             }
           } else {

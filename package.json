@@ -19,7 +19,7 @@
     "test:e2e": "cross-env NODE_ENV=test jest --config __tests__/jest.config.e2e.ts",
     "test:db": "cross-env NODE_ENV=test jest --config __tests__/jest.config.db.ts",
     "test:unit": "cross-env NODE_ENV=test jest --config __tests__/jest.config.unit.ts",
-    "prepare": "husky install",
+    "prepareHooks": "husky install",
     "migrate:init": "node build/src/migrations/init.js",
     "migrate:latest": "npx knex --knexfile build/src/migrations/index.js migrate:latest",
     "migrate:rollback": "npx knex --knexfile build/src/migrations/index.js migrate:rollback",
