@@ -17,6 +17,7 @@ export default class Router {
     this._app = express();
     this._middleware = new Middleware();
     this._router = new AppRouter(this.app);
+    // this.app.
   }
 
   get app(): express.Express {
