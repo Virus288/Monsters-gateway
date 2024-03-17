@@ -1,6 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import Middleware from './middleware';
+import initBugReportRoutes from './modules/bugReport';
 import initFightsRoutes from './modules/fights';
 import initHealthRoutes from './modules/health';
 import initInventoryRoutes from './modules/inventory';
@@ -37,6 +38,8 @@ export default class AppRouter {
     this.router.use(Middleware.userValidation);
 
     initRemoveAccountRoutes(this.router, provider);
+    initLogsRoutes(this.router);
+    initBugReportRoutes(this.router);
 
     this.router.use(Middleware.initUserProfile);
 
@@ -48,7 +51,6 @@ export default class AppRouter {
     initPartyRoutes(this.router);
     initMessagesRoutes(this.router);
     initInventoryRoutes(this.router);
-    initLogsRoutes(this.router);
     initFightsRoutes(this.router);
   }
 

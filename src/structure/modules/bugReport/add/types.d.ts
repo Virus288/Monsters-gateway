@@ -2,15 +2,13 @@
  * @openapi
  * components:
  *   schemas:
- *     IAddLogDto:
+ *     IAddBugReport:
  *       type: object
  *       properties:
  *         message:
  *           type: string
- *         target:
- *           type: string
  */
-export interface IAddLogDto {
+export interface IAddBugReport {
   message: string;
-  target: string;
+  user: string;
 }

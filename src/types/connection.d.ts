@@ -1,6 +1,7 @@
 import type { IUserBrokerInfo } from './user';
 import type * as types from '../connections/websocket/types';
 import type * as enums from '../enums';
+import type { IAddBugReport } from '../structure/modules/bugReport/add/types';
 import type ChangeCharacterStatusDto from '../structure/modules/character/changeState/dto';
 import type AttackDto from '../structure/modules/fights/attack/dto';
 import type CreateFightDto from '../structure/modules/fights/debug/dto';
@@ -33,6 +34,7 @@ export type IRabbitSubTargets =
   | enums.EChatTargets
   | enums.EFightsTargets
   | enums.ECharacterStateTargets
+  | enums.EBugReportTargets
   | enums.ELogTargets;
 
 export interface IProfileConnectionData {
@@ -67,6 +69,11 @@ export interface IInventoryConnectionData {
   [enums.EItemsTargets.Use]: InventoryAddDto;
 }
 
+export interface IBugReportConnectionData {
+  [enums.EBugReportTargets.AddBugReport]: IAddBugReport;
+  [enums.EBugReportTargets.GetBugReport]: null;
+}
+
 export interface IPartyConnectionData {
   [enums.EPartyTargets.Get]: GetPartyDto;
 }
@@ -98,6 +105,7 @@ export interface IRabbitConnectionData
     IChatConnectionData,
     ILogConnectionData,
     IFightConnectionData,
+    IBugReportConnectionData,
     IInventoryConnectionData {}
 
 export type IRabbitTargets = enums.EMessageTypes | enums.EUserMainTargets;
