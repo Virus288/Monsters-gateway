@@ -52,7 +52,7 @@
     "mysql2": "3.9.2",
     "node": "21.7.1",
     "node-jose": "2.2.0",
-    "oidc-provider": "^6",
+    "oidc-provider": "^8",
     "redis": "4.6.13",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "5.0.0",
